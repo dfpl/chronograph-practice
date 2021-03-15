@@ -1,6 +1,7 @@
 package org.dfpl.chronograph;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,23 +11,31 @@ import org.dfpl.chronograph.model.Vertex;
 
 public class DFPL_Graph implements Graph{
 
-	Set<Vertex> v = new HashSet<Vertex>();
+	HashMap<String , Vertex> Vertices;
+	HashSet<Edge> Edges;
 	
+	DFPL_Graph(){
+		Vertices = new HashMap<String , Vertex>();
+		Edges = new HashSet<Edge>();
+		
+	}
 	@Override
 	public Vertex addVertex(String id) {
 		// TODO Auto-generated method stub
+		DFPL_Vertex vertex = new DFPL_Vertex(id);
+		Vertices.put(id, vertex);
 		
-		return null;
+		return vertex;
 	}
 
 	@Override
 	public Vertex getVertex(String id) {
 		// TODO Auto-generated method stub
-		return null;
+		return Vertices.get(id);
 	}
 
 	@Override
-	public void removeVertex(Vertex vertex) {
+	public void removeVertex(Vertex vertex) { // 지울 때 연결된 엣지들도 지워야할까 ? 
 		// TODO Auto-generated method stub
 		
 	}
@@ -38,9 +47,10 @@ public class DFPL_Graph implements Graph{
 	}
 
 	@Override
-	public Collection<Vertex> getVertices(String key, Object value) {
+	public Collection<Vertex> getVertices(String key, Object value) { // Stream 사용해서 코딩해보기
+		
 		// TODO Auto-generated method stub
-		return null;
+		return Vertices.entrySet().stream().filter(t->t.getKey() == id);
 	}
 
 	@Override
