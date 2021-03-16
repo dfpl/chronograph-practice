@@ -1,4 +1,4 @@
-package org.dfpl.chronograph;
+package org.dfpl.chronograph.impl.jaehyun;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -8,18 +8,28 @@ import org.dfpl.chronograph.model.Direction;
 import org.dfpl.chronograph.model.Edge;
 import org.dfpl.chronograph.model.Vertex;
 
-public class DFPL_Vertex implements Vertex {
+/**
+ * Copyright (C) 2021- DFPL
+ *
+ *
+ * @author Jaewook Byun, Ph.D, Assistant Professor, Department of Software,
+ *         Sejong University, Associate Director of Auto-ID Labs Korea,
+ *         jwbyun@sejong.ac.kr, bjw0829@gmail.com
+ * 
+ * @author Jaehyun 쓰세요
+ */
+public class JaehyunVertex implements Vertex {
 
 	String id;
 	HashMap<String , Edge> InEdges; // <label ,Edge> direction is IN 
 	HashMap<String , Edge> OutEdges; // <label ,Edge> direction is OUT	
 	
-	DFPL_Vertex(){
+	JaehyunVertex(){
 		InEdges = new HashMap<String , Edge>();
 		OutEdges = new HashMap<String , Edge>();
 			
 	}
-	DFPL_Vertex(String id){
+	JaehyunVertex(String id){
 		this.id = id;
 		
 	}
