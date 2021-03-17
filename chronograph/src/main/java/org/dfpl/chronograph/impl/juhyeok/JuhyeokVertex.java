@@ -37,7 +37,7 @@ public class JuhyeokVertex implements Vertex {
 	// OUT_Vertex --> IN_Vertex
 	@SuppressWarnings("unlikely-arg-type")
 	@Override
-	public synchronized Edge addEdge(String label, Vertex inVertex) {
+	public Edge addEdge(String label, Vertex inVertex) {
 		Edge newEdge = new JuhyeokEdge();
 		incidentEdges.get(Direction.OUT).add(newEdge);
 		((JuhyeokVertex) inVertex).getIncidentEdges().get(Direction.IN).add(newEdge);
@@ -46,7 +46,7 @@ public class JuhyeokVertex implements Vertex {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public synchronized <T> T getProperty(String key) {
+	public <T> T getProperty(String key) {
 		if (this.properties.containsKey(key)) {
 			return (T) this.properties.get(key);
 		} else {
@@ -55,18 +55,18 @@ public class JuhyeokVertex implements Vertex {
 	}
 
 	@Override
-	public synchronized Set<String> getPropertyKeys() {
+	public Set<String> getPropertyKeys() {
 		return this.properties.keySet();
 	}
 
 	@Override
-	public synchronized void setProperty(String key, Object value) {
+	public void setProperty(String key, Object value) {
 		this.properties.put(key, value);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public synchronized <T> T removeProperty(String key) {
+	public <T> T removeProperty(String key) {
 		if (this.properties.containsKey(key)) {
 			Object removedValue = this.properties.get(key);
 			this.properties.remove(key);

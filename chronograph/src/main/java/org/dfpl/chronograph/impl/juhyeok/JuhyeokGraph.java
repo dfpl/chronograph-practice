@@ -12,16 +12,18 @@ import org.dfpl.chronograph.model.Vertex;
 public class JuhyeokGraph implements Graph{
 	final Map<String, Vertex> vertices = new HashMap<String, Vertex>();
 	final Map<String, Edge> edges = new HashMap<String, Edge>();
+	final Object lock = new Object();
 	
 	@Override
-	public synchronized Vertex addVertex(String id) {
+	public Vertex addVertex(String id) {
 		Vertex newVertex = new JuhyeokVertex(id);
 		vertices.put(id, newVertex);
 		return newVertex;
+	
 	}
 
 	@Override
-	public synchronized Vertex getVertex(String id) {
+	public Vertex getVertex(String id) {
 		return vertices.get(id);
 	}
 
@@ -37,7 +39,7 @@ public class JuhyeokGraph implements Graph{
 	}
 
 	@Override
-	public synchronized Collection<Vertex> getVertices(String key, Object value) {
+	public Collection<Vertex> getVertices(String key, Object value) {
 		return vertices.values().parallelStream().filter(v -> {
 			if (v.getProperty(key) == null)
 				return false;
