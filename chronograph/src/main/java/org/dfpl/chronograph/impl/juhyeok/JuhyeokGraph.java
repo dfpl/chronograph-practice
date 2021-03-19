@@ -11,12 +11,12 @@ import org.dfpl.chronograph.model.Vertex;
 
 public class JuhyeokGraph implements Graph{
 	final Map<String, Vertex> vertices = new HashMap<String, Vertex>();
-	final Map<String, Edge> edges = new HashMap<String, Edge>();
+	final Map<String, Edge> edges = new HashMap<String, Edge>(); // Key: InVertex|label|OutVertex <- Primary key?
 	final Object lock = new Object();
 	
 	@Override
 	public Vertex addVertex(String id) {
-		Vertex newVertex = new JuhyeokVertex(id);
+		Vertex newVertex = new JuhyeokVertex(this, id);
 		vertices.put(id, newVertex);
 		return newVertex;
 	

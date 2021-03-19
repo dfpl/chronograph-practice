@@ -19,7 +19,7 @@ import org.dfpl.chronograph.model.Vertex;
 public class Practice25 {
 
 	public static void main(String[] args) throws IOException {
-		BufferedReader r = new BufferedReader(new FileReader("d:\\data.txt"));
+		BufferedReader r = new BufferedReader(new FileReader("C:\\Users\\NUC\\Documents\\data1.txt"));
 
 		Graph g = new JGraph();
 

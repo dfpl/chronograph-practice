@@ -1,53 +1,75 @@
 package org.dfpl.chronograph.impl.juhyeok;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.dfpl.chronograph.model.Direction;
 import org.dfpl.chronograph.model.Edge;
+import org.dfpl.chronograph.model.Graph;
 import org.dfpl.chronograph.model.Vertex;
 
-public class JuhyeokEdge implements Edge{
-
+public class JuhyeokEdge implements Edge {
+	private String label;	
+	private Map<String, Object> properties;
+	private Graph g;
+	private Vertex in;
+	private Vertex out;
+	
+	public JuhyeokEdge(Graph g, Vertex outV, String label, Vertex inV) {
+		this.g = g;
+		this.in = inV;
+		this.label = label;
+		this.out = outV;
+		this.properties = new HashMap<String, Object>();
+	}
+	
 	@Override
 	public Vertex getVertex(Direction direction) throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-		return null;
+		if (direction.equals(Direction.IN))
+			return in;
+		else
+			return out;
 	}
 
 	@Override
 	public String getLabel() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.label;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getProperty(String key) {
-		// TODO Auto-generated method stub
-		return null;
+		return (T) this.properties.get(key);
 	}
 
 	@Override
 	public Set<String> getPropertyKeys() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.properties.keySet();
 	}
 
 	@Override
 	public void setProperty(String key, Object value) {
-		// TODO Auto-generated method stub
-		
+		this.properties.put(key, value);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T removeProperty(String key) {
-		// TODO Auto-generated method stub
-		return null;
+		if (this.properties.containsKey(key)) {
+			Object removedValue = this.properties.get(key);
+			this.properties.remove(key);
+			return (T) removedValue;
+		} else {
+			return null;
+		}
 	}
 
 	@Override
 	public void remove() {
-		// TODO Auto-generated method stub
-		
+		// 1차 OutVertex에서 지우기
+		// 2차 InVertex에서 지우기
+		// 3차 Graph.edges에서 지우기
 	}
 
 }

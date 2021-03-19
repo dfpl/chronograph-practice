@@ -7,16 +7,20 @@ import java.util.Set;
 
 import org.dfpl.chronograph.model.Direction;
 import org.dfpl.chronograph.model.Edge;
+import org.dfpl.chronograph.model.Graph;
 import org.dfpl.chronograph.model.Vertex;
 
 public class JuhyeokVertex implements Vertex {
 	private String id;
 	private Map<String, Object> properties;
-	
+	private Graph g;
 	// Map<Direction, Set<Edge>>
 	private Map<String, Set<Edge>> incidentEdges;
-
-	public JuhyeokVertex(String id) {
+	// Map<Direction, Map<Label, Set<Edge>>>
+	// 디렉션으로 인덱싱, 라벨로 인덱싱
+	// private Map<String, Map<String, Set<Edge>>> incidentEdges; 
+	public JuhyeokVertex(Graph g, String id) {
+		this.g = g;
 		this.id = id;
 		this.properties = new HashMap<String, Object>();
 		this.incidentEdges = new HashMap<String, Set<Edge>>();
@@ -38,7 +42,7 @@ public class JuhyeokVertex implements Vertex {
 	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public Edge addEdge(String label, Vertex inVertex) {
-		Edge newEdge = new JuhyeokEdge();
+		Edge newEdge = new JuhyeokEdge(this.g, this, label, inVertex);
 		incidentEdges.get(Direction.OUT).add(newEdge);
 		((JuhyeokVertex) inVertex).getIncidentEdges().get(Direction.IN).add(newEdge);
 		return newEdge;
