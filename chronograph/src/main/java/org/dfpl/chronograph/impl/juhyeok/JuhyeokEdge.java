@@ -12,6 +12,7 @@ import org.dfpl.chronograph.model.Vertex;
 public class JuhyeokEdge implements Edge {
 	private String label;	
 	private Map<String, Object> properties;
+	@SuppressWarnings("unused")
 	private Graph g;
 	private Vertex in;
 	private Vertex out;
@@ -67,9 +68,16 @@ public class JuhyeokEdge implements Edge {
 
 	@Override
 	public void remove() {
-		// 1차 OutVertex에서 지우기
-		// 2차 InVertex에서 지우기
-		// 3차 Graph.edges에서 지우기
+		((JuhyeokVertex)this.in).removeEdge(this);
+		((JuhyeokVertex)this.out).removeEdge(this);
+	}
+
+	public Vertex getIn() {
+		return in;
+	}
+
+	public Vertex getOut() {
+		return out;
 	}
 
 }
