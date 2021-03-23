@@ -9,14 +9,25 @@ import org.dfpl.chronograph.model.Edge;
 import org.dfpl.chronograph.model.Graph;
 import org.dfpl.chronograph.model.Vertex;
 
+/**
+ * Copyright (C) 2021- DFPL
+ *
+ *
+ * @author Jaewook Byun, Ph.D, Assistant Professor, Department of Software,
+ *         Sejong University, Associate Director of Auto-ID Labs Korea,
+ *         jwbyun@sejong.ac.kr, bjw0829@gmail.com
+ * 
+ * @author Juhyeok Lee, Bachelor Student, Department of Software, Sejong
+ *         University, zero5.two4@gmail.com
+ */
+
 public class JuhyeokEdge implements Edge {
-	private String label;	
+	private String label;
 	private Map<String, Object> properties;
-	@SuppressWarnings("unused")
 	private Graph g;
 	private Vertex in;
 	private Vertex out;
-	
+
 	public JuhyeokEdge(Graph g, Vertex outV, String label, Vertex inV) {
 		this.g = g;
 		this.in = inV;
@@ -24,7 +35,7 @@ public class JuhyeokEdge implements Edge {
 		this.out = outV;
 		this.properties = new HashMap<String, Object>();
 	}
-	
+
 	@Override
 	public Vertex getVertex(Direction direction) throws IllegalArgumentException {
 		if (direction.equals(Direction.IN))
@@ -68,16 +79,19 @@ public class JuhyeokEdge implements Edge {
 
 	@Override
 	public void remove() {
-		((JuhyeokVertex)this.in).removeEdge(this);
-		((JuhyeokVertex)this.out).removeEdge(this);
+		g.removeEdge(this);
 	}
 
 	public Vertex getIn() {
-		return in;
+		return this.in;
 	}
 
 	public Vertex getOut() {
-		return out;
+		return this.out;
 	}
 
+	@Override
+	public String toString() {
+		return this.label;
+	}
 }

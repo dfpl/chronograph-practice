@@ -1,4 +1,4 @@
-package org.dfpl.chronograph.impl.jgraph.practice;
+package org.dfpl.chronograph.impl.juhyeok.practice;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -17,7 +17,7 @@ import org.dfpl.chronograph.model.Vertex;
 public class Practice22 {
 
 	public static void main(String[] args) throws IOException {
-		BufferedReader r = new BufferedReader(new FileReader("C:\\Users\\NUC\\Documents\\Graph Data\\Email Data\\data1.txt"));
+		BufferedReader r = new BufferedReader(new FileReader("d:\\data.txt"));
 
 		Graph g = new JGraph();
 
