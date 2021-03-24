@@ -1,19 +1,26 @@
-package org.dfpl.chronograph.impl.hgraph;
+package org.dfpl.chronograph.impl.kgraph;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Set;
 
 import org.dfpl.chronograph.model.Direction;
 import org.dfpl.chronograph.model.Edge;
 import org.dfpl.chronograph.model.Vertex;
 
+public class KVertex implements Vertex {
 
-public class HVertex implements Vertex{
-	
-	private String id;
+	private HashMap<String, Object> properties;
+	@SuppressWarnings("unused")
+	private HashMap<String, Set<Edge>> incidentEdges;
+	String id;
+	HashMap<String, Edge> InEdges; // <label ,Edge> direction is IN
+	HashMap<String, Edge> OutEdges; // <label ,Edge> direction is OUT
 
-	public HVertex(String id) {
+	public KVertex(String id) {
 		this.id = id;
+		this.properties = new HashMap<String, Object>();
+		this.incidentEdges = new HashMap<String, Set<Edge>>();
 	}
 
 	@Override
@@ -34,21 +41,27 @@ public class HVertex implements Vertex{
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getProperty(String key) {
 		// TODO Auto-generated method stub
-		return null;
+		if (this.properties.containsKey(key)) {
+			return (T) this.properties.get(key);
+		} else {
+			return null;
+		}
 	}
 
 	@Override
 	public Set<String> getPropertyKeys() {
 		// TODO Auto-generated method stub
-		return null;
+		return this.properties.keySet();
 	}
 
 	@Override
 	public void setProperty(String key, Object value) {
 		// TODO Auto-generated method stub
+		this.properties.put(key, value);
 
 	}
 
@@ -66,6 +79,7 @@ public class HVertex implements Vertex{
 
 	@Override
 	public String getId() {
+		// TODO Auto-generated method stub
 		return this.id;
 	}
 
