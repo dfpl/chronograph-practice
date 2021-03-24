@@ -2,6 +2,7 @@ package org.dfpl.chronograph.impl.hgraph;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,7 +28,7 @@ public class HGraph implements Graph {
 		if (this.vertices.containsKey(id))
 			return this.vertices.get(id);
 
-		HVertex vertex = new HVertex(id);
+		Vertex vertex = new HVertex(this, id);
 		this.vertices.put(id, vertex);
 		return vertex;
 	}
@@ -39,18 +40,19 @@ public class HGraph implements Graph {
 
 	@Override
 	public void removeVertex(Vertex vertex) {
-		this.vertices.remove(vertex.getId());
 
 		// Remove edges connected to the target vertex
 		Iterator<Map.Entry<String, Edge>> edges = this.edges.entrySet().iterator();
 		while (edges.hasNext()) {
 			Edge cEdge = edges.next().getValue();
 			if (cEdge.getVertex(Direction.OUT).getId() == vertex.getId()) {
-				cEdge.remove();
+				edges.remove();
 			} else if (cEdge.getVertex(Direction.IN).getId() == vertex.getId()) {
-				cEdge.remove();
+				edges.remove();
 			}
 		}
+		
+		this.vertices.remove(vertex.getId());
 	}
 
 	@Override
@@ -68,22 +70,25 @@ public class HGraph implements Graph {
 		if (this.edges.containsKey(label))
 			return this.edges.get(label);
 
-		String edgeId = outVertex.getId() + '|' + label + '|' + inVertex.getId();
-		Edge edge = new HEdge(outVertex, inVertex, label);
-		this.edges.put(edgeId, edge);
+		Edge edge = new HEdge(this, outVertex, inVertex, label);
+		this.edges.put(edge.toString(), edge);
 		return edge;
 	}
 
 	@Override
 	public Edge getEdge(Vertex outVertex, Vertex inVertex, String label) {
-		String targetId = outVertex.getId() + '|' + label + '|' + inVertex.getId();
-		return this.edges.get(targetId);
+		for (Edge edge : this.edges.values()) {
+			if (edge.getVertex(Direction.OUT).equals(outVertex) && edge.getVertex(Direction.IN).equals(inVertex)
+					&& edge.getLabel().equals(label)) {
+				return edge;
+			}
+		}
+		return null;
 	}
 
 	@Override
 	public void removeEdge(Edge edge) {
-		
-
+		this.edges.remove(edge.toString());
 	}
 
 	@Override
@@ -99,7 +104,5 @@ public class HGraph implements Graph {
 	@Override
 	public void shutdown() {
 		// TODO Auto-generated method stub
-
 	}
-
 }

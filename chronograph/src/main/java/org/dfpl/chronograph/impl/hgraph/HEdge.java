@@ -5,19 +5,33 @@ import java.util.Set;
 
 import org.dfpl.chronograph.model.Direction;
 import org.dfpl.chronograph.model.Edge;
+import org.dfpl.chronograph.model.Graph;
 import org.dfpl.chronograph.model.Vertex;
 
 public class HEdge implements Edge {
 
+	String id;
 	Vertex outVertex;
 	Vertex inVertex;
 	String label;
 	HashMap<String, Object> properties;
+	Graph graph;
 
-	public HEdge(Vertex outVertex, Vertex inVertex, String label) {
+	public HEdge(Graph graph, Vertex outVertex, Vertex inVertex, String label) {
+		this.graph = graph;
 		this.outVertex = outVertex;
 		this.inVertex = inVertex;
 		this.label = label;
+		this.properties = new HashMap<String, Object>();
+		this.id = outVertex.getId() + '|' + label + '|' + inVertex.getId();
+	}
+	
+	public HEdge(Graph graph, Vertex outVertex, Vertex inVertex, String label, String id) {
+		this.graph = graph;
+		this.outVertex = outVertex;
+		this.inVertex = inVertex;
+		this.label = label;
+		this.id = id;
 	}
 
 	@Override
@@ -56,7 +70,11 @@ public class HEdge implements Edge {
 
 	@Override
 	public void remove() {
-
+		this.graph.removeEdge(this);
 	}
 
+	@Override
+	public String toString() {
+		return this.id;
+	}
 }

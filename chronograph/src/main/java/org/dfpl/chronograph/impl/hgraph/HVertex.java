@@ -1,71 +1,80 @@
 package org.dfpl.chronograph.impl.hgraph;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.dfpl.chronograph.model.Direction;
 import org.dfpl.chronograph.model.Edge;
+import org.dfpl.chronograph.model.Graph;
 import org.dfpl.chronograph.model.Vertex;
 
+public class HVertex implements Vertex {
 
-public class HVertex implements Vertex{
-	
-	private String id;
+	String id;
+	Graph graph;
+	HashMap<String, Object> properties;
 
-	public HVertex(String id) {
+	public HVertex(Graph graph, String id) {
+		this.graph = graph;
 		this.id = id;
+		this.properties = new HashMap<String, Object>();
 	}
 
 	@Override
 	public Collection<Edge> getEdges(Direction direction, String... labels) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.graph.getEdges().parallelStream().filter(e -> e.getVertex(direction).equals(this))
+				.filter(e -> Arrays.asList(labels).contains(e.getLabel())).collect(Collectors.toSet());
 	}
 
 	@Override
 	public Collection<Vertex> getVertices(Direction direction, String... labels) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.graph.getEdges().parallelStream().filter(e -> e.getVertex(direction).equals(this))
+				.filter(e -> Arrays.asList(labels).contains(e.getLabel())).map(e -> e.getVertex(direction.opposite()))
+				.collect(Collectors.toSet());
 	}
 
 	@Override
 	public Edge addEdge(String label, Vertex inVertex) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.graph.addEdge(this, inVertex, label);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getProperty(String key) {
-		// TODO Auto-generated method stub
-		return null;
+		return (T) this.properties.get(key);
 	}
 
 	@Override
 	public Set<String> getPropertyKeys() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.properties.keySet();
 	}
 
 	@Override
 	public void setProperty(String key, Object value) {
-		// TODO Auto-generated method stub
-
+		this.properties.put(key, value);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T removeProperty(String key) {
-		// TODO Auto-generated method stub
-		return null;
+		return (T) this.properties.remove(key);
 	}
 
 	@Override
 	public void remove() {
-		// TODO Auto-generated method stub
-
+		this.graph.removeVertex(this);
 	}
 
 	@Override
 	public String getId() {
+		return this.id;
+	}
+	
+	@Override
+	public String toString() {
 		return this.id;
 	}
 
