@@ -7,14 +7,14 @@ import org.dfpl.chronograph.model.Direction;
 import org.dfpl.chronograph.model.Edge;
 import org.dfpl.chronograph.model.Vertex;
 
-public class HVertex implements Vertex{
-	
+public class HVertex implements Vertex {
+
 	private String id;
-	
+
 	public HVertex(String id) {
 		this.id = id;
 	}
-	
+
 	@Override
 	public Collection<Edge> getEdges(Direction direction, String... labels) {
 		// TODO Auto-generated method stub
@@ -48,7 +48,7 @@ public class HVertex implements Vertex{
 	@Override
 	public void setProperty(String key, Object value) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -60,13 +60,12 @@ public class HVertex implements Vertex{
 	@Override
 	public void remove() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public String getId() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.id;
 	}
 
 }

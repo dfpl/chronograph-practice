@@ -1,11 +1,11 @@
 package org.dfpl.chronograph.impl.hgraph;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.dfpl.chronograph.model.Direction;
 import org.dfpl.chronograph.model.Edge;
@@ -15,28 +15,42 @@ import org.dfpl.chronograph.model.Vertex;
 public class HGraph implements Graph {
 
 	HashMap<String, Vertex> vertices;
+	HashMap<String, Edge> edges;
+
+	public HGraph() {
+		this.vertices = new HashMap<String, Vertex>();
+		this.edges = new HashMap<String, Edge>();
+	}
 
 	@Override
 	public Vertex addVertex(String id) {
 		// TODO: Add check for valid ID
-		if (vertices.containsKey(id))
-			return vertices.get(id);
-		return new HVertex(id);
+		if (this.vertices.containsKey(id))
+			return this.vertices.get(id);
+
+		HVertex vertex = new HVertex(id);
+		this.vertices.put(id, vertex);
+		return vertex;
 	}
 
 	@Override
 	public Vertex getVertex(String id) {
-		if (vertices.containsKey(id))
-			return vertices.get(id);
-		return null;
+		return this.vertices.get(id);
 	}
 
 	@Override
 	public void removeVertex(Vertex vertex) {
-		vertices.remove(vertex.getId());
-		// TODO: Remove edges connected to the given vertex
-		for(Edge e: vertex.getEdges(Direction.BOTH, "")) {
-			e.remove();
+		this.vertices.remove(vertex.getId());
+
+		// Remove edges connected to the target vertex
+		Iterator<Map.Entry<String, Edge>> edges = this.edges.entrySet().iterator();
+		while (edges.hasNext()) {
+			Edge cEdge = edges.next().getValue();
+			if (cEdge.getVertex(Direction.OUT).getId() == vertex.getId()) {
+				cEdge.remove();
+			} else if (cEdge.getVertex(Direction.IN).getId() == vertex.getId()) {
+				cEdge.remove();
+			}
 		}
 	}
 
@@ -47,39 +61,40 @@ public class HGraph implements Graph {
 
 	@Override
 	public Collection<Vertex> getVertices(String key, Object value) {
-		// TODO: Filter a hashmap based on key or value
-		
-		return null;
+		return this.vertices.values().stream().filter(p -> p.getProperty(key) == value).collect(Collectors.toSet());
 	}
 
 	@Override
 	public Edge addEdge(Vertex outVertex, Vertex inVertex, String label) {
-		// TODO Auto-generated method stub
-		return null;
+		if (this.edges.containsKey(label))
+			return this.edges.get(label);
+
+		String edgeId = outVertex.getId() + '|' + label + '|' + inVertex.getId();
+		Edge edge = new HEdge(outVertex, inVertex, label);
+		this.edges.put(edgeId, edge);
+		return edge;
 	}
 
 	@Override
 	public Edge getEdge(Vertex outVertex, Vertex inVertex, String label) {
-		// TODO Auto-generated method stub
-		return null;
+		String targetId = outVertex.getId() + '|' + label + '|' + inVertex.getId();
+		return this.edges.get(targetId);
 	}
 
 	@Override
 	public void removeEdge(Edge edge) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public Collection<Edge> getEdges() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.edges.values();
 	}
 
 	@Override
 	public Collection<Edge> getEdges(String key, Object value) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.edges.values().stream().filter(e -> e.getProperty(key).equals(value)).collect(Collectors.toSet());
 	}
 
 	@Override
