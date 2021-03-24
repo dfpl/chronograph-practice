@@ -2,7 +2,6 @@ package org.dfpl.chronograph.impl.hgraph;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -51,7 +50,7 @@ public class HGraph implements Graph {
 				edges.remove();
 			}
 		}
-		
+
 		this.vertices.remove(vertex.getId());
 	}
 
@@ -62,7 +61,8 @@ public class HGraph implements Graph {
 
 	@Override
 	public Collection<Vertex> getVertices(String key, Object value) {
-		return this.vertices.values().stream().filter(p -> p.getProperty(key) == value).collect(Collectors.toSet());
+		return this.vertices.values().parallelStream().filter(p -> p.getProperty(key) == value)
+				.collect(Collectors.toSet());
 	}
 
 	@Override

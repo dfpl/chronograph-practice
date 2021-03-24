@@ -25,7 +25,7 @@ public class HEdge implements Edge {
 		this.properties = new HashMap<String, Object>();
 		this.id = outVertex.getId() + '|' + label + '|' + inVertex.getId();
 	}
-	
+
 	public HEdge(Graph graph, Vertex outVertex, Vertex inVertex, String label, String id) {
 		this.graph = graph;
 		this.outVertex = outVertex;

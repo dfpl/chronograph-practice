@@ -72,7 +72,7 @@ public class HVertex implements Vertex {
 	public String getId() {
 		return this.id;
 	}
-	
+
 	@Override
 	public String toString() {
 		return this.id;

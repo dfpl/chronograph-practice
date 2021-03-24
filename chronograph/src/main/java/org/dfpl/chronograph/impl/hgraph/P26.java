@@ -9,7 +9,7 @@ import org.dfpl.chronograph.model.Direction;
 import org.dfpl.chronograph.model.Graph;
 import org.dfpl.chronograph.model.Vertex;
 
-public class P25 {
+public class P26 {
 
 	public static void main(String[] args) throws IOException {
 		Graph g = new HGraph();
@@ -43,15 +43,15 @@ public class P25 {
 		br.close();
 
 		for (Vertex source : g.getVertices()) {
-			String sent = source.toString();
+			String receiver = source.toString();
 
-			HashSet<Vertex> receivers = new HashSet<Vertex>();
+			HashSet<Vertex> senders = new HashSet<Vertex>();
 
-			for (Vertex out : source.getVertices(Direction.OUT, "sendEmail")) {
-				receivers.add(out);
+			for (Vertex in : source.getVertices(Direction.IN, "sendEmail")) {
+				senders.add(in);
 			}
-			if (receivers.size() > 0)
-				System.out.println(sent + " sent email to " + receivers);
+			if (senders.size() > 0)
+				System.out.println(receiver + " received email from " + senders);
 		}
 	}
 }
