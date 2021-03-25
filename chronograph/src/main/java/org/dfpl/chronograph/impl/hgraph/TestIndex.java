@@ -1,8 +1,8 @@
 package org.dfpl.chronograph.impl.hgraph;
 
-import org.dfpl.chronograph.model.Edge;
-import org.dfpl.chronograph.model.Graph;
-import org.dfpl.chronograph.model.Vertex;
+import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Graph;
+import com.tinkerpop.blueprints.Vertex;
 
 public class TestIndex {
 

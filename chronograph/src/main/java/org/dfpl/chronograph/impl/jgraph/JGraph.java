@@ -2,14 +2,15 @@ package org.dfpl.chronograph.impl.jgraph;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import org.dfpl.chronograph.model.Direction;
-import org.dfpl.chronograph.model.Edge;
-import org.dfpl.chronograph.model.Graph;
-import org.dfpl.chronograph.model.Vertex;
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Graph;
+import com.tinkerpop.blueprints.Vertex;
 
 /**
  * The in-memory implementation of temporal graph database.
@@ -23,9 +24,15 @@ public class JGraph implements Graph {
 	private HashMap<String, Vertex> vertices;
 	private HashMap<String, Edge> edges;
 
+	// index <vertexID, HashSet<JEdge>>
+	private HashMap<String, HashSet<Edge>> outEdges;
+	private HashMap<String, HashSet<Edge>> inEdges;
+
 	public JGraph() {
 		vertices = new HashMap<String, Vertex>();
 		edges = new HashMap<String, Edge>();
+		outEdges = new HashMap<String, HashSet<Edge>>();
+		inEdges = new HashMap<String, HashSet<Edge>>();
 	}
 
 	/**
@@ -41,7 +48,7 @@ public class JGraph implements Graph {
 		if (vertices.containsKey(id)) {
 			return vertices.get(id);
 		} else {
-			Vertex newVertex = new JVertex(this, id);
+			JVertex newVertex = new JVertex(this, id);
 			vertices.put(id, newVertex);
 			return newVertex;
 		}
@@ -109,13 +116,35 @@ public class JGraph implements Graph {
 	@Override
 	public Edge addEdge(Vertex outVertex, Vertex inVertex, String label) {
 		String edgeId = outVertex.toString() + "|" + label + "|" + inVertex.toString();
+		// whole edges
+		JEdge edgeToReturn = null;
 		if (edges.containsKey(edgeId)) {
-			return edges.get(edgeId);
+			edgeToReturn = (JEdge) edges.get(edgeId);
 		} else {
-			Edge newEdge = new JEdge(this, outVertex, label, inVertex);
+			JEdge newEdge = new JEdge(this, outVertex, label, inVertex);
 			edges.put(edgeId, newEdge);
-			return newEdge;
+			edgeToReturn = newEdge;
 		}
+		// outEdges
+		if (outEdges.containsKey(outVertex.getId())) {
+			HashSet<Edge> outEdgeSet = outEdges.get(outVertex.getId());
+			outEdgeSet.add(edgeToReturn);
+		} else {
+			HashSet<Edge> outEdgeSet = new HashSet<Edge>();
+			outEdgeSet.add(edgeToReturn);
+			outEdges.put(outVertex.getId(), outEdgeSet);
+		}
+		// inEdges
+		if (inEdges.containsKey(inVertex.getId())) {
+			HashSet<Edge> inEdgeSet = inEdges.get(inVertex.getId());
+			inEdgeSet.add(edgeToReturn);
+		} else {
+			HashSet<Edge> inEdgeSet = new HashSet<Edge>();
+			inEdgeSet.add(edgeToReturn);
+			inEdges.put(inVertex.getId(), inEdgeSet);
+		}
+
+		return edgeToReturn;
 	}
 
 	/**
@@ -176,6 +205,7 @@ public class JGraph implements Graph {
 	@Override
 	public void removeVertex(Vertex vertex) {
 		this.vertices.remove(vertex.getId());
+		// whole edges
 		Iterator<Entry<String, Edge>> eIter = edges.entrySet().iterator();
 		while (eIter.hasNext()) {
 			Entry<String, Edge> entry = eIter.next();
@@ -187,11 +217,16 @@ public class JGraph implements Graph {
 				eIter.remove();
 			}
 		}
+		// indexes
+		outEdges.remove(vertex.getId());
+		inEdges.remove(vertex.getId());
 	}
 
 	@Override
 	public void removeEdge(Edge edge) {
 		this.edges.remove(edge.toString());
+		this.outEdges.values().forEach(set -> set.remove(edge));
+		this.inEdges.values().forEach(set -> set.remove(edge));
 	}
 
 	@Override
@@ -199,4 +234,19 @@ public class JGraph implements Graph {
 		// Do Nothing
 	}
 
+	HashMap<String, HashSet<Edge>> getOutEdges() {
+		return outEdges;
+	}
+
+	void setOutEdges(HashMap<String, HashSet<Edge>> outEdges) {
+		this.outEdges = outEdges;
+	}
+
+	HashMap<String, HashSet<Edge>> getInEdges() {
+		return inEdges;
+	}
+
+	void setInEdges(HashMap<String, HashSet<Edge>> inEdges) {
+		this.inEdges = inEdges;
+	}
 }

@@ -1,4 +1,4 @@
-package org.dfpl.chronograph.model;
+package com.tinkerpop.blueprints;
 
 import java.util.Collection;
 

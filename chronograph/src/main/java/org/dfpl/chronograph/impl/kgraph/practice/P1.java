@@ -2,8 +2,9 @@ package org.dfpl.chronograph.impl.kgraph.practice;
 
 import org.dfpl.chronograph.impl.kgraph.KGraph;
 import org.dfpl.chronograph.impl.kgraph.KVertex;
-import org.dfpl.chronograph.model.Graph;
-import org.dfpl.chronograph.model.Vertex;
+
+import com.tinkerpop.blueprints.Graph;
+import com.tinkerpop.blueprints.Vertex;
 
 public class P1 {
 
