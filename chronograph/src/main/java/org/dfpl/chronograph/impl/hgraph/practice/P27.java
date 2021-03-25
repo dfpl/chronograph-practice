@@ -1,9 +1,11 @@
-package org.dfpl.chronograph.impl.hgraph;
+package org.dfpl.chronograph.impl.hgraph.practice;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashSet;
+
+import org.dfpl.chronograph.impl.hgraph.HGraph;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Graph;

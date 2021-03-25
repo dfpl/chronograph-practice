@@ -1,21 +1,23 @@
-package org.dfpl.chronograph.impl.hgraph;
+package org.dfpl.chronograph.impl.hgraph.practice;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashSet;
 
+import org.dfpl.chronograph.impl.hgraph.HGraph;
+
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 
-public class P25 {
+public class P26 {
 
 	public static void main(String[] args) throws IOException {
 		Graph g = new HGraph();
 
 		BufferedReader br = new BufferedReader(
-				new FileReader("d:\\email.txt"));
+				new FileReader("C:\\Users\\haifa\\OneDrive\\Desktop\\advanced_database\\week_2\\email.txt"));
 
 		while (true) {
 			String line = br.readLine();
@@ -43,15 +45,15 @@ public class P25 {
 		br.close();
 
 		for (Vertex source : g.getVertices()) {
-			String sent = source.toString();
+			String receiver = source.toString();
 
-			HashSet<Vertex> receivers = new HashSet<Vertex>();
+			HashSet<Vertex> senders = new HashSet<Vertex>();
 
-			for (Vertex out : source.getVertices(Direction.OUT, "sendEmail")) {
-				receivers.add(out);
+			for (Vertex in : source.getVertices(Direction.IN, "sendEmail")) {
+				senders.add(in);
 			}
-			if (receivers.size() > 0)
-				System.out.println(sent + " sent email to " + receivers);
+			if (senders.size() > 0)
+				System.out.println(receiver + " received email from " + senders);
 		}
 	}
 }

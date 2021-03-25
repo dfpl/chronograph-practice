@@ -1,4 +1,7 @@
-package org.dfpl.chronograph.impl.hgraph;
+package org.dfpl.chronograph.impl.hgraph.practice;
+
+import org.dfpl.chronograph.impl.hgraph.HGraph;
+import org.dfpl.chronograph.impl.hgraph.HVertex;
 
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Graph;
