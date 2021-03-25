@@ -2,13 +2,13 @@ package org.dfpl.chronograph.impl.jgraph;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.dfpl.chronograph.model.Direction;
-import org.dfpl.chronograph.model.Edge;
-import org.dfpl.chronograph.model.Graph;
-import org.dfpl.chronograph.model.Vertex;
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Vertex;
 
 /**
  * The in-memory implementation of temporal graph database.
@@ -18,11 +18,11 @@ import org.dfpl.chronograph.model.Vertex;
  */
 public class JVertex implements Vertex {
 
-	private Graph g;
+	private JGraph g;
 	private String id;
 	private HashMap<String, Object> properties;
 
-	public JVertex(Graph g, String id) {
+	JVertex(JGraph g, String id) {
 		this.id = id;
 		this.g = g;
 		this.properties = new HashMap<String, Object>();
@@ -52,28 +52,77 @@ public class JVertex implements Vertex {
 
 	@Override
 	public Collection<Edge> getEdges(Direction direction, String... labels) {
-		return g.getEdges().parallelStream().filter(e -> {
-			return e.getVertex(direction).equals(this);
-		}).filter(e -> {
-			for (String label : labels) {
-				if (e.getLabel().equals(label))
-					return true;
+		if (direction.equals(Direction.OUT)) {
+			HashMap<String, HashSet<Edge>> outEdgeSet = g.getOutEdges();
+			if (!outEdgeSet.containsKey(id)) {
+				return new HashSet<Edge>();
+			} else {
+				return outEdgeSet.get(id).parallelStream().filter(e -> {
+					if (labels == null)
+						return true;
+
+					for (String label : labels) {
+						if (e.getLabel().equals(label))
+							return true;
+					}
+					return false;
+				}).collect(Collectors.toSet());
 			}
-			return false;
-		}).collect(Collectors.toSet());
+		} else {
+			HashMap<String, HashSet<Edge>> inEdgeSet = g.getInEdges();
+			if (!inEdgeSet.containsKey(id)) {
+				return new HashSet<Edge>();
+			} else {
+				return inEdgeSet.get(id).parallelStream().filter(e -> {
+					if (labels == null)
+						return true;
+
+					for (String label : labels) {
+						if (e.getLabel().equals(label))
+							return true;
+					}
+					return false;
+				}).collect(Collectors.toSet());
+			}
+		}
 	}
 
 	@Override
 	public Collection<Vertex> getVertices(Direction direction, String... labels) {
-		return g.getEdges().parallelStream().filter(e -> {
-			return e.getVertex(direction).equals(this);
-		}).filter(e -> {
-			for (String label : labels) {
-				if (e.getLabel().equals(label))
-					return true;
+
+		if (direction.equals(Direction.OUT)) {
+			HashMap<String, HashSet<Edge>> outEdgeSet = g.getOutEdges();
+			if (!outEdgeSet.containsKey(id)) {
+				return new HashSet<Vertex>();
+			} else {
+				return outEdgeSet.get(id).parallelStream().filter(e -> {
+					if (labels == null)
+						return true;
+
+					for (String label : labels) {
+						if (e.getLabel().equals(label))
+							return true;
+					}
+					return false;
+				}).map(e -> e.getVertex(direction.opposite())).collect(Collectors.toSet());
 			}
-			return false;
-		}).map(e -> e.getVertex(direction.opposite())).collect(Collectors.toSet());
+		} else {
+			HashMap<String, HashSet<Edge>> inEdgeSet = g.getInEdges();
+			if (!inEdgeSet.containsKey(id)) {
+				return new HashSet<Vertex>();
+			} else {
+				return inEdgeSet.get(id).parallelStream().filter(e -> {
+					if (labels == null)
+						return true;
+
+					for (String label : labels) {
+						if (e.getLabel().equals(label))
+							return true;
+					}
+					return false;
+				}).map(e -> e.getVertex(direction.opposite())).collect(Collectors.toSet());
+			}
+		}
 	}
 
 	@Override
@@ -99,6 +148,11 @@ public class JVertex implements Vertex {
 	@Override
 	public boolean equals(Object obj) {
 		return this.getId().equals(obj.toString());
+	}
+
+	@Override
+	public int hashCode() {
+		return id.hashCode();
 	}
 
 }

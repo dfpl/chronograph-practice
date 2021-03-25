@@ -6,9 +6,10 @@ import java.io.IOException;
 import java.util.HashSet;
 
 import org.dfpl.chronograph.impl.jgraph.JGraph;
-import org.dfpl.chronograph.model.Direction;
-import org.dfpl.chronograph.model.Graph;
-import org.dfpl.chronograph.model.Vertex;
+
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.Graph;
+import com.tinkerpop.blueprints.Vertex;
 
 /**
  * The in-memory implementation of temporal graph database.
@@ -19,7 +20,7 @@ import org.dfpl.chronograph.model.Vertex;
 public class Practice25 {
 
 	public static void main(String[] args) throws IOException {
-		BufferedReader r = new BufferedReader(new FileReader("C:\\Users\\NUC\\Documents\\data1.txt"));
+		BufferedReader r = new BufferedReader(new FileReader("d:\\email.txt"));
 
 		Graph g = new JGraph();
 
@@ -43,8 +44,7 @@ public class Practice25 {
 			for (Vertex ov : outVs) {
 				outVSet.add(ov);
 			}
-
-			System.out.println(v + " -> " + outVSet);
+			System.out.println(v + " -> " + outVSet.size());
 		}
 
 		r.close();

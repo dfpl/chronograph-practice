@@ -1,4 +1,4 @@
-package org.dfpl.chronograph.model;
+package com.tinkerpop.blueprints;
 
 /**
  * Direction is used to denote the direction of an edge or location of a vertex

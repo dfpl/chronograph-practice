@@ -1,7 +1,8 @@
 package org.dfpl.chronograph.impl.jgraph.practice;
 
 import org.dfpl.chronograph.impl.jgraph.JGraph;
-import org.dfpl.chronograph.model.Graph;
+
+import com.tinkerpop.blueprints.Graph;
 
 /**
  * The in-memory implementation of temporal graph database.

@@ -5,9 +5,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashSet;
 
-import org.dfpl.chronograph.model.Direction;
-import org.dfpl.chronograph.model.Graph;
-import org.dfpl.chronograph.model.Vertex;
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.Graph;
+import com.tinkerpop.blueprints.Vertex;
 
 public class P25 {
 
@@ -15,7 +15,7 @@ public class P25 {
 		Graph g = new HGraph();
 
 		BufferedReader br = new BufferedReader(
-				new FileReader("C:\\Users\\haifa\\OneDrive\\Desktop\\advanced_database\\week_2\\email.txt"));
+				new FileReader("d:\\email.txt"));
 
 		while (true) {
 			String line = br.readLine();

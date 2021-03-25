@@ -5,9 +5,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashSet;
 
-import org.dfpl.chronograph.model.Direction;
-import org.dfpl.chronograph.model.Graph;
-import org.dfpl.chronograph.model.Vertex;
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.Graph;
+import com.tinkerpop.blueprints.Vertex;
 
 public class P26 {
 

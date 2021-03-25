@@ -6,9 +6,10 @@ import java.io.IOException;
 import java.util.HashSet;
 
 import org.dfpl.chronograph.impl.jgraph.JGraph;
-import org.dfpl.chronograph.model.Direction;
-import org.dfpl.chronograph.model.Graph;
-import org.dfpl.chronograph.model.Vertex;
+
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.Graph;
+import com.tinkerpop.blueprints.Vertex;
 
 /**
  * The in-memory implementation of temporal graph database.
@@ -36,8 +37,8 @@ public class Practice27 {
 			g.addEdge(vl, vr, "sendEmailTo");
 		}
 
+		long pre = System.currentTimeMillis();
 		for (Vertex v : g.getVertices()) {
-
 			HashSet<Vertex> outVoutVSet = new HashSet<Vertex>();
 			Iterable<Vertex> outVs = v.getVertices(Direction.OUT, "sendEmailTo");
 			for (Vertex ov : outVs) {
@@ -45,10 +46,11 @@ public class Practice27 {
 					outVoutVSet.add(oov);
 				}
 			}
-
-			System.out.println(v + " -> " + outVoutVSet);
+			System.out.println(v + " -> " + outVoutVSet.size());
 		}
-
+		// I9-10900K - Elapsed Time: 13951
+		System.out.println("Elapsed Time: " + (System.currentTimeMillis()-pre));
+		
 		r.close();
 	}
 }

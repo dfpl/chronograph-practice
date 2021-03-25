@@ -5,8 +5,9 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import org.dfpl.chronograph.impl.jgraph.JGraph;
-import org.dfpl.chronograph.model.Graph;
-import org.dfpl.chronograph.model.Vertex;
+
+import com.tinkerpop.blueprints.Graph;
+import com.tinkerpop.blueprints.Vertex;
 
 /**
  * The in-memory implementation of temporal graph database.

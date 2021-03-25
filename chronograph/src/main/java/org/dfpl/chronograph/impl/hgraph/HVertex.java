@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.dfpl.chronograph.model.Direction;
-import org.dfpl.chronograph.model.Edge;
-import org.dfpl.chronograph.model.Graph;
-import org.dfpl.chronograph.model.Vertex;
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Graph;
+import com.tinkerpop.blueprints.Vertex;
 
 public class HVertex implements Vertex {
 
@@ -31,8 +31,10 @@ public class HVertex implements Vertex {
 
 	@Override
 	public Collection<Vertex> getVertices(Direction direction, String... labels) {
-		return this.graph.getEdges().parallelStream().filter(e -> e.getVertex(direction).equals(this))
-				.filter(e -> Arrays.asList(labels).contains(e.getLabel())).map(e -> e.getVertex(direction.opposite()))
+		return this.graph.getEdges().parallelStream()
+				.filter(e -> e.getVertex(direction).equals(this))
+				.filter(e -> Arrays.asList(labels).contains(e.getLabel()))
+				.map(e -> e.getVertex(direction.opposite()))
 				.collect(Collectors.toSet());
 	}
 
