@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.dfpl.chronograph.model.Direction;
@@ -23,7 +24,6 @@ public class HGraph implements Graph {
 
 	@Override
 	public Vertex addVertex(String id) {
-		// TODO: Add check for valid ID
 		if (this.vertices.containsKey(id))
 			return this.vertices.get(id);
 
@@ -39,18 +39,24 @@ public class HGraph implements Graph {
 
 	@Override
 	public void removeVertex(Vertex vertex) {
-
 		// Remove edges connected to the target vertex
-		Iterator<Map.Entry<String, Edge>> edges = this.edges.entrySet().iterator();
+		Iterator<Entry<String, Edge>> edges = this.edges.entrySet().iterator();
 		while (edges.hasNext()) {
 			Edge cEdge = edges.next().getValue();
-			if (cEdge.getVertex(Direction.OUT).getId() == vertex.getId()) {
-				edges.remove();
-			} else if (cEdge.getVertex(Direction.IN).getId() == vertex.getId()) {
-				edges.remove();
+
+			Direction[] directions = { Direction.IN, Direction.OUT };
+
+			for (Direction direction : directions) {
+				if (cEdge.getVertex(direction).getId() == vertex.getId()) {
+					// Remove edge from opposite vertex's edge index
+					HVertex oppositeVertex = (HVertex) cEdge.getVertex(direction.opposite());
+					oppositeVertex.removeEdgeIndex(cEdge, direction.opposite());
+
+					edges.remove();
+				}
 			}
 		}
-
+		// Remove vertex from vertex list
 		this.vertices.remove(vertex.getId());
 	}
 
@@ -72,6 +78,7 @@ public class HGraph implements Graph {
 
 		Edge edge = new HEdge(this, outVertex, inVertex, label);
 		this.edges.put(edge.toString(), edge);
+		outVertex.addEdge(label, inVertex);
 		return edge;
 	}
 
@@ -88,6 +95,14 @@ public class HGraph implements Graph {
 
 	@Override
 	public void removeEdge(Edge edge) {
+		// Remove edge from vertex's index
+		Direction[] directions = { Direction.OUT, Direction.IN };
+		for (Direction direction : directions) {
+			HVertex vertex = (HVertex) edge.getVertex(direction);
+			vertex.removeEdgeIndex(edge, direction);
+		}
+
+		// Remove edge from edge list
 		this.edges.remove(edge.toString());
 	}
 

@@ -77,4 +77,14 @@ public class HEdge implements Edge {
 	public String toString() {
 		return this.id;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return this.toString().equals(obj.toString());
+	}
+
+	@Override
+	public int hashCode() {
+		return id.hashCode();
+	}
 }

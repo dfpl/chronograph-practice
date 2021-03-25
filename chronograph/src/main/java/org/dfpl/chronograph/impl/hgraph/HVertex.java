@@ -3,6 +3,7 @@ package org.dfpl.chronograph.impl.hgraph;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -16,11 +17,23 @@ public class HVertex implements Vertex {
 	String id;
 	Graph graph;
 	HashMap<String, Object> properties;
+	HashSet<Edge> outEdges;
+	HashSet<Edge> inEdges;
+
+	public HashSet<Edge> getOutEdges() {
+		return outEdges;
+	}
+
+	public HashSet<Edge> getInEdges() {
+		return inEdges;
+	}
 
 	public HVertex(Graph graph, String id) {
 		this.graph = graph;
 		this.id = id;
 		this.properties = new HashMap<String, Object>();
+		this.outEdges = new HashSet<Edge>();
+		this.inEdges = new HashSet<Edge>();
 	}
 
 	@Override
@@ -31,14 +44,21 @@ public class HVertex implements Vertex {
 
 	@Override
 	public Collection<Vertex> getVertices(Direction direction, String... labels) {
-		return this.graph.getEdges().parallelStream().filter(e -> e.getVertex(direction).equals(this))
-				.filter(e -> Arrays.asList(labels).contains(e.getLabel())).map(e -> e.getVertex(direction.opposite()))
-				.collect(Collectors.toSet());
+		Collection<Edge> targetEdges = this.inEdges;
+
+		if (Direction.OUT.equals(direction))
+			targetEdges = this.outEdges;
+
+		return targetEdges.parallelStream().filter(e -> Arrays.asList(labels).contains(e.getLabel()))
+				.map(e -> e.getVertex(direction.opposite())).collect(Collectors.toSet());
 	}
 
 	@Override
 	public Edge addEdge(String label, Vertex inVertex) {
-		return this.graph.addEdge(this, inVertex, label);
+		Edge newEdge = new HEdge(this.graph, this, inVertex, label);
+		this.outEdges.add(newEdge);
+		((HVertex) inVertex).inEdges.add(newEdge);
+		return newEdge;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -78,4 +98,11 @@ public class HVertex implements Vertex {
 		return this.id;
 	}
 
+	public void removeEdgeIndex(Edge edge, Direction direction) {
+		if (direction.equals(Direction.IN))
+			this.inEdges.remove(edge);
+		else if (direction.equals(Direction.OUT))
+			this.outEdges.remove(edge);
+
+	}
 }
