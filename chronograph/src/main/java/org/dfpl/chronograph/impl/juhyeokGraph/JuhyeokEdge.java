@@ -1,4 +1,4 @@
-package org.dfpl.chronograph.impl.juhyeok;
+package org.dfpl.chronograph.impl.juhyeokGraph;
 
 import java.util.HashMap;
 import java.util.Map;
