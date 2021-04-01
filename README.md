@@ -35,8 +35,6 @@
 
 >> Haifa Gaza, hlgaza@sju.ac.kr
 
->> Kyudam Choi
-
 >> Juhyeok Lee, zero5.two4@gmail.com
 
 >> Jaehyun Ahn, jaehyen2@naver.com
