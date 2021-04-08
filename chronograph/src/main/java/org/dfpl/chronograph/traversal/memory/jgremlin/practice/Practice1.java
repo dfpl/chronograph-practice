@@ -14,7 +14,7 @@ public class Practice1 {
 		graph.addVertex("B");
 		graph.addVertex("C");
 
-		JTraversalEngine<Graph, Vertex> engine = new JTraversalEngine<Graph, Vertex>(graph, Graph.class);
+		JTraversalEngine<Graph, Vertex> engine = new JTraversalEngine<Graph, Vertex>(graph, graph, Graph.class);
 		System.out.println(engine.V().toList());
 	}
 

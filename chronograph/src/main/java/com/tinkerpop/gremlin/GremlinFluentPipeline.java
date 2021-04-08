@@ -7,6 +7,8 @@ import com.tinkerpop.blueprints.Vertex;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @author Jaewook Byun, Ph.D., Assistant Professor, Department of Software,
+ *         Sejong University (slightly modify interface)
  */
 public interface GremlinFluentPipeline<S, E> {
 
