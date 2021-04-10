@@ -117,10 +117,23 @@ public interface GremlinFluentPipeline<S, E> {
 	public GremlinFluentPipeline<S, S> has(String key, Tokens.NC compareToken, Object value);
 
 	/**
+	 * Move traversers from graph elements to their IDs (String)
+	 *
+	 * Type: transform
+	 * 
+	 * Lazy Evaluation: true
+	 * 
+	 * Terminal Step: false
+	 * 
+	 * @return the extended Pipeline
+	 */
+	public GremlinFluentPipeline<S, String> id();
+
+	/**
 	 * 
 	 * Collect the current traversers in Gremlin as List
 	 * 
-	 * Lazy Evaluation: true
+	 * Lazy Evaluation: false
 	 * 
 	 * Terminal Step: true
 	 * 

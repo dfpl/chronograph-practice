@@ -169,6 +169,21 @@ public class JTraversalEngine<S, E> extends GremlinPipeline<S, E> implements Gre
 	}
 
 	@Override
+	public GremlinFluentPipeline<S, String> id() {
+		// Check the type of input
+		checkInputElementClass(Vertex.class, Edge.class);
+
+		// Modify stream
+		stream = stream.map(e -> e.toString());
+
+		// Set the class of element
+		elementClass = String.class;
+
+		// return the extended stream
+		return (GremlinFluentPipeline<S, String>) this;
+	}
+
+	@Override
 	public List toList() {
 		return (List) stream.collect(Collectors.toList());
 	}
