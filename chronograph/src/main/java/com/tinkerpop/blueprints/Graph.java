@@ -75,6 +75,18 @@ public interface Graph {
 	public Edge addEdge(Vertex outVertex, Vertex inVertex, String label);
 
 	/**
+	 * Return the edge with the unique combination of out-going vertex, in-going
+	 * vertex, and label. If no edge is referenced by that identifier, then return
+	 * null.
+	 * 
+	 * @param outVertex	out-going vertex
+	 * @param inVertex	in-going vertex
+	 * @param label		edge label
+	 * @return
+	 */
+	public Edge getEdge(Vertex outVertex, Vertex inVertex, String label);
+
+	/**
 	 * Return the edge referenced by the provided object identifier. If no edge is
 	 * referenced by that identifier, then return null.
 	 *
@@ -82,7 +94,7 @@ public interface Graph {
 	 * @return the edge referenced by the provided identifier or null when no such
 	 *         edge exists
 	 */
-	public Edge getEdge(Vertex outVertex, Vertex inVertex, String label);
+	public Edge getEdge(String id);
 
 	/**
 	 * Remove the provided edge from the graph.

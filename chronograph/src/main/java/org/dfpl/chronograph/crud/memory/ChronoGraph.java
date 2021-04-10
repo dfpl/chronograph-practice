@@ -44,7 +44,7 @@ public class ChronoGraph implements Graph {
 	 * @return the newly created vertex
 	 */
 	@Override
-	public Vertex addVertex(String id) {		
+	public Vertex addVertex(String id) {
 		if (vertices.containsKey(id)) {
 			return vertices.get(id);
 		} else {
@@ -159,6 +159,19 @@ public class ChronoGraph implements Graph {
 	public Edge getEdge(Vertex outVertex, Vertex inVertex, String label) {
 		String edgeId = outVertex.toString() + "|" + label + "|" + inVertex.toString();
 		return edges.get(edgeId);
+	}
+	
+	/**
+	 * Return the edge referenced by the provided object identifier. If no edge is
+	 * referenced by that identifier, then return null.
+	 *
+	 * @param id the identifier of the edge to retrieved from the graph
+	 * @return the edge referenced by the provided identifier or null when no such
+	 *         edge exists
+	 */
+	@Override
+	public Edge getEdge(String id) {
+		return edges.get(id);
 	}
 
 	/**

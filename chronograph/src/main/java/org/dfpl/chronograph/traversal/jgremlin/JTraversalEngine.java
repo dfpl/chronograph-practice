@@ -1,6 +1,12 @@
-package org.dfpl.chronograph.traversal.memory.jgremlin;
+package org.dfpl.chronograph.traversal.jgremlin;
 
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.tinkerpop.blueprints.Edge;
@@ -9,12 +15,13 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.common.Tokens.NC;
 import com.tinkerpop.gremlin.GremlinFluentPipeline;
 import com.tinkerpop.gremlin.GremlinPipeline;
+import com.tinkerpop.gremlin.LoopBundle;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class JTraversalEngine<S, E> extends GremlinPipeline<S, E> implements GremlinFluentPipeline<S, E> {
 
-	public JTraversalEngine(Graph graph, Object starts, Class elementClass) {
-		super(graph, starts, elementClass);
+	public JTraversalEngine(Graph graph, Object starts, Class<S> elementClass, boolean isParallel) {
+		super(graph, starts, elementClass, isParallel);
 	}
 
 	@Override
@@ -184,6 +191,33 @@ public class JTraversalEngine<S, E> extends GremlinPipeline<S, E> implements Gre
 	}
 
 	@Override
+	public GremlinFluentPipeline<String, E> element(Class<E> elementClass) {
+		// Check the type of input
+		if (!elementClass.equals(Vertex.class) || !elementClass.equals(Edge.class))
+			throw new IllegalArgumentException("The argument should be one of Vertex.class or Edge.class");
+
+		if (elementClass.equals(Vertex.class)) {
+			// Modify stream
+			stream = stream.map(e -> g.getVertex((String) e)).filter(e -> e != null);
+
+			// Set the class of element
+			this.elementClass = Vertex.class;
+
+			// return the extended stream
+			return (GremlinFluentPipeline<String, E>) this;
+		} else {
+			// Modify stream
+			stream = stream.map(e -> g.getEdge((String) e)).filter(e -> e != null);
+
+			// Set the class of element
+			this.elementClass = Edge.class;
+
+			// return the extended stream
+			return (GremlinFluentPipeline<String, E>) this;
+		}
+	}
+
+	@Override
 	public List toList() {
 		return (List) stream.collect(Collectors.toList());
 	}
@@ -200,6 +234,139 @@ public class JTraversalEngine<S, E> extends GremlinPipeline<S, E> implements Gre
 			throw new UnsupportedOperationException(
 					"Current stream element class " + elementClass + " should be one of " + correctClasses);
 		}
+	}
+
+	@Override
+	public GremlinFluentPipeline<Vertex, Edge> outE(String... labels) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public GremlinFluentPipeline<Vertex, Edge> inE(String... labels) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public GremlinFluentPipeline<Edge, Vertex> outV() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public GremlinFluentPipeline<Edge, Vertex> inV() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public GremlinFluentPipeline<Vertex, Vertex> out(String... labels) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public GremlinFluentPipeline<Vertex, Vertex> in(String... labels) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public GremlinFluentPipeline<S, List<S>> gather() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public GremlinFluentPipeline<S, E> scatter() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T> GremlinFluentPipeline<S, T> transform(Function<S, E> function, boolean setUnboxing) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public GremlinFluentPipeline<S, S> dedup() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public GremlinFluentPipeline<S, S> random(Double lowerBound) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public GremlinFluentPipeline<S, S> filter(Predicate<S> predicate) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public GremlinFluentPipeline<S, S> sideEffect(Collection<S> collection) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public GremlinFluentPipeline<S, S> sideEffect(Function<S, S> function) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public GremlinFluentPipeline<S, E> ifThenElse(Predicate<S> ifPredicate, Function<S, ?> thenFunction,
+			Function<S, ?> elseFunction, boolean setThenUnboxing, boolean setElseUnboxing) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public GremlinFluentPipeline<S, E> as(String pointer) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public GremlinFluentPipeline<S, E> loop(String pointer, Predicate<LoopBundle<S>> whilePredicate) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public GremlinFluentPipeline<S, S> sort(Comparator<S> comparator) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public GremlinFluentPipeline<S, S> limit(long maxSize) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T> Map<T, List<S>> groupBy(Function<S, T> classifier) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T> Map<T, Long> groupCount(Function<S, T> classifier) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T> T reduce(T base, BinaryOperator<T> reducer) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

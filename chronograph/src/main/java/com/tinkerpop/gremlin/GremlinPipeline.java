@@ -12,12 +12,13 @@ import com.tinkerpop.blueprints.Vertex;
  * @author Jaewook Byun, Ph.D., Assistant Professor, Department of Software,
  *         Sejong University (slightly modify interface)
  */
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings("unchecked")
 public class GremlinPipeline<S, E> {
 
 	protected Graph g;
-	protected Stream stream;
-	protected Class elementClass;
+	protected Stream<?> stream;
+	protected Class<?> elementClass;
+	protected boolean isParallel;
 
 	/**
 	 * Initialize TraversalEngine
@@ -27,16 +28,30 @@ public class GremlinPipeline<S, E> {
 	 *                     VertexEvent, EdgeEvent) or Collection<Vertex> or
 	 *                     Collection<Edge>
 	 * @param elementClass either of Graph.class, Vertex.class, Edge.class
+	 * 
+	 * @param isParallel   if true, steps are executed in parallel
 	 */
-	public GremlinPipeline(Graph graph, Object starts, Class elementClass) {
+	public GremlinPipeline(Graph graph, Object starts, Class<S> elementClass, boolean isParallel) {
 		if (starts instanceof Graph || starts instanceof Vertex || starts instanceof Edge) {
 			stream = Stream.of(starts);
 		} else if (starts instanceof Collection) {
-			stream = ((Collection) starts).stream();
+			stream = ((Collection<S>) starts).stream();
 		} else {
 			throw new IllegalArgumentException();
 		}
+
+		if (isParallel)
+			stream.parallel();
 		this.elementClass = elementClass;
+
+	}
+
+	public boolean isParallel() {
+		return isParallel;
+	}
+
+	public void setParallel(boolean isParallel) {
+		this.isParallel = isParallel;
 	}
 
 }
