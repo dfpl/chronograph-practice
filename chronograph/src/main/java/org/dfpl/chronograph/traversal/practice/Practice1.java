@@ -1,7 +1,7 @@
-package org.dfpl.chronograph.traversal.jgremlin.practice;
+package org.dfpl.chronograph.traversal.practice;
 
 import org.dfpl.chronograph.crud.memory.ChronoGraph;
-import org.dfpl.chronograph.traversal.jgremlin.JTraversalEngine;
+import org.dfpl.chronograph.traversal.TraversalEngine;
 
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
@@ -14,8 +14,8 @@ public class Practice1 {
 		graph.addVertex("B");
 		graph.addVertex("C");
 
-		JTraversalEngine<Graph, Vertex> engine = new JTraversalEngine<Graph, Vertex>(graph, graph, Graph.class, true);
-		System.out.println(engine.V().toList());
+		TraversalEngine<Graph, Vertex> engine = new TraversalEngine<Graph, Vertex>(graph, graph, Graph.class, true);
+		System.out.println(engine.V().out().outE().inV().out().toList());
 	}
 
 }

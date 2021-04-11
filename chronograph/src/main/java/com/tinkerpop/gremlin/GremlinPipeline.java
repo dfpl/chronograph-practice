@@ -33,7 +33,7 @@ public class GremlinPipeline<S, E> {
 	 */
 	public GremlinPipeline(Graph graph, Object starts, Class<S> elementClass, boolean isParallel) {
 		if (starts instanceof Graph || starts instanceof Vertex || starts instanceof Edge) {
-			stream = Stream.of(starts);
+			stream = Stream.of((S)starts);
 		} else if (starts instanceof Collection) {
 			stream = ((Collection<S>) starts).stream();
 		} else {

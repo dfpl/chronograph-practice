@@ -9,6 +9,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.common.Tokens;
@@ -17,6 +18,8 @@ import com.tinkerpop.common.Tokens;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @author Jaewook Byun, Ph.D., Assistant Professor, Department of Software,
  *         Sejong University (slightly modify interface)
+ * @param <S> a type of start traverser
+ * @param <E> a type of end traverser
  */
 public interface GremlinFluentPipeline<S, E> {
 
@@ -92,7 +95,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * 
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<S, String> id();
+	public GremlinFluentPipeline<Element, String> id();
 
 	/**
 	 * Move traversers from IDs of graph elements to the elements
@@ -105,7 +108,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * 
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<String, E> element(Class<E> elementClass);
+	public GremlinFluentPipeline<String, ? extends Element> element(Class<? extends Element> elementClass);
 
 	// -------------------Transform: Vertex to Edge ----------------------
 
@@ -204,7 +207,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * 
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<S, List<S>> gather();
+	public <O> GremlinFluentPipeline<O, List<O>> gather();
 
 	/**
 	 * Any input extending Collection is unboxed. If the input is not extending
@@ -218,7 +221,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * 
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<S, E> scatter();
+	public <I, O> GremlinFluentPipeline<I, O> scatter();
 
 	/**
 	 * Given an input, the provided function is computed on the input and the output
@@ -235,7 +238,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 *                     emitted.
 	 * @return the extended Pipeline
 	 */
-	public <T> GremlinFluentPipeline<S, T> transform(Function<S, E> function, boolean setUnboxing);
+	public <I, C, O> GremlinFluentPipeline<I, O> transform(Function<I, C> function, boolean setUnboxing);
 
 	// -------------------Filter/Sort/Limit ----------------------
 
@@ -251,7 +254,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param predicate the custom filter function
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<S, S> dedup();
+	public <I> GremlinFluentPipeline<I, I> dedup();
 
 	/**
 	 * A biased coin toss determines if the object is emitted or not.
@@ -260,7 +263,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 *                   else filtered. (lowerBound is between 0 to 1)
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<S, S> random(Double lowerBound);
+	public <I> GremlinFluentPipeline<I, I> random(Double lowerBound);
 
 	/**
 	 * Check if the vertex or edge has a property with provided key.
@@ -274,7 +277,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param key the property key to check
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<S, S> has(String key);
+	public GremlinFluentPipeline<? extends Element, ? extends Element> has(String key);
 
 	/**
 	 * Check if the vertex or edge has a property with provided key-value.
@@ -289,7 +292,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param value the object to filter on (in an OR manner)
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<S, S> has(String key, Object value);
+	public GremlinFluentPipeline<? extends Element, ? extends Element> has(String key, Object value);
 
 	/**
 	 * Check if the vertex or edge has a property with provided key-predicate-value.
@@ -305,7 +308,8 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param value        the object to filter on
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<S, S> has(String key, Tokens.NC compareToken, Object value);
+	public GremlinFluentPipeline<? extends Element, ? extends Element> has(String key, Tokens.NC compareToken,
+			Object value);
 
 	/**
 	 * Given an input, the provided predicate evaluates the input and only inputs
@@ -320,7 +324,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param predicate the custom filter function
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<S, S> filter(Predicate<S> predicate);
+	public <I> GremlinFluentPipeline<I, I> filter(Predicate<S> predicate);
 
 	/**
 	 * Sort the traversers based on comparator
@@ -334,7 +338,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param comparator
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<S, S> sort(Comparator<S> comparator);
+	public <I> GremlinFluentPipeline<I, I> sort(Comparator<S> comparator);
 
 	/**
 	 * Limit the number of traversers
@@ -348,7 +352,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param maxSize
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<S, S> limit(long maxSize);
+	public <I> GremlinFluentPipeline<I, I> limit(long maxSize);
 
 	// ------------------- Side Effect ----------------------
 
@@ -365,7 +369,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param collection to store traversers
 	 * @return
 	 */
-	public GremlinFluentPipeline<S, S> sideEffect(Collection<S> collection);
+	public <I> GremlinFluentPipeline<I, I> sideEffect(Collection<I> collection);
 
 	/**
 	 * The provided function is invoked while the incoming object is just emitted to
@@ -380,7 +384,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param function the function should return the intact argument
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<S, S> sideEffect(Function<S, S> function);
+	public <I> GremlinFluentPipeline<I, I> sideEffect(Function<I, I> function);
 
 	// ------------------- Branch ----------------------
 
@@ -395,8 +399,8 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param setElseUnboxing refer to {@link #transform(Function, boolean)}
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<S, E> ifThenElse(Predicate<S> ifPredicate, Function<S, ?> thenFunction,
-			Function<S, ?> elseFunction, boolean setThenUnboxing, boolean setElseUnboxing);
+	public <I, C1, C2, O> GremlinFluentPipeline<I, O> ifThenElse(Predicate<I> ifPredicate, Function<I, C1> thenFunction,
+			Function<I, C2> elseFunction, boolean setThenUnboxing, boolean setElseUnboxing);
 
 	/**
 	 * Useful for naming steps and is used in conjunction with loop
@@ -404,7 +408,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param pointer for the loop
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<S, E> as(String pointer);
+	public <I> GremlinFluentPipeline<I, I> as(String pointer);
 
 	/**
 	 * loop repeats a part of a pipeline between as('name') to loop('name',
@@ -414,7 +418,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param whilePredicate if true, go to the pointer
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<S, E> loop(String pointer, Predicate<LoopBundle<S>> whilePredicate);
+	public <I, O> GremlinFluentPipeline<I, O> loop(String pointer, Predicate<LoopBundle<I>> whilePredicate);
 
 	// ------------------- Aggregation ----------------------
 
@@ -430,7 +434,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param classifier
 	 * @return the extended Pipeline
 	 */
-	public <T> Map<T, List<S>> groupBy(Function<S, T> classifier);
+	public <I, T> Map<T, List<I>> groupBy(Function<I, T> classifier);
 
 	/**
 	 * Counting the traversers grouped by results of classifier
@@ -444,7 +448,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param classifier
 	 * @return the extended Pipeline
 	 */
-	public <T> Map<T, Long> groupCount(Function<S, T> classifier);
+	public <I, T> Map<T, Long> groupCount(Function<I, T> classifier);
 
 	/**
 	 * Reduce the traversers based on reducer
@@ -470,5 +474,5 @@ public interface GremlinFluentPipeline<S, E> {
 	 * 
 	 * @return the current traversers in Gremlin as List
 	 */
-	public List<E> toList();
+	public <I> List<I> toList();
 }
