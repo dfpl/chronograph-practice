@@ -29,6 +29,7 @@ public class ChronoEdge implements Edge {
 		this.label = label;
 		this.in = in;
 		this.id = out.toString() + "|" + label + "|" + in.toString();
+		this.properties = new HashMap<String, Object>();
 	}
 
 	@Override
