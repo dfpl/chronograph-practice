@@ -2,13 +2,18 @@ package org.dfpl.chronograph.traversal;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.dfpl.chronograph.crud.memory.ChronoGraph;
+
+import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Graph;
@@ -136,56 +141,131 @@ public class TraversalEngine<S, E> extends GremlinPipeline<S, E> implements Grem
 
 	@Override
 	public GremlinFluentPipeline<Vertex, Edge> outE(String... labels) {
-		// TODO Auto-generated method stub
-		return null;
+		// Check the type of input
+		// checkInputElementClass(Vertex.class, Edge.class);
+
+		// Modify stream
+		stream = stream.flatMap(v -> ((Vertex) v).getEdges(Direction.OUT, labels).stream());
+
+		// Set the class of element
+		elementClass = Edge.class;
+
+		// return the extended stream
+		return (GremlinFluentPipeline<Vertex, Edge>) this;
 	}
 
 	@Override
 	public GremlinFluentPipeline<Vertex, Edge> inE(String... labels) {
-		// TODO Auto-generated method stub
-		return null;
+		// Check the type of input
+		// checkInputElementClass(Vertex.class, Edge.class);
+
+		// Modify stream
+		stream = stream.flatMap(v -> ((Vertex) v).getEdges(Direction.IN, labels).stream());
+
+		// Set the class of element
+		elementClass = Edge.class;
+
+		// return the extended stream
+		return (GremlinFluentPipeline<Vertex, Edge>) this;
 	}
 
 	// -------------------Transform: Edge to Vertex ----------------------
 
 	@Override
 	public GremlinFluentPipeline<Edge, Vertex> outV() {
-		// TODO Auto-generated method stub
-		return null;
+		// Check the type of input
+		// checkInputElementClass(Vertex.class, Edge.class);
+
+		// Modify stream
+		stream = stream.map(e -> ((Edge) e).getVertex(Direction.OUT));
+
+		// Set the class of element
+		elementClass = Vertex.class;
+
+		// return the extended stream
+		return (GremlinFluentPipeline<Edge, Vertex>) this;
 	}
 
 	@Override
 	public GremlinFluentPipeline<Edge, Vertex> inV() {
-		// TODO Auto-generated method stub
-		return null;
+		// Check the type of input
+		// checkInputElementClass(Vertex.class, Edge.class);
+
+		// Modify stream
+		stream = stream.map(e -> ((Edge) e).getVertex(Direction.IN));
+
+		// Set the class of element
+		elementClass = Vertex.class;
+
+		// return the extended stream
+		return (GremlinFluentPipeline<Edge, Vertex>) this;
 	}
 
 	// -------------------Transform: Vertex to Vertex ----------------------
 
 	@Override
 	public GremlinFluentPipeline<Vertex, Vertex> out(String... labels) {
-		// TODO Auto-generated method stub
-		return null;
+		// Check the type of input
+		// checkInputElementClass(Vertex.class, Edge.class);
+
+		// Modify stream
+		stream = stream.flatMap(v -> ((Vertex) v).getVertices(Direction.OUT, labels).stream());
+
+		// Set the class of element
+		elementClass = Edge.class;
+
+		// return the extended stream
+		return (GremlinFluentPipeline<Vertex, Vertex>) this;
 	}
 
 	@Override
 	public GremlinFluentPipeline<Vertex, Vertex> in(String... labels) {
-		// TODO Auto-generated method stub
-		return null;
+		// Check the type of input
+		// checkInputElementClass(Vertex.class, Edge.class);
+
+		// Modify stream
+		stream = stream.flatMap(v -> ((Vertex) v).getVertices(Direction.IN, labels).stream());
+
+		// Set the class of element
+		elementClass = Edge.class;
+
+		// return the extended stream
+		return (GremlinFluentPipeline<Vertex, Vertex>) this;
 	}
 
 	// -------------------Transform: Gather / Scatter ----------------------
 
+	@SuppressWarnings("unused")
 	@Override
 	public <O> GremlinFluentPipeline<O, List<O>> gather() {
-		// TODO Auto-generated method stub
-		return null;
+		// Check the type of input
+		// checkInputElementClass(Vertex.class, Edge.class);
+
+		// Modify stream
+		List intermediate = stream.collect(Collectors.toList());
+
+		// Set the class of element
+		collectionClass = elementClass;
+		elementClass = List.class;
+
+		// return the extended stream
+		return (GremlinFluentPipeline<O, List<O>>) this;
 	}
 
 	@Override
 	public <I, O> GremlinFluentPipeline<I, O> scatter() {
-		// TODO Auto-generated method stub
-		return null;
+		// Check the type of input
+		// checkInputElementClass(Vertex.class, Edge.class);
+
+		// Modify stream
+		if (elementClass.equals(List.class)) {
+			stream = stream.flatMap(list -> ((List) list).stream());
+			elementClass = collectionClass;
+			collectionClass = null;
+			return (GremlinFluentPipeline<I, O>) this;
+		} else {
+			return (GremlinFluentPipeline<I, O>) this;
+		}
 	}
 
 	@Override
@@ -370,4 +450,24 @@ public class TraversalEngine<S, E> extends GremlinPipeline<S, E> implements Grem
 		}
 	}
 
+	public static void main(String[] args) {
+		ChronoGraph g = new ChronoGraph();
+		Vertex v1 = g.addVertex("1");
+		Vertex v2 = g.addVertex("2");
+		Vertex v3 = g.addVertex("3");
+
+		g.addEdge(v1, v2, "l");
+		g.addEdge(v1, v3, "l");
+
+		System.out.println(new TraversalEngine<Graph, Edge>(g, g, Graph.class, false).V().outE("l").toList());
+
+		java.util.Set<Integer> s1 = java.util.Set.of(1, 2, 3);
+		java.util.Set<Integer> s2 = java.util.Set.of(2, 3, 4);
+
+		// flatMap of set.streams has redundancy~ it is ok
+		HashMap<Integer, Set<Integer>> map = new HashMap<Integer, Set<Integer>>();
+		map.put(1, s1);
+		map.put(2, s2);
+		System.out.println(map.entrySet().stream().flatMap(m -> m.getValue().stream()).collect(Collectors.toList()));
+	}
 }

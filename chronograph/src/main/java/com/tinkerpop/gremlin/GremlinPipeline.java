@@ -18,6 +18,7 @@ public class GremlinPipeline<S, E> {
 	protected Graph g;
 	protected Stream<?> stream;
 	protected Class<?> elementClass;
+	protected Class<?> collectionClass;
 	protected boolean isParallel;
 
 	/**
@@ -33,7 +34,7 @@ public class GremlinPipeline<S, E> {
 	 */
 	public GremlinPipeline(Graph graph, Object starts, Class<S> elementClass, boolean isParallel) {
 		if (starts instanceof Graph || starts instanceof Vertex || starts instanceof Edge) {
-			stream = Stream.of((S)starts);
+			stream = Stream.of((S) starts);
 		} else if (starts instanceof Collection) {
 			stream = ((Collection<S>) starts).stream();
 		} else {
@@ -43,7 +44,7 @@ public class GremlinPipeline<S, E> {
 		if (isParallel)
 			stream.parallel();
 		this.elementClass = elementClass;
-
+		this.collectionClass = null;
 	}
 
 	public boolean isParallel() {
