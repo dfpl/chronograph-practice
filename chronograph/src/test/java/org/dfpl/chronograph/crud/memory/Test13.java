@@ -1,8 +1,12 @@
-package org.dfpl.chronograph.crud.memory.practice;
+package org.dfpl.chronograph.crud.memory;
 
-import org.dfpl.chronograph.crud.memory.ChronoGraph;
+import static org.junit.Assert.assertTrue;
 
-import com.tinkerpop.blueprints.Edge;
+import java.util.stream.Collectors;
+
+import org.junit.Test;
+
+import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 
@@ -12,9 +16,10 @@ import com.tinkerpop.blueprints.Vertex;
  * @author Jaewook Byun, Ph.D., Assistant Professor, Department of Software,
  *         Sejong University (slightly modify interface)
  */
-public class Practice7 {
+public class Test13 {
 
-	public static void main(String[] args) {
+	@Test
+	public void incidentEdges() {
 		Graph g = new ChronoGraph();
 		Vertex a = g.addVertex("A");
 		Vertex b = g.addVertex("B");
@@ -23,14 +28,8 @@ public class Practice7 {
 		g.addEdge(a, b, "loves");
 		g.addEdge(a, c, "likes");
 		g.addEdge(c, c, "likes");
-
-		g.removeVertex(a);
-
-		for (Vertex v : g.getVertices()) {
-			System.out.println(v);
-		}
-		for (Edge e : g.getEdges()) {
-			System.out.println(e);
-		}
+	
+		assertTrue(a.getEdges(Direction.OUT, "likes", "loves").stream().map(e -> e.getId()).sorted().collect(Collectors.toList()).toString()
+				.equals("[A|likes|B, A|likes|C, A|loves|B]"));
 	}
 }

@@ -1,8 +1,9 @@
-package org.dfpl.chronograph.crud.memory.practice;
+package org.dfpl.chronograph.crud.memory;
 
-import org.dfpl.chronograph.crud.memory.ChronoGraph;
+import static org.junit.Assert.assertTrue;
 
-import com.tinkerpop.blueprints.Edge;
+import org.junit.Test;
+
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 
@@ -12,9 +13,10 @@ import com.tinkerpop.blueprints.Vertex;
  * @author Jaewook Byun, Ph.D., Assistant Professor, Department of Software,
  *         Sejong University (slightly modify interface)
  */
-public class Practice6 {
+public class Test19 {
 
-	public static void main(String[] args) {
+	@Test
+	public void setProperty() {
 		Graph g = new ChronoGraph();
 		Vertex a = g.addVertex("A");
 		Vertex b = g.addVertex("B");
@@ -24,8 +26,10 @@ public class Practice6 {
 		g.addEdge(a, c, "likes");
 		g.addEdge(c, c, "likes");
 
-		for (Edge e : g.getEdges()) {
-			System.out.println(e);
-		}
+		a.setProperty("name", "J. B.");
+		a.setProperty("title", "Prof.");
+		
+		assertTrue(a.getProperty("name").toString().equals("J. B."));
+		assertTrue(a.getProperty("title").toString().equals("Prof."));
 	}
 }

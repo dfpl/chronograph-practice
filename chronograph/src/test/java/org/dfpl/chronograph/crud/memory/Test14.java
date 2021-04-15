@@ -1,7 +1,12 @@
-package org.dfpl.chronograph.crud.memory.practice;
+package org.dfpl.chronograph.crud.memory;
 
-import org.dfpl.chronograph.crud.memory.ChronoGraph;
+import static org.junit.Assert.assertTrue;
 
+import java.util.stream.Collectors;
+
+import org.junit.Test;
+
+import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 
@@ -11,14 +16,20 @@ import com.tinkerpop.blueprints.Vertex;
  * @author Jaewook Byun, Ph.D., Assistant Professor, Department of Software,
  *         Sejong University (slightly modify interface)
  */
-public class Practice3 {
+public class Test14 {
 
-	public static void main(String[] args) {
+	@Test
+	public void incidentEdges() {
 		Graph g = new ChronoGraph();
 		Vertex a = g.addVertex("A");
 		Vertex b = g.addVertex("B");
 		Vertex c = g.addVertex("C");
 		g.addEdge(a, b, "likes");
+		g.addEdge(a, b, "loves");
 		g.addEdge(a, c, "likes");
+		g.addEdge(c, c, "likes");
+
+		assertTrue(b.getEdges(Direction.IN, "likes").stream().map(e -> e.getId()).sorted().collect(Collectors.toList())
+				.toString().equals("[A|likes|B]"));
 	}
 }
