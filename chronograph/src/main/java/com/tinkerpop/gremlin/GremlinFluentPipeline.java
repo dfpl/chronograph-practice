@@ -262,6 +262,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param lowerBound if Random.getDouble() is larger than lowerBound, retained,
 	 *                   else filtered. (lowerBound is between 0 to 1)
 	 * @return the extended Pipeline
+	 * 
 	 */
 	public <I> GremlinFluentPipeline<I, I> random(Double lowerBound);
 
