@@ -8,7 +8,9 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Graph;
@@ -76,64 +78,97 @@ public class HTraversalEngine<S, E> extends GremlinPipeline<S, E> implements Gre
 		return (GremlinFluentPipeline<Graph, Edge>) this;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public GremlinFluentPipeline<Element, String> id() {
-		// TODO Auto-generated method stub
-		return null;
+		stream = stream.map(e -> ((Element) e).getId());
+
+		elementClass = String.class;
+
+		return (GremlinFluentPipeline<Element, String>) this;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public GremlinFluentPipeline<String, ? extends Element> element(Class<? extends Element> elementClass) {
-		// TODO Auto-generated method stub
-		return null;
+		this.elementClass = elementClass;
+
+		if (elementClass.equals(Vertex.class)) {
+			stream = stream.flatMap(g -> ((Graph) g).getVertices().stream());
+		} else if (elementClass.equals(Edge.class)) {
+			stream = stream.flatMap(g -> ((Graph) g).getEdges().stream());
+		} else {
+			stream = null;
+		}
+		return (GremlinFluentPipeline<String, ? extends Element>) this;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public GremlinFluentPipeline<Vertex, Edge> outE(String... labels) {
-		// TODO Auto-generated method stub
-		return null;
+		stream = stream.flatMap(v -> ((Vertex) v).getEdges(Direction.OUT, labels).stream());
+		elementClass = Edge.class;
+		return (GremlinFluentPipeline<Vertex, Edge>) this;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public GremlinFluentPipeline<Vertex, Edge> inE(String... labels) {
-		// TODO Auto-generated method stub
-		return null;
+		stream = stream.flatMap(v -> ((Vertex) v).getEdges(Direction.IN, labels).stream());
+		elementClass = Edge.class;
+		return (GremlinFluentPipeline<Vertex, Edge>) this;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public GremlinFluentPipeline<Edge, Vertex> outV() {
-		// TODO Auto-generated method stub
-		return null;
+		stream = stream.map(e -> ((Edge) e).getVertex(Direction.OUT));
+		elementClass = Vertex.class;
+		return (GremlinFluentPipeline<Edge, Vertex>) this; 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public GremlinFluentPipeline<Edge, Vertex> inV() {
-		// TODO Auto-generated method stub
-		return null;
+		stream = stream.map(e -> ((Edge) e).getVertex(Direction.IN));
+		elementClass = Vertex.class;
+		return (GremlinFluentPipeline<Edge, Vertex>) this; 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public GremlinFluentPipeline<Vertex, Vertex> out(String... labels) {
-		// TODO Auto-generated method stub
-		return null;
+		stream = stream.flatMap(v -> ((Vertex) v).getVertices(Direction.OUT, labels).stream());
+		return (GremlinFluentPipeline<Vertex, Vertex>) this;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public GremlinFluentPipeline<Vertex, Vertex> in(String... labels) {
-		// TODO Auto-generated method stub
-		return null;
+		stream = stream.flatMap(v -> ((Vertex) v).getVertices(Direction.IN, labels).stream());
+
+		return (GremlinFluentPipeline<Vertex, Vertex>) this;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <O> GremlinFluentPipeline<O, List<O>> gather() {
-		// TODO Auto-generated method stub
-		return null;
+		stream = (Stream<List<O>>) stream.collect(Collectors.toList()).stream();
+		
+		collectionClass = elementClass;
+		elementClass = List.class;
+		return (GremlinFluentPipeline<O, List<O>>) this;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <I, O> GremlinFluentPipeline<I, O> scatter() {
-		// TODO Auto-generated method stub
-		return null;
+		if(elementClass.equals(List.class)) {
+			stream = stream.flatMap(list -> ((List) list).stream());
+			elementClass = collectionClass;
+			collectionClass = null;
+		} 
+		return (GremlinFluentPipeline<I, O>) this;
 	}
 
 	@Override
@@ -225,9 +260,9 @@ public class HTraversalEngine<S, E> extends GremlinPipeline<S, E> implements Gre
 	@Override
 	public GremlinFluentPipeline<? extends Element, ? extends Element> has(String key, Object value) {
 		stream = stream.filter(element -> {
-			return ((Element) element).getProperty(key).equals(value);
+			Object property = ((Element) element).getProperty(key);
+			return property != null && property.equals(value);
 		});
-		
 		return (GremlinFluentPipeline<? extends Element, ? extends Element>) this;
 	}
 
@@ -243,7 +278,7 @@ public class HTraversalEngine<S, E> extends GremlinPipeline<S, E> implements Gre
 		stream = stream.filter(element -> {
 			return ((Element) element).getPropertyKeys().contains(key);
 		});
-		
+
 		return (GremlinFluentPipeline<? extends Element, ? extends Element>) this;
 	}
 }

@@ -1,6 +1,5 @@
 package org.dfpl.chronograph.traversal.memory.hgremlin;
 
-import static org.junit.Assert.*;
 
 import org.dfpl.chronograph.crud.memory.ChronoGraph;
 import org.junit.Test;
@@ -9,7 +8,7 @@ import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 
-public class TestFluentPipeline {
+public class GraphToElement {
 
 	@Test
 	public void getVertices() {
@@ -81,59 +80,4 @@ public class TestFluentPipeline {
 
 		assert (engine.E("test", true).toList().size() == 2);
 	}
-
-	@Test
-	public void getElementsWithPropKey() {
-		Graph graph = new ChronoGraph();
-
-		Vertex a = graph.addVertex("A");
-		Vertex b = graph.addVertex("B");
-		Vertex c = graph.addVertex("C");
-
-		a.setProperty("test", true);
-		b.setProperty("test", false);
-		c.setProperty("not", true);
-
-		Edge abLikes = graph.addEdge(a, b, "likes");
-		Edge acLikes = graph.addEdge(a, c, "likes");
-		Edge abLoves = graph.addEdge(a, b, "loves");
-		Edge ccLoves = graph.addEdge(c, c, "loves");
-
-		abLikes.setProperty("test", true); // included
-		abLoves.setProperty("test", true); // included
-		acLikes.setProperty("test", false); // included
-		ccLoves.setProperty("notest", "a");
-
-		HTraversalEngine<Edge, Edge> engine = new HTraversalEngine<Edge, Edge>(graph, graph.getEdges(), Edge.class);
-
-		assert (engine.has("test").toList().size() == 3);
-	}
-
-	@Test
-	public void getElementsWithPropKeyAndValue() {
-		Graph graph = new ChronoGraph();
-
-		Vertex a = graph.addVertex("A");
-		Vertex b = graph.addVertex("B");
-		Vertex c = graph.addVertex("C");
-
-		a.setProperty("test", true); // included
-		b.setProperty("test", false);
-		c.setProperty("not", true);
-
-		Edge abLikes = graph.addEdge(a, b, "likes");
-		Edge acLikes = graph.addEdge(a, c, "likes");
-		Edge abLoves = graph.addEdge(a, b, "loves");
-		Edge ccLoves = graph.addEdge(c, c, "loves");
-
-		abLikes.setProperty("test", true);
-		abLoves.setProperty("test", true);
-		acLikes.setProperty("test", false);
-		ccLoves.setProperty("notest", "a");
-
-		HTraversalEngine<Vertex, Vertex> engine = new HTraversalEngine<Vertex, Vertex>(graph, graph.getVertices(), Vertex.class);
-
-		assert (engine.has("test", true).toList().size() == 1);
-	}
-
 }
