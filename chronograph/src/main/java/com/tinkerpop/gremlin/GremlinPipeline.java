@@ -12,8 +12,7 @@ import com.tinkerpop.blueprints.Vertex;
  * @author Jaewook Byun, Ph.D., Assistant Professor, Department of Software,
  *         Sejong University (slightly modify interface)
  */
-@SuppressWarnings("unchecked")
-public class GremlinPipeline<S, E> {
+public class GremlinPipeline {
 
 	protected Graph g;
 	protected Stream<?> stream;
@@ -32,11 +31,11 @@ public class GremlinPipeline<S, E> {
 	 * 
 	 * @param isParallel   if true, steps are executed in parallel
 	 */
-	public GremlinPipeline(Graph graph, Object starts, Class<S> elementClass, boolean isParallel) {
+	public GremlinPipeline(Graph graph, Object starts, Class<?> elementClass, boolean isParallel) {
 		if (starts instanceof Graph || starts instanceof Vertex || starts instanceof Edge) {
-			stream = Stream.of((S) starts);
+			stream = Stream.of(starts);
 		} else if (starts instanceof Collection) {
-			stream = ((Collection<S>) starts).stream();
+			stream = ((Collection<?>) starts).stream();
 		} else {
 			throw new IllegalArgumentException();
 		}

@@ -1,6 +1,5 @@
 package org.dfpl.chronograph.traversal.memory.hgremlin;
 
-
 import org.dfpl.chronograph.crud.memory.ChronoGraph;
 import org.junit.Test;
 
@@ -18,7 +17,7 @@ public class GraphToElement {
 		graph.addVertex("B");
 		graph.addVertex("C");
 
-		HTraversalEngine<Graph, Vertex> engine = new HTraversalEngine<Graph, Vertex>(graph, graph, Graph.class);
+		HTraversalEngine engine = new HTraversalEngine(graph, graph, Graph.class);
 
 		assert (engine.V().toList().size() == 3);
 	}
@@ -36,7 +35,7 @@ public class GraphToElement {
 		graph.addEdge(a, b, "loves");
 		graph.addEdge(c, c, "loves");
 
-		HTraversalEngine<Graph, Edge> engine = new HTraversalEngine<Graph, Edge>(graph, graph, Graph.class);
+		HTraversalEngine engine = new HTraversalEngine(graph, graph, Graph.class);
 
 		assert (engine.E().toList().size() == 4);
 	}
@@ -53,7 +52,7 @@ public class GraphToElement {
 		b.setProperty("test", false);
 		c.setProperty("not", true);
 
-		HTraversalEngine<Graph, Vertex> engine = new HTraversalEngine<Graph, Vertex>(graph, graph, Graph.class);
+		HTraversalEngine engine = new HTraversalEngine(graph, graph, Graph.class);
 
 		assert (engine.V("test", true).toList().size() == 1);
 	}
@@ -76,7 +75,7 @@ public class GraphToElement {
 		acLikes.setProperty("test", false);
 		ccLoves.setProperty("notest", "a");
 
-		HTraversalEngine<Graph, Edge> engine = new HTraversalEngine<Graph, Edge>(graph, graph, Graph.class);
+		HTraversalEngine engine = new HTraversalEngine(graph, graph, Graph.class);
 
 		assert (engine.E("test", true).toList().size() == 2);
 	}

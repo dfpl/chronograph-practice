@@ -25,7 +25,7 @@ public class EdgeToVertex {
 		graph.addEdge(a, b, "loves");
 		graph.addEdge(c, c, "loves");
 
-		HTraversalEngine<Edge, Vertex> engine = new HTraversalEngine<Edge, Vertex>(graph, abLikes, Edge.class);
+		HTraversalEngine engine = new HTraversalEngine(graph, abLikes, Edge.class);
 
 		assertThat(engine.inV().toList(), containsInAnyOrder("B"));
 	}
@@ -43,7 +43,7 @@ public class EdgeToVertex {
 		graph.addEdge(a, b, "loves");
 		graph.addEdge(c, c, "loves");
 
-		HTraversalEngine<Edge, Vertex> engine = new HTraversalEngine<Edge, Vertex>(graph, abLikes, Edge.class);
+		HTraversalEngine engine = new HTraversalEngine(graph, abLikes, Edge.class);
 
 		assertThat(engine.outV().toList(), containsInAnyOrder("A"));
 	}

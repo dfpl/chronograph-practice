@@ -2,8 +2,6 @@ package org.dfpl.chronograph.traversal.memory.hgremlin;
 
 import static org.junit.Assert.*;
 
-import java.util.List;
-
 import org.dfpl.chronograph.crud.memory.ChronoGraph;
 import org.junit.Test;
 
@@ -16,31 +14,33 @@ import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInA
 
 public class GatherScatter {
 
+	@SuppressWarnings("unused")
 	@Test
 	public void gather() {
 		Graph graph = new ChronoGraph();
-		
+
 		Vertex a = graph.addVertex("A");
 		Vertex b = graph.addVertex("B");
 		Vertex c = graph.addVertex("C");
-		
-		HTraversalEngine<Vertex, List<Vertex>> engine = new HTraversalEngine<Vertex, List<Vertex>>(graph, graph.getVertices(), Graph.class);
-		
-		GremlinFluentPipeline<Object, List<Object>> vertices = engine.gather();
-		
+
+		HTraversalEngine engine = new HTraversalEngine(graph, graph.getVertices(), Graph.class);
+
+		GremlinFluentPipeline vertices = engine.gather();
+
 		assertThat(vertices.toList(), containsInAnyOrder("A", "B", "C"));
 	}
-	
+
+	@SuppressWarnings("unused")
 	@Test
 	public void scatter() {
 		Graph graph = new ChronoGraph();
-		
+
 		Vertex a = graph.addVertex("A");
 		Vertex b = graph.addVertex("B");
 		Vertex c = graph.addVertex("C");
-		
-		HTraversalEngine<Vertex, List<Vertex>> engine = new HTraversalEngine<Vertex, List<Vertex>>(graph, graph.getVertices(), Graph.class);
-		
+
+		HTraversalEngine engine = new HTraversalEngine(graph, graph.getVertices(), Graph.class);
+
 		assertThat(engine.scatter().toList(), containsInAnyOrder("A", "B", "C"));
 	}
 

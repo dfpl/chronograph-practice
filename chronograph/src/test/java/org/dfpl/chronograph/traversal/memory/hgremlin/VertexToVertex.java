@@ -16,30 +16,30 @@ public class VertexToVertex {
 	@Test
 	public void getOutVertex() {
 		Graph graph = new ChronoGraph();
-		
+
 		Vertex a = graph.addVertex("A");
 		Vertex b = graph.addVertex("B");
-		
+
 		graph.addEdge(a, b, "likes");
 		graph.addEdge(a, a, "loves");
-		
-		HTraversalEngine<Vertex, Vertex> engine = new HTraversalEngine<Vertex, Vertex>(graph, a, Vertex.class);
-		
-		assertThat(engine.out("likes", "loves").toList(), containsInAnyOrder(a,b));
+
+		HTraversalEngine engine = new HTraversalEngine(graph, a, Vertex.class);
+
+		assertThat(engine.out("likes", "loves").toList(), containsInAnyOrder(a, b));
 	}
-	
+
 	@Test
 	public void getInVertex() {
 		Graph graph = new ChronoGraph();
-		
+
 		Vertex a = graph.addVertex("A");
 		Vertex b = graph.addVertex("B");
-		
+
 		graph.addEdge(a, b, "likes");
 		graph.addEdge(a, a, "loves");
-		
-		HTraversalEngine<Vertex, Vertex> engine = new HTraversalEngine<Vertex, Vertex>(graph, a, Vertex.class);
-		
+
+		HTraversalEngine engine = new HTraversalEngine(graph, a, Vertex.class);
+
 		assertThat(engine.in("likes", "loves").toList(), containsInAnyOrder(a));
 	}
 
