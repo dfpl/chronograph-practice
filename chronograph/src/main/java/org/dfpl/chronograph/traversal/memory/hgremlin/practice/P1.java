@@ -9,31 +9,32 @@ import com.tinkerpop.blueprints.Vertex;
 
 public class P1 {
 
+	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 		Graph graph = new ChronoGraph();
 
 		Vertex a = graph.addVertex("A");
 		Vertex b = graph.addVertex("B");
 		Vertex c = graph.addVertex("C");
-		
+
 		a.setProperty("test", true);
 		b.setProperty("test", false);
-		
+
 		Edge abLikes = graph.addEdge(a, b, "likes");
-		Edge acLikes =  graph.addEdge(a, c, "likes");
+		Edge acLikes = graph.addEdge(a, c, "likes");
 		Edge abLoves = graph.addEdge(a, b, "loves");
 		Edge ccLoves = graph.addEdge(c, c, "loves");
-		
+
 		// Test V()
-		HTraversalEngine<Graph, Vertex> engine1 = new HTraversalEngine<Graph, Vertex>(graph, graph, Graph.class);
+		HTraversalEngine engine1 = new HTraversalEngine(graph, graph, Graph.class);
 		System.out.println(engine1.V().toList());
-		
+
 		// Test E()
-		HTraversalEngine<Graph, Edge> engine2 = new HTraversalEngine<Graph, Edge>(graph, graph, Graph.class);
+		HTraversalEngine engine2 = new HTraversalEngine(graph, graph, Graph.class);
 		System.out.println(engine2.E().toList());
-		
+
 		// Test V(key, object)
-		HTraversalEngine<Graph, Vertex> engine3 = new HTraversalEngine<Graph, Vertex>(graph, graph, Graph.class);
+		HTraversalEngine engine3 = new HTraversalEngine(graph, graph, Graph.class);
 		System.out.println(engine3.V("test", true).toList());
 	}
 

@@ -1,6 +1,5 @@
 package org.dfpl.chronograph.traversal.memory.hgremlin;
 
-
 import org.dfpl.chronograph.crud.memory.ChronoGraph;
 import org.junit.Test;
 
@@ -32,8 +31,8 @@ public class FilterSortLimit {
 		acLikes.setProperty("test", false);
 		ccLoves.setProperty("notest", "a");
 
-		HTraversalEngine<Vertex, Vertex> engine = new HTraversalEngine<Vertex, Vertex>(graph, graph.getVertices(), Vertex.class);
-		
+		HTraversalEngine engine = new HTraversalEngine(graph, graph.getVertices(), Vertex.class);
+
 		assert (engine.has("test", true).toList().size() == 1);
 	}
 

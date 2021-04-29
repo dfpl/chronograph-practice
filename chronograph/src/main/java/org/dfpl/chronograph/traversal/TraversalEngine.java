@@ -24,16 +24,16 @@ import com.tinkerpop.gremlin.GremlinPipeline;
 import com.tinkerpop.gremlin.LoopBundle;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class TraversalEngine<S, E> extends GremlinPipeline<S, E> implements GremlinFluentPipeline<S, E> {
+public class TraversalEngine extends GremlinPipeline implements GremlinFluentPipeline {
 
-	public TraversalEngine(Graph graph, Object starts, Class<S> elementClass, boolean isParallel) {
+	public TraversalEngine(Graph graph, Object starts, Class<?> elementClass, boolean isParallel) {
 		super(graph, starts, elementClass, isParallel);
 	}
 
 	// -------------------Transform: Graph to Element----------------------
 
 	@Override
-	public GremlinFluentPipeline<Graph, Vertex> V() {
+	public GremlinFluentPipeline V() {
 		// Check the type of input
 		// checkInputElementClass(Graph.class);
 
@@ -44,11 +44,11 @@ public class TraversalEngine<S, E> extends GremlinPipeline<S, E> implements Grem
 		elementClass = Vertex.class;
 
 		// return the extended stream
-		return (GremlinFluentPipeline<Graph, Vertex>) this;
+		return this;
 	}
 
 	@Override
-	public GremlinFluentPipeline<Graph, Vertex> V(String key, Object value) {
+	public GremlinFluentPipeline V(String key, Object value) {
 		// Check the type of input
 		// checkInputElementClass(Graph.class);
 
@@ -59,11 +59,11 @@ public class TraversalEngine<S, E> extends GremlinPipeline<S, E> implements Grem
 		elementClass = Vertex.class;
 
 		// return the extended stream
-		return (GremlinFluentPipeline<Graph, Vertex>) this;
+		return this;
 	}
 
 	@Override
-	public GremlinFluentPipeline<Graph, Edge> E() {
+	public GremlinFluentPipeline E() {
 		// Check the type of input
 		// checkInputElementClass(Graph.class);
 
@@ -74,11 +74,11 @@ public class TraversalEngine<S, E> extends GremlinPipeline<S, E> implements Grem
 		elementClass = Edge.class;
 
 		// return the extended stream
-		return (GremlinFluentPipeline<Graph, Edge>) this;
+		return this;
 	}
 
 	@Override
-	public GremlinFluentPipeline<Graph, Edge> E(String key, Object value) {
+	public GremlinFluentPipeline E(String key, Object value) {
 		// Check the type of input
 		// checkInputElementClass(Graph.class);
 
@@ -89,13 +89,13 @@ public class TraversalEngine<S, E> extends GremlinPipeline<S, E> implements Grem
 		elementClass = Edge.class;
 
 		// return the extended stream
-		return (GremlinFluentPipeline<Graph, Edge>) this;
+		return this;
 	}
 
 	// -------------------Transform: Element <- -> String ----------------------
 
 	@Override
-	public GremlinFluentPipeline<Element, String> id() {
+	public GremlinFluentPipeline id() {
 		// Check the type of input
 		// checkInputElementClass(Vertex.class, Edge.class);
 
@@ -106,11 +106,11 @@ public class TraversalEngine<S, E> extends GremlinPipeline<S, E> implements Grem
 		elementClass = String.class;
 
 		// return the extended stream
-		return (GremlinFluentPipeline<Element, String>) this;
+		return this;
 	}
 
 	@Override
-	public GremlinFluentPipeline<String, ? extends Element> element(Class<? extends Element> elementClass) {
+	public GremlinFluentPipeline element(Class<? extends Element> elementClass) {
 		// Check the type of input
 		// if (!elementClass.equals(Vertex.class) || !elementClass.equals(Edge.class))
 		// throw new IllegalArgumentException("The argument should be one of
@@ -124,7 +124,7 @@ public class TraversalEngine<S, E> extends GremlinPipeline<S, E> implements Grem
 			this.elementClass = Vertex.class;
 
 			// return the extended stream
-			return (GremlinFluentPipeline<String, Vertex>) this;
+			return this;
 		} else {
 			// Modify stream
 			stream = stream.map(e -> g.getEdge((String) e)).filter(e -> e != null);
@@ -133,14 +133,14 @@ public class TraversalEngine<S, E> extends GremlinPipeline<S, E> implements Grem
 			this.elementClass = Edge.class;
 
 			// return the extended stream
-			return (GremlinFluentPipeline<String, Edge>) this;
+			return this;
 		}
 	}
 
 	// -------------------Transform: Vertex to Edge ----------------------
 
 	@Override
-	public GremlinFluentPipeline<Vertex, Edge> outE(String... labels) {
+	public GremlinFluentPipeline outE(String... labels) {
 		// Check the type of input
 		// checkInputElementClass(Vertex.class, Edge.class);
 
@@ -151,11 +151,11 @@ public class TraversalEngine<S, E> extends GremlinPipeline<S, E> implements Grem
 		elementClass = Edge.class;
 
 		// return the extended stream
-		return (GremlinFluentPipeline<Vertex, Edge>) this;
+		return this;
 	}
 
 	@Override
-	public GremlinFluentPipeline<Vertex, Edge> inE(String... labels) {
+	public GremlinFluentPipeline inE(String... labels) {
 		// Check the type of input
 		// checkInputElementClass(Vertex.class, Edge.class);
 
@@ -166,13 +166,13 @@ public class TraversalEngine<S, E> extends GremlinPipeline<S, E> implements Grem
 		elementClass = Edge.class;
 
 		// return the extended stream
-		return (GremlinFluentPipeline<Vertex, Edge>) this;
+		return this;
 	}
 
 	// -------------------Transform: Edge to Vertex ----------------------
 
 	@Override
-	public GremlinFluentPipeline<Edge, Vertex> outV() {
+	public GremlinFluentPipeline outV() {
 		// Check the type of input
 		// checkInputElementClass(Vertex.class, Edge.class);
 
@@ -183,11 +183,11 @@ public class TraversalEngine<S, E> extends GremlinPipeline<S, E> implements Grem
 		elementClass = Vertex.class;
 
 		// return the extended stream
-		return (GremlinFluentPipeline<Edge, Vertex>) this;
+		return this;
 	}
 
 	@Override
-	public GremlinFluentPipeline<Edge, Vertex> inV() {
+	public GremlinFluentPipeline inV() {
 		// Check the type of input
 		// checkInputElementClass(Vertex.class, Edge.class);
 
@@ -198,13 +198,13 @@ public class TraversalEngine<S, E> extends GremlinPipeline<S, E> implements Grem
 		elementClass = Vertex.class;
 
 		// return the extended stream
-		return (GremlinFluentPipeline<Edge, Vertex>) this;
+		return this;
 	}
 
 	// -------------------Transform: Vertex to Vertex ----------------------
 
 	@Override
-	public GremlinFluentPipeline<Vertex, Vertex> out(String... labels) {
+	public GremlinFluentPipeline out(String... labels) {
 		// Check the type of input
 		// checkInputElementClass(Vertex.class, Edge.class);
 
@@ -215,11 +215,11 @@ public class TraversalEngine<S, E> extends GremlinPipeline<S, E> implements Grem
 		elementClass = Edge.class;
 
 		// return the extended stream
-		return (GremlinFluentPipeline<Vertex, Vertex>) this;
+		return this;
 	}
 
 	@Override
-	public GremlinFluentPipeline<Vertex, Vertex> in(String... labels) {
+	public GremlinFluentPipeline in(String... labels) {
 		// Check the type of input
 		// checkInputElementClass(Vertex.class, Edge.class);
 
@@ -230,14 +230,14 @@ public class TraversalEngine<S, E> extends GremlinPipeline<S, E> implements Grem
 		elementClass = Edge.class;
 
 		// return the extended stream
-		return (GremlinFluentPipeline<Vertex, Vertex>) this;
+		return this;
 	}
 
 	// -------------------Transform: Gather / Scatter ----------------------
 
 	@SuppressWarnings("unused")
 	@Override
-	public <O> GremlinFluentPipeline<O, List<O>> gather() {
+	public GremlinFluentPipeline gather() {
 		// Check the type of input
 		// checkInputElementClass(Vertex.class, Edge.class);
 
@@ -249,11 +249,11 @@ public class TraversalEngine<S, E> extends GremlinPipeline<S, E> implements Grem
 		elementClass = List.class;
 
 		// return the extended stream
-		return (GremlinFluentPipeline<O, List<O>>) this;
+		return this;
 	}
 
 	@Override
-	public <I, O> GremlinFluentPipeline<I, O> scatter() {
+	public GremlinFluentPipeline scatter() {
 		// Check the type of input
 		// checkInputElementClass(Vertex.class, Edge.class);
 
@@ -262,14 +262,13 @@ public class TraversalEngine<S, E> extends GremlinPipeline<S, E> implements Grem
 			stream = stream.flatMap(list -> ((List) list).stream());
 			elementClass = collectionClass;
 			collectionClass = null;
-			return (GremlinFluentPipeline<I, O>) this;
-		} else {
-			return (GremlinFluentPipeline<I, O>) this;
 		}
+
+		return this;
 	}
 
 	@Override
-	public <I, C, O> GremlinFluentPipeline<I, O> transform(Function<I, C> function, boolean setUnboxing) {
+	public <I, C> GremlinFluentPipeline transform(Function<I, C> function, boolean setUnboxing) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -277,19 +276,19 @@ public class TraversalEngine<S, E> extends GremlinPipeline<S, E> implements Grem
 	// -------------------Filter/Sort/Limit ----------------------
 
 	@Override
-	public <I> GremlinFluentPipeline<I, I> dedup() {
+	public GremlinFluentPipeline dedup() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public <I> GremlinFluentPipeline<I, I> random(Double lowerBound) {
+	public GremlinFluentPipeline random(Double lowerBound) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public GremlinFluentPipeline<? extends Element, ? extends Element> has(String key) {
+	public GremlinFluentPipeline has(String key) {
 		// Check the type of input
 		// checkInputElementClass(Vertex.class, Edge.class);
 
@@ -301,11 +300,11 @@ public class TraversalEngine<S, E> extends GremlinPipeline<S, E> implements Grem
 		// Set the class of element: no change of element class
 
 		// return the extended stream
-		return (GremlinFluentPipeline<? extends Element, ? extends Element>) this;
+		return this;
 	}
 
 	@Override
-	public GremlinFluentPipeline<? extends Element, ? extends Element> has(String key, Object value) {
+	public GremlinFluentPipeline has(String key, Object value) {
 		// Check the type of input
 		// checkInputElementClass(Vertex.class, Edge.class);
 
@@ -320,11 +319,11 @@ public class TraversalEngine<S, E> extends GremlinPipeline<S, E> implements Grem
 		// Set the class of element: no change of element class
 
 		// return the extended stream
-		return (GremlinFluentPipeline<? extends Element, ? extends Element>) this;
+		return this;
 	}
 
 	@Override
-	public GremlinFluentPipeline<? extends Element, ? extends Element> has(String key, NC t, Object value) {
+	public GremlinFluentPipeline has(String key, NC t, Object value) {
 		// Check the type of input
 		// checkInputElementClass(Vertex.class, Edge.class);
 
@@ -354,23 +353,23 @@ public class TraversalEngine<S, E> extends GremlinPipeline<S, E> implements Grem
 		// Set the class of element: no change of element class
 
 		// return the extended stream
-		return (GremlinFluentPipeline<? extends Element, ? extends Element>) this;
+		return this;
 	}
 
 	@Override
-	public <I> GremlinFluentPipeline<I, I> filter(Predicate<S> predicate) {
+	public <E> GremlinFluentPipeline filter(Predicate<E> predicate) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public <I> GremlinFluentPipeline<I, I> sort(Comparator<S> comparator) {
+	public <E> GremlinFluentPipeline sort(Comparator<E> comparator) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public <I> GremlinFluentPipeline<I, I> limit(long maxSize) {
+	public GremlinFluentPipeline limit(long maxSize) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -378,13 +377,13 @@ public class TraversalEngine<S, E> extends GremlinPipeline<S, E> implements Grem
 	// ------------------- Side Effect ----------------------
 
 	@Override
-	public <I> GremlinFluentPipeline<I, I> sideEffect(Collection<I> collection) {
+	public <E> GremlinFluentPipeline sideEffect(Collection<E> collection) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public <I> GremlinFluentPipeline<I, I> sideEffect(Function<I, I> function) {
+	public <E> GremlinFluentPipeline sideEffect(Function<E, E> function) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -392,20 +391,20 @@ public class TraversalEngine<S, E> extends GremlinPipeline<S, E> implements Grem
 	// ------------------- Branch ----------------------
 
 	@Override
-	public <I, C1, C2, O> GremlinFluentPipeline<I, O> ifThenElse(Predicate<I> ifPredicate, Function<I, C1> thenFunction,
+	public <I, C1, C2> GremlinFluentPipeline ifThenElse(Predicate<I> ifPredicate, Function<I, C1> thenFunction,
 			Function<I, C2> elseFunction, boolean setThenUnboxing, boolean setElseUnboxing) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public <I> GremlinFluentPipeline<I, I> as(String pointer) {
+	public GremlinFluentPipeline as(String pointer) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public <I, O> GremlinFluentPipeline<I, O> loop(String pointer, Predicate<LoopBundle<I>> whilePredicate) {
+	public <E> GremlinFluentPipeline loop(String pointer, Predicate<LoopBundle<E>> whilePredicate) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -459,7 +458,7 @@ public class TraversalEngine<S, E> extends GremlinPipeline<S, E> implements Grem
 		g.addEdge(v1, v2, "l");
 		g.addEdge(v1, v3, "l");
 
-		System.out.println(new TraversalEngine<Graph, Edge>(g, g, Graph.class, false).V().outE("l").toList());
+		System.out.println(new TraversalEngine(g, g, Graph.class, false).V().outE("l").toList());
 
 		java.util.Set<Integer> s1 = java.util.Set.of(1, 2, 3);
 		java.util.Set<Integer> s2 = java.util.Set.of(2, 3, 4);

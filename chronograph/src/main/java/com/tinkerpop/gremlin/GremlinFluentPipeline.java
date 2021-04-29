@@ -8,10 +8,7 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
-import com.tinkerpop.blueprints.Graph;
-import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.common.Tokens;
 
 /**
@@ -21,7 +18,7 @@ import com.tinkerpop.common.Tokens;
  * @param <S> a type of start traverser
  * @param <E> a type of end traverser
  */
-public interface GremlinFluentPipeline<S, E> {
+public interface GremlinFluentPipeline {
 
 	// -------------------Transform: Graph to Element----------------------
 
@@ -36,7 +33,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 *
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<Graph, Vertex> V();
+	public GremlinFluentPipeline V();
 
 	/**
 	 * Move traverser from Graph to all the vertices matched with key-value
@@ -51,7 +48,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param value the value that all the emitted vertices should have for the key
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<Graph, Vertex> V(String key, Object value);
+	public GremlinFluentPipeline V(String key, Object value);
 
 	/**
 	 * Move traverser from Graph to all the edges
@@ -65,7 +62,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 *
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<Graph, Edge> E();
+	public GremlinFluentPipeline E();
 
 	/**
 	 * Move traverser from Graph to all the edges matched with key-value
@@ -80,7 +77,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param value the value that all the emitted edges should have for the key
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<Graph, Edge> E(String key, Object value);
+	public GremlinFluentPipeline E(String key, Object value);
 
 	// -------------------Transform: Element <- -> String ----------------------
 
@@ -95,7 +92,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * 
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<Element, String> id();
+	public GremlinFluentPipeline id();
 
 	/**
 	 * Move traversers from IDs of graph elements to the elements
@@ -108,7 +105,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * 
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<String, ? extends Element> element(Class<? extends Element> elementClass);
+	public GremlinFluentPipeline element(Class<? extends Element> elementClass);
 
 	// -------------------Transform: Vertex to Edge ----------------------
 
@@ -123,7 +120,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * 
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<Vertex, Edge> outE(String... labels);
+	public GremlinFluentPipeline outE(String... labels);
 
 	/**
 	 * Move traverser from each vertex to in-going edges
@@ -136,7 +133,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * 
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<Vertex, Edge> inE(String... labels);
+	public GremlinFluentPipeline inE(String... labels);
 
 	// -------------------Transform: Edge to Vertex ----------------------
 
@@ -151,7 +148,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * 
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<Edge, Vertex> outV();
+	public GremlinFluentPipeline outV();
 
 	/**
 	 * Move traverser from each edge to in vertex
@@ -164,7 +161,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * 
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<Edge, Vertex> inV();
+	public GremlinFluentPipeline inV();
 
 	// -------------------Transform: Vertex to Vertex ----------------------
 	/**
@@ -178,7 +175,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * 
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<Vertex, Vertex> out(String... labels);
+	public GremlinFluentPipeline out(String... labels);
 
 	/**
 	 * Move traverser from each vertex to out-going vertices
@@ -191,7 +188,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * 
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<Vertex, Vertex> in(String... labels);
+	public GremlinFluentPipeline in(String... labels);
 
 	// -------------------Transform: Gather / Scatter ----------------------
 
@@ -207,7 +204,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * 
 	 * @return the extended Pipeline
 	 */
-	public <O> GremlinFluentPipeline<O, List<O>> gather();
+	public GremlinFluentPipeline gather();
 
 	/**
 	 * Any input extending Collection is unboxed. If the input is not extending
@@ -221,7 +218,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * 
 	 * @return the extended Pipeline
 	 */
-	public <I, O> GremlinFluentPipeline<I, O> scatter();
+	public GremlinFluentPipeline scatter();
 
 	/**
 	 * Given an input, the provided function is computed on the input and the output
@@ -238,7 +235,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 *                     emitted.
 	 * @return the extended Pipeline
 	 */
-	public <I, C, O> GremlinFluentPipeline<I, O> transform(Function<I, C> function, boolean setUnboxing);
+	public <I, C> GremlinFluentPipeline transform(Function<I, C> function, boolean setUnboxing);
 
 	// -------------------Filter/Sort/Limit ----------------------
 
@@ -254,7 +251,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param predicate the custom filter function
 	 * @return the extended Pipeline
 	 */
-	public <I> GremlinFluentPipeline<I, I> dedup();
+	public <I> GremlinFluentPipeline dedup();
 
 	/**
 	 * A biased coin toss determines if the object is emitted or not.
@@ -264,7 +261,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @return the extended Pipeline
 	 * 
 	 */
-	public <I> GremlinFluentPipeline<I, I> random(Double lowerBound);
+	public <I> GremlinFluentPipeline random(Double lowerBound);
 
 	/**
 	 * Check if the vertex or edge has a property with provided key.
@@ -278,7 +275,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param key the property key to check
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<? extends Element, ? extends Element> has(String key);
+	public GremlinFluentPipeline has(String key);
 
 	/**
 	 * Check if the vertex or edge has a property with provided key-value.
@@ -293,7 +290,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param value the object to filter on (in an OR manner)
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<? extends Element, ? extends Element> has(String key, Object value);
+	public GremlinFluentPipeline has(String key, Object value);
 
 	/**
 	 * Check if the vertex or edge has a property with provided key-predicate-value.
@@ -309,8 +306,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param value        the object to filter on
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline<? extends Element, ? extends Element> has(String key, Tokens.NC compareToken,
-			Object value);
+	public GremlinFluentPipeline has(String key, Tokens.NC compareToken, Object value);
 
 	/**
 	 * Given an input, the provided predicate evaluates the input and only inputs
@@ -325,7 +321,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param predicate the custom filter function
 	 * @return the extended Pipeline
 	 */
-	public <I> GremlinFluentPipeline<I, I> filter(Predicate<S> predicate);
+	public <E> GremlinFluentPipeline filter(Predicate<E> predicate);
 
 	/**
 	 * Sort the traversers based on comparator
@@ -339,7 +335,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param comparator
 	 * @return the extended Pipeline
 	 */
-	public <I> GremlinFluentPipeline<I, I> sort(Comparator<S> comparator);
+	public <E> GremlinFluentPipeline sort(Comparator<E> comparator);
 
 	/**
 	 * Limit the number of traversers
@@ -353,7 +349,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param maxSize
 	 * @return the extended Pipeline
 	 */
-	public <I> GremlinFluentPipeline<I, I> limit(long maxSize);
+	public GremlinFluentPipeline limit(long maxSize);
 
 	// ------------------- Side Effect ----------------------
 
@@ -370,7 +366,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param collection to store traversers
 	 * @return
 	 */
-	public <I> GremlinFluentPipeline<I, I> sideEffect(Collection<I> collection);
+	public <E> GremlinFluentPipeline sideEffect(Collection<E> collection);
 
 	/**
 	 * The provided function is invoked while the incoming object is just emitted to
@@ -385,7 +381,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param function the function should return the intact argument
 	 * @return the extended Pipeline
 	 */
-	public <I> GremlinFluentPipeline<I, I> sideEffect(Function<I, I> function);
+	public <E> GremlinFluentPipeline sideEffect(Function<E, E> function);
 
 	// ------------------- Branch ----------------------
 
@@ -400,7 +396,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param setElseUnboxing refer to {@link #transform(Function, boolean)}
 	 * @return the extended Pipeline
 	 */
-	public <I, C1, C2, O> GremlinFluentPipeline<I, O> ifThenElse(Predicate<I> ifPredicate, Function<I, C1> thenFunction,
+	public <I, C1, C2> GremlinFluentPipeline ifThenElse(Predicate<I> ifPredicate, Function<I, C1> thenFunction,
 			Function<I, C2> elseFunction, boolean setThenUnboxing, boolean setElseUnboxing);
 
 	/**
@@ -409,7 +405,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param pointer for the loop
 	 * @return the extended Pipeline
 	 */
-	public <I> GremlinFluentPipeline<I, I> as(String pointer);
+	public GremlinFluentPipeline as(String pointer);
 
 	/**
 	 * loop repeats a part of a pipeline between as('name') to loop('name',
@@ -419,7 +415,7 @@ public interface GremlinFluentPipeline<S, E> {
 	 * @param whilePredicate if true, go to the pointer
 	 * @return the extended Pipeline
 	 */
-	public <I, O> GremlinFluentPipeline<I, O> loop(String pointer, Predicate<LoopBundle<I>> whilePredicate);
+	public <E> GremlinFluentPipeline loop(String pointer, Predicate<LoopBundle<E>> whilePredicate);
 
 	// ------------------- Aggregation ----------------------
 
