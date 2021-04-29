@@ -124,7 +124,7 @@ public class HTraversalEngine<S, E> extends GremlinPipeline<S, E> implements Gre
 	public GremlinFluentPipeline<Edge, Vertex> outV() {
 		stream = stream.map(e -> ((Edge) e).getVertex(Direction.OUT));
 		elementClass = Vertex.class;
-		return (GremlinFluentPipeline<Edge, Vertex>) this; 
+		return (GremlinFluentPipeline<Edge, Vertex>) this;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -132,7 +132,7 @@ public class HTraversalEngine<S, E> extends GremlinPipeline<S, E> implements Gre
 	public GremlinFluentPipeline<Edge, Vertex> inV() {
 		stream = stream.map(e -> ((Edge) e).getVertex(Direction.IN));
 		elementClass = Vertex.class;
-		return (GremlinFluentPipeline<Edge, Vertex>) this; 
+		return (GremlinFluentPipeline<Edge, Vertex>) this;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -154,7 +154,7 @@ public class HTraversalEngine<S, E> extends GremlinPipeline<S, E> implements Gre
 	@Override
 	public <O> GremlinFluentPipeline<O, List<O>> gather() {
 		stream = (Stream<List<O>>) stream.collect(Collectors.toList()).stream();
-		
+
 		collectionClass = elementClass;
 		elementClass = List.class;
 		return (GremlinFluentPipeline<O, List<O>>) this;
@@ -163,24 +163,30 @@ public class HTraversalEngine<S, E> extends GremlinPipeline<S, E> implements Gre
 	@SuppressWarnings("unchecked")
 	@Override
 	public <I, O> GremlinFluentPipeline<I, O> scatter() {
-		if(elementClass.equals(List.class)) {
+		if (elementClass.equals(List.class)) {
 			stream = stream.flatMap(list -> ((List) list).stream());
 			elementClass = collectionClass;
 			collectionClass = null;
-		} 
+		}
 		return (GremlinFluentPipeline<I, O>) this;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <I, C, O> GremlinFluentPipeline<I, O> transform(Function<I, C> function, boolean setUnboxing) {
-		// TODO Auto-generated method stub
-		return null;
+		stream = stream.map(entry -> {
+			function.apply((I) entry);
+			return entry;
+		});
+
+		return (GremlinFluentPipeline<I, O>) this;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <I> GremlinFluentPipeline<I, I> dedup() {
-		// TODO Auto-generated method stub
-		return null;
+		stream = stream.distinct();
+		return (GremlinFluentPipeline<I, I>) this;
 	}
 
 	@Override
@@ -189,10 +195,16 @@ public class HTraversalEngine<S, E> extends GremlinPipeline<S, E> implements Gre
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <I> GremlinFluentPipeline<I, I> filter(Predicate<S> predicate) {
-		// TODO Auto-generated method stub
-		return null;
+		stream = stream.filter(entry -> {
+			if (predicate.equals(entry)) {
+				return true;
+			}
+			return false;
+		});
+		return (GremlinFluentPipeline<I, I>) this;
 	}
 
 	@Override
@@ -209,21 +221,33 @@ public class HTraversalEngine<S, E> extends GremlinPipeline<S, E> implements Gre
 
 	@Override
 	public <I> GremlinFluentPipeline<I, I> sideEffect(Collection<I> collection) {
-		// TODO Auto-generated method stub
-		return null;
+		collection = (Collection<I>) stream.collect(Collectors.toList());
+		return (GremlinFluentPipeline<I, I>) this;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <I> GremlinFluentPipeline<I, I> sideEffect(Function<I, I> function) {
-		// TODO Auto-generated method stub
+		stream = stream.flatMap(entry -> {
+			function.apply((I) entry);
+			return (Stream<? extends Object>) entry;
+		});
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <I, C1, C2, O> GremlinFluentPipeline<I, O> ifThenElse(Predicate<I> ifPredicate, Function<I, C1> thenFunction,
 			Function<I, C2> elseFunction, boolean setThenUnboxing, boolean setElseUnboxing) {
-		// TODO Auto-generated method stub
-		return null;
+		stream = stream.flatMap(entry -> {
+			if (ifPredicate.test((I) entry)) {
+				thenFunction.apply((I) entry);
+			} else {
+				elseFunction.apply((I) entry);
+			}
+			return (Stream<? extends Object>) entry;
+		});
+		return (GremlinFluentPipeline<I, O>) this;
 	}
 
 	@Override
