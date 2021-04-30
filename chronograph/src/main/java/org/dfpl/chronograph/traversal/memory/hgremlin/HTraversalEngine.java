@@ -161,14 +161,13 @@ public class HTraversalEngine extends GremlinPipeline implements GremlinFluentPi
 	public <I, C> GremlinFluentPipeline transform(Function<I, C> function, boolean setUnboxing) {
 		if (setUnboxing) {
 			stream = stream.flatMap(entry -> {
-				Collection<C> temp = (Collection<C>) function.apply((I) entry);
-				return temp.stream();
+				return ((Collection<C>) function.apply((I) entry)).stream();
 			});
 
 		} else {
 			stream = stream.map(entry -> {
 				elementClass = entry.getClass();
-				return function.apply((I) entry);
+				return (C) function.apply((I) entry);
 			});
 		}
 
@@ -211,6 +210,7 @@ public class HTraversalEngine extends GremlinPipeline implements GremlinFluentPi
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <E> GremlinFluentPipeline sideEffect(Collection<E> collection) {
 		stream.forEach(entry -> {
@@ -236,20 +236,21 @@ public class HTraversalEngine extends GremlinPipeline implements GremlinFluentPi
 	@Override
 	public <I, C1, C2> GremlinFluentPipeline ifThenElse(Predicate<I> ifPredicate, Function<I, C1> thenFunction,
 			Function<I, C2> elseFunction, boolean setThenUnboxing, boolean setElseUnboxing) {
+
 		stream = stream.map(entry -> {
 			if (ifPredicate.test((I) entry)) {
-				thenFunction.apply((I) entry);
+//				return ((Collection<C1>) thenFunction.apply((I) entry)).stream();
+				return (C1) thenFunction.apply((I) entry);
 			} else {
-				elseFunction.apply((I) entry);
+//				return ((Collection<C2>) elseFunction.apply((I) entry)).stream();
+				return (C2) elseFunction.apply((I) entry);
 			}
-			return entry;
 		});
 		return this;
 	}
 
 	@Override
 	public GremlinFluentPipeline as(String pointer) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
