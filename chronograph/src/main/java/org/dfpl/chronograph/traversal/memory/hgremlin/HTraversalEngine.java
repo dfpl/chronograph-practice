@@ -85,15 +85,15 @@ public class HTraversalEngine extends GremlinPipeline implements GremlinFluentPi
 	public GremlinFluentPipeline element(Class<? extends Element> elementClass) {
 		if (!elementClass.equals(Vertex.class) || !elementClass.equals(Edge.class))
 			throw new IllegalArgumentException("The argument should be of Vertex or Edge class.");
-		
+
 		this.elementClass = elementClass;
 
 		if (elementClass.equals(Vertex.class)) {
 			stream = stream.flatMap(g -> ((Graph) g).getVertices().stream());
 		} else if (elementClass.equals(Edge.class)) {
 			stream = stream.flatMap(g -> ((Graph) g).getEdges().stream());
-		} 
-		
+		}
+
 		return this;
 	}
 
@@ -140,7 +140,7 @@ public class HTraversalEngine extends GremlinPipeline implements GremlinFluentPi
 	@Override
 	public GremlinFluentPipeline gather() {
 		stream = stream.collect(Collectors.toList()).stream();
-		
+
 		collectionClass = elementClass;
 		elementClass = List.class;
 		return this;
@@ -159,19 +159,19 @@ public class HTraversalEngine extends GremlinPipeline implements GremlinFluentPi
 	@SuppressWarnings("unchecked")
 	@Override
 	public <I, C> GremlinFluentPipeline transform(Function<I, C> function, boolean setUnboxing) {
-		if(setUnboxing) {
+		if (setUnboxing) {
 			stream = stream.flatMap(entry -> {
 				Collection<C> temp = (Collection<C>) function.apply((I) entry);
 				return temp.stream();
 			});
-			
+
 		} else {
 			stream = stream.map(entry -> {
 				elementClass = entry.getClass();
 				return function.apply((I) entry);
 			});
 		}
-		
+
 		return this;
 	}
 
@@ -213,15 +213,21 @@ public class HTraversalEngine extends GremlinPipeline implements GremlinFluentPi
 
 	@Override
 	public <E> GremlinFluentPipeline sideEffect(Collection<E> collection) {
-		return null;
+		stream.forEach(entry -> {
+			collection.add((E) entry);
+		});
+
+		collectionClass = elementClass;
+		elementClass = List.class;
+
+		return this;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <E> GremlinFluentPipeline sideEffect(Function<E, E> function) {
 		stream = stream.map(entry -> {
-			function.apply((E) entry);
-			return entry;
+			return function.apply((E) entry);
 		});
 		return this;
 	}

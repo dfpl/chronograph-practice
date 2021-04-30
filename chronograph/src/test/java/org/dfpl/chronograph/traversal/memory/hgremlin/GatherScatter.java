@@ -29,7 +29,7 @@ public class GatherScatter {
 		Vertex b = graph.addVertex("B");
 		Vertex c = graph.addVertex("C");
 
-		HTraversalEngine engine = new HTraversalEngine(graph, graph.getVertices(), Graph.class);
+		HTraversalEngine engine = new HTraversalEngine(graph, graph.getVertices(), Vertex.class);
 
 		GremlinFluentPipeline vertices = engine.gather();
 		assertThat(vertices.toList(), containsInAnyOrder("A", "B", "C"));
@@ -44,7 +44,7 @@ public class GatherScatter {
 		Vertex b = graph.addVertex("B");
 		Vertex c = graph.addVertex("C");
 
-		HTraversalEngine engine = new HTraversalEngine(graph, graph.getVertices(), Graph.class);
+		HTraversalEngine engine = new HTraversalEngine(graph, graph.getVertices(), Vertex.class);
 
 		assertThat(engine.scatter().toList(), containsInAnyOrder("A", "B", "C"));
 	}
