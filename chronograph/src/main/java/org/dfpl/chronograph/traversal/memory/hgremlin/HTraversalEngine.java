@@ -8,7 +8,6 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
@@ -84,15 +83,17 @@ public class HTraversalEngine extends GremlinPipeline implements GremlinFluentPi
 
 	@Override
 	public GremlinFluentPipeline element(Class<? extends Element> elementClass) {
+		if (!elementClass.equals(Vertex.class) || !elementClass.equals(Edge.class))
+			throw new IllegalArgumentException("The argument should be of Vertex or Edge class.");
+		
 		this.elementClass = elementClass;
 
 		if (elementClass.equals(Vertex.class)) {
 			stream = stream.flatMap(g -> ((Graph) g).getVertices().stream());
 		} else if (elementClass.equals(Edge.class)) {
 			stream = stream.flatMap(g -> ((Graph) g).getEdges().stream());
-		} else {
-			stream = null;
-		}
+		} 
+		
 		return this;
 	}
 
@@ -136,11 +137,10 @@ public class HTraversalEngine extends GremlinPipeline implements GremlinFluentPi
 		return this;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public GremlinFluentPipeline gather() {
-		stream = (Stream<List<?>>) stream.collect(Collectors.toList()).stream();
-
+		stream = stream.collect(Collectors.toList()).stream();
+		
 		collectionClass = elementClass;
 		elementClass = List.class;
 		return this;
@@ -159,14 +159,22 @@ public class HTraversalEngine extends GremlinPipeline implements GremlinFluentPi
 	@SuppressWarnings("unchecked")
 	@Override
 	public <I, C> GremlinFluentPipeline transform(Function<I, C> function, boolean setUnboxing) {
-		stream = stream.map(entry -> {
-			function.apply((I) entry);
-			return entry;
-		});
+		if(setUnboxing) {
+			stream = stream.flatMap(entry -> {
+				Collection<C> temp = (Collection<C>) function.apply((I) entry);
+				return temp.stream();
+			});
+			
+		} else {
+			stream = stream.map(entry -> {
+				elementClass = entry.getClass();
+				return function.apply((I) entry);
+			});
+		}
+		
 		return this;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public GremlinFluentPipeline dedup() {
 		stream = stream.distinct();
@@ -179,11 +187,10 @@ public class HTraversalEngine extends GremlinPipeline implements GremlinFluentPi
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <E> GremlinFluentPipeline filter(Predicate<E> predicate) {
 		stream = stream.filter(entry -> {
-			if (predicate.equals(entry)) {
+			if (predicate.test((E) entry)) {
 				return true;
 			}
 			return false;
@@ -205,16 +212,15 @@ public class HTraversalEngine extends GremlinPipeline implements GremlinFluentPi
 
 	@Override
 	public <E> GremlinFluentPipeline sideEffect(Collection<E> collection) {
-		collection = (Collection<E>) stream.collect(Collectors.toList());
-		return this;
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <E> GremlinFluentPipeline sideEffect(Function<E, E> function) {
-		stream = stream.flatMap(entry -> {
+		stream = stream.map(entry -> {
 			function.apply((E) entry);
-			return (Stream<? extends Object>) entry;
+			return entry;
 		});
 		return this;
 	}
@@ -223,13 +229,13 @@ public class HTraversalEngine extends GremlinPipeline implements GremlinFluentPi
 	@Override
 	public <I, C1, C2> GremlinFluentPipeline ifThenElse(Predicate<I> ifPredicate, Function<I, C1> thenFunction,
 			Function<I, C2> elseFunction, boolean setThenUnboxing, boolean setElseUnboxing) {
-		stream = stream.flatMap(entry -> {
+		stream = stream.map(entry -> {
 			if (ifPredicate.test((I) entry)) {
 				thenFunction.apply((I) entry);
 			} else {
 				elseFunction.apply((I) entry);
 			}
-			return (Stream<? extends Object>) entry;
+			return entry;
 		});
 		return this;
 	}
