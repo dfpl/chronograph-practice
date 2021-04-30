@@ -187,6 +187,7 @@ public class HTraversalEngine extends GremlinPipeline implements GremlinFluentPi
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <E> GremlinFluentPipeline filter(Predicate<E> predicate) {
 		stream = stream.filter(entry -> {

@@ -1,11 +1,7 @@
 package org.dfpl.chronograph.traversal.memory.hgremlin;
 
-import static org.junit.Assert.fail;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -68,8 +64,8 @@ public class FilterSortLimit {
 		Graph graph = new ChronoGraph();
 
 		Vertex a = graph.addVertex("A");
-		Vertex b = graph.addVertex("B");
-		Vertex c = graph.addVertex("C");
+		graph.addVertex("B");
+		graph.addVertex("C");
 
 		HTraversalEngine engine = new HTraversalEngine(graph, graph.getVertices(), Vertex.class);
 
