@@ -1,6 +1,7 @@
-package org.dfpl.chronograph.traversal.memory.hgremlin;
+package org.dfpl.chronograph.traversal.memory;
 
 import org.dfpl.chronograph.crud.memory.ChronoGraph;
+import org.dfpl.chronograph.traversal.TraversalEngine;
 import org.junit.Test;
 
 import com.tinkerpop.blueprints.Edge;
@@ -20,7 +21,7 @@ public class ElementToString {
 		graph.addVertex("B");
 		graph.addVertex("C");
 
-		HTraversalEngine engine = new HTraversalEngine(graph, graph.getVertices(), Vertex.class);
+		TraversalEngine engine = new TraversalEngine(graph, graph.getVertices(), Vertex.class, false);
 
 		assertThat(engine.id().toList(), containsInAnyOrder("A", "B", "C"));
 	}
@@ -37,7 +38,7 @@ public class ElementToString {
 		graph.addEdge(a, c, "likes");
 		graph.addEdge(c, c, "loves");
 
-		HTraversalEngine engine = new HTraversalEngine(graph, graph.getEdges(), Edge.class);
+		TraversalEngine engine = new TraversalEngine(graph, graph.getEdges(), Edge.class, false);
 
 		assertThat(engine.id().toList(), containsInAnyOrder("A|likes|B", "A|likes|C", "C|loves|C"));
 	}
@@ -50,7 +51,7 @@ public class ElementToString {
 		Vertex b = graph.addVertex("B");
 		Vertex c = graph.addVertex("C");
 
-		HTraversalEngine vEngine = new HTraversalEngine(graph, graph, Graph.class);
+		TraversalEngine vEngine = new TraversalEngine(graph, graph, Graph.class, false);
 
 		assertThat(vEngine.element(Vertex.class).toList(), containsInAnyOrder("A", "B", "C"));
 
@@ -58,7 +59,7 @@ public class ElementToString {
 		graph.addEdge(a, c, "likes");
 		graph.addEdge(c, c, "loves");
 
-		HTraversalEngine eEngine = new HTraversalEngine(graph, graph, Graph.class);
+		TraversalEngine eEngine = new TraversalEngine(graph, graph, Graph.class, false);
 
 		assertThat(eEngine.element(Edge.class).toList(), containsInAnyOrder("A|likes|B", "A|likes|C", "C|loves|C"));
 	}

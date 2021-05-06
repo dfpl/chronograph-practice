@@ -1,4 +1,4 @@
-package org.dfpl.chronograph.traversal.memory.hgremlin;
+package org.dfpl.chronograph.traversal.memory;
 
 import static org.junit.Assert.*;
 
@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 import org.dfpl.chronograph.crud.memory.ChronoGraph;
+import org.dfpl.chronograph.traversal.TraversalEngine;
 import org.junit.Test;
 
 import com.tinkerpop.blueprints.Graph;
@@ -18,6 +19,7 @@ import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInA
 
 public class SideEffect {
 
+	@SuppressWarnings("unused")
 	@Test
 	public void sideEffectWithFunction() {
 		Graph graph = new ChronoGraph();
@@ -26,7 +28,7 @@ public class SideEffect {
 		Vertex b = graph.addVertex("B");
 		Vertex c = graph.addVertex("C");
 
-		HTraversalEngine engine = new HTraversalEngine(graph, graph.getVertices(), Vertex.class);
+		TraversalEngine engine = new TraversalEngine(graph, graph.getVertices(), Vertex.class, false);
 
 		Set<Vertex> vSet = new HashSet<Vertex>();
 
@@ -50,7 +52,7 @@ public class SideEffect {
 		Vertex b = graph.addVertex("B");
 		Vertex c = graph.addVertex("C");
 
-		HTraversalEngine engine = new HTraversalEngine(graph, graph.getVertices(), Vertex.class);
+		TraversalEngine engine = new TraversalEngine(graph, graph.getVertices(), Vertex.class, false);
 
 		Set<Vertex> vertices = new HashSet<Vertex>();
 

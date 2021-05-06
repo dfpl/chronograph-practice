@@ -1,4 +1,4 @@
-package org.dfpl.chronograph.traversal.memory.hgremlin;
+package org.dfpl.chronograph.traversal.memory;
 
 import static org.junit.Assert.*;
 
@@ -8,6 +8,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.dfpl.chronograph.crud.memory.ChronoGraph;
+import org.dfpl.chronograph.traversal.TraversalEngine;
 import org.junit.Test;
 
 import com.tinkerpop.blueprints.Direction;
@@ -50,7 +51,7 @@ public class Branch {
 		acLikes.setProperty("isOdd", false);
 		ccLoves.setProperty("weight", 50);
 
-		HTraversalEngine engine = new HTraversalEngine(graph, graph.getVertices(), Vertex.class);
+		TraversalEngine engine = new TraversalEngine(graph, graph.getVertices(), Vertex.class, false);
 
 		List<Object> vertices = engine.ifThenElse(new Predicate<Vertex>() {
 
@@ -78,6 +79,7 @@ public class Branch {
 		assertThat(vertices, containsInAnyOrder("north", 10, "west"));
 	}
 
+	@SuppressWarnings("unused")
 	@Test
 	public void ifThenElseWithIfUnboxing() {
 		Graph graph = new ChronoGraph();
@@ -103,7 +105,7 @@ public class Branch {
 		Edge abLoves = graph.addEdge(a, b, "loves");
 		Edge ccLoves = graph.addEdge(c, c, "loves");
 
-		HTraversalEngine engine = new HTraversalEngine(graph, graph.getVertices(), Vertex.class);
+		TraversalEngine engine = new TraversalEngine(graph, graph.getVertices(), Vertex.class, false);
 
 		List<Object> vertices = engine.ifThenElse(new Predicate<Vertex>() {
 

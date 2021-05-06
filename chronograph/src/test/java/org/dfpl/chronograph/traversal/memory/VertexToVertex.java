@@ -1,8 +1,9 @@
-package org.dfpl.chronograph.traversal.memory.hgremlin;
+package org.dfpl.chronograph.traversal.memory;
 
 import static org.junit.Assert.*;
 
 import org.dfpl.chronograph.crud.memory.ChronoGraph;
+import org.dfpl.chronograph.traversal.TraversalEngine;
 import org.junit.Test;
 
 import com.tinkerpop.blueprints.Graph;
@@ -23,7 +24,7 @@ public class VertexToVertex {
 		graph.addEdge(a, b, "likes");
 		graph.addEdge(a, a, "loves");
 
-		HTraversalEngine engine = new HTraversalEngine(graph, a, Vertex.class);
+		TraversalEngine engine = new TraversalEngine(graph, a, Vertex.class, false);
 
 		assertThat(engine.out("likes", "loves").toList(), containsInAnyOrder(a, b));
 	}
@@ -38,7 +39,7 @@ public class VertexToVertex {
 		graph.addEdge(a, b, "likes");
 		graph.addEdge(a, a, "loves");
 
-		HTraversalEngine engine = new HTraversalEngine(graph, a, Vertex.class);
+		TraversalEngine engine = new TraversalEngine(graph, a, Vertex.class, false);
 
 		assertThat(engine.in("likes", "loves").toList(), containsInAnyOrder(a));
 	}

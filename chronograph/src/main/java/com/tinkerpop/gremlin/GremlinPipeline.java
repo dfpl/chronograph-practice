@@ -1,7 +1,11 @@
 package com.tinkerpop.gremlin;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.stream.Stream;
+
+import org.dfpl.chronograph.common.Step;
 
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Graph;
@@ -19,6 +23,8 @@ public class GremlinPipeline {
 	protected Class<?> elementClass;
 	protected Class<?> collectionClass;
 	protected boolean isParallel;
+	protected ArrayList<Step> stepList;
+	protected HashMap<String, Integer> stepIndex;
 
 	/**
 	 * Initialize TraversalEngine
@@ -42,6 +48,10 @@ public class GremlinPipeline {
 
 		if (isParallel)
 			stream.parallel();
+
+		stepList = new ArrayList<Step>();
+		stepIndex = new HashMap<String, Integer>();
+
 		this.elementClass = elementClass;
 		this.collectionClass = null;
 	}

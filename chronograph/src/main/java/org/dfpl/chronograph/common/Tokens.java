@@ -1,4 +1,4 @@
-package com.tinkerpop.common;
+package org.dfpl.chronograph.common;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)

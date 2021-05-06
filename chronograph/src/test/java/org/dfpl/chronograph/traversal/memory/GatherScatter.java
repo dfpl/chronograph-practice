@@ -1,4 +1,4 @@
-package org.dfpl.chronograph.traversal.memory.hgremlin;
+package org.dfpl.chronograph.traversal.memory;
 
 import static org.junit.Assert.*;
 
@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import org.dfpl.chronograph.crud.memory.ChronoGraph;
+import org.dfpl.chronograph.traversal.TraversalEngine;
 import org.junit.Test;
 
 import com.tinkerpop.blueprints.Direction;
@@ -29,7 +30,7 @@ public class GatherScatter {
 		Vertex b = graph.addVertex("B");
 		Vertex c = graph.addVertex("C");
 
-		HTraversalEngine engine = new HTraversalEngine(graph, graph.getVertices(), Vertex.class);
+		TraversalEngine engine = new TraversalEngine(graph, graph.getVertices(), Vertex.class, false);
 
 		GremlinFluentPipeline vertices = engine.gather();
 		assertThat(vertices.toList(), containsInAnyOrder("A", "B", "C"));
@@ -44,11 +45,11 @@ public class GatherScatter {
 		Vertex b = graph.addVertex("B");
 		Vertex c = graph.addVertex("C");
 
-		HTraversalEngine engine = new HTraversalEngine(graph, graph.getVertices(), Vertex.class);
+		TraversalEngine engine = new TraversalEngine(graph, graph.getVertices(), Vertex.class, false);
 
 		assertThat(engine.scatter().toList(), containsInAnyOrder("A", "B", "C"));
 	}
-	
+
 	@SuppressWarnings("unused")
 	@Test
 	public void transform() {
@@ -57,13 +58,13 @@ public class GatherScatter {
 		Vertex a = graph.addVertex("A");
 		Vertex b = graph.addVertex("B");
 		Vertex c = graph.addVertex("C");
-		
+
 		Edge abLikes = graph.addEdge(a, b, "likes");
 		Edge acLikes = graph.addEdge(a, c, "likes");
 		graph.addEdge(c, c, "loves");
 
-		HTraversalEngine boxEngine = new HTraversalEngine(graph, abLikes, Edge.class);
-		
+		TraversalEngine boxEngine = new TraversalEngine(graph, abLikes, Edge.class, false);
+
 		List<Vertex> test = boxEngine.transform(new Function<Edge, Vertex>() {
 
 			@Override
@@ -73,10 +74,9 @@ public class GatherScatter {
 
 		}, false).toList();
 		assertThat(test, containsInAnyOrder("B"));
-		
-		
-		HTraversalEngine unboxEngine = new HTraversalEngine(graph, a, Vertex.class);
-		
+
+		TraversalEngine unboxEngine = new TraversalEngine(graph, a, Vertex.class, false);
+
 		GremlinFluentPipeline unboxPipeline = unboxEngine.transform(new Function<Vertex, Collection<Edge>>() {
 
 			@Override
@@ -85,7 +85,7 @@ public class GatherScatter {
 			}
 
 		}, true);
-		
+
 		assertThat(unboxPipeline.toList(), containsInAnyOrder(abLikes, acLikes));
 	}
 

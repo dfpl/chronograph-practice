@@ -1,4 +1,4 @@
-package org.dfpl.chronograph.traversal.memory.hgremlin;
+package org.dfpl.chronograph.traversal.memory;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import org.dfpl.chronograph.crud.memory.ChronoGraph;
+import org.dfpl.chronograph.traversal.TraversalEngine;
 import org.junit.Test;
 
 import com.tinkerpop.blueprints.Edge;
@@ -39,7 +40,7 @@ public class FilterSortLimit {
 		acLikes.setProperty("test", false);
 		ccLoves.setProperty("notest", "a");
 
-		HTraversalEngine engine = new HTraversalEngine(graph, graph.getVertices(), Vertex.class);
+		TraversalEngine engine = new TraversalEngine(graph, graph.getVertices(), Vertex.class, false);
 
 		assert (engine.has("test", true).toList().size() == 1);
 	}
@@ -53,7 +54,7 @@ public class FilterSortLimit {
 		Vertex aDup = graph.addVertex("A");
 
 		Collection<Vertex> dupVertices = Arrays.asList(a, b, aDup);
-		HTraversalEngine engine = new HTraversalEngine(graph, dupVertices, Vertex.class);
+		TraversalEngine engine = new TraversalEngine(graph, dupVertices, Vertex.class, false);
 
 		assertThat(engine.dedup().toList(), containsInAnyOrder(a, b));
 	}
@@ -67,7 +68,7 @@ public class FilterSortLimit {
 		graph.addVertex("B");
 		graph.addVertex("C");
 
-		HTraversalEngine engine = new HTraversalEngine(graph, graph.getVertices(), Vertex.class);
+		TraversalEngine engine = new TraversalEngine(graph, graph.getVertices(), Vertex.class, false);
 
 		List<Vertex> vertices = engine.filter(new Predicate<Vertex>() {
 

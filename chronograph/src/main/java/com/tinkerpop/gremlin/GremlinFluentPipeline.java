@@ -8,8 +8,9 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.dfpl.chronograph.common.Tokens;
+
 import com.tinkerpop.blueprints.Element;
-import com.tinkerpop.common.Tokens;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
@@ -335,7 +336,7 @@ public interface GremlinFluentPipeline {
 	 * @param comparator
 	 * @return the extended Pipeline
 	 */
-	public <E> GremlinFluentPipeline sort(Comparator<E> comparator);
+	public GremlinFluentPipeline sort(Comparator<?> comparator);
 
 	/**
 	 * Limit the number of traversers
