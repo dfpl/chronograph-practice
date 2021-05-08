@@ -399,6 +399,12 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 	@Override
 	public GremlinFluentPipeline dedup() {
 		stream = stream.distinct();
+
+		// Step Update
+		Class[] args = { };
+		Step step = new Step(this.getClass().getName(), "dedup", args);
+		stepList.add(step);
+		
 		return this;
 	}
 
