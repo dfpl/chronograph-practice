@@ -277,7 +277,6 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 
 		// Set the class of element
 		elementClass = Vertex.class;
-		
 
 		// Step Update
 		Class[] args = { labels.getClass() };
@@ -302,14 +301,12 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 
 		// Set the class of element
 		elementClass = Vertex.class;
-		
 
 		// Step Update
 		Class[] args = { labels.getClass() };
 		// TODO: Confirm warning on parameter type
 		Step step = new Step(this.getClass().getName(), "in", args, labels);
 		stepList.add(step);
-
 
 		// return the extended stream
 		return this;
@@ -330,6 +327,11 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 		collectionClass = elementClass;
 		elementClass = List.class;
 
+		// Step Update
+		Class[] args = {};
+		Step step = new Step(this.getClass().getName(), "gather", args);
+		stepList.add(step);
+
 		// return the extended stream
 		return this;
 	}
@@ -349,6 +351,11 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 			elementClass = collectionClass;
 			collectionClass = null;
 		}
+
+		// Step Update
+		Class[] args = {};
+		Step step = new Step(this.getClass().getName(), "scatter", args);
+		stepList.add(step);
 
 		return this;
 	}
@@ -371,13 +378,20 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 		}
 
 		// TODO: have to check
-		try {
-			Type sooper = getClass().getGenericSuperclass();
-			Type t = ((ParameterizedType) sooper).getActualTypeArguments()[0];
-			elementClass = Class.forName(t.toString());
-		} catch (ClassNotFoundException e) {
-			// Not occurred
-		}
+//		try {
+//			Type sooper = getClass().getGenericSuperclass();
+//			Type t = ((ParameterizedType) sooper).getActualTypeArguments()[0];
+//			elementClass = Class.forName(t.toString());
+//		} catch (ClassNotFoundException e) {
+//			// Not occurred
+//		}
+
+		// Step Update
+		Class[] args = { Function.class, Boolean.class };
+		// TODO: No Such Method Exception
+		Step step = new Step(this.getClass().getName(), "transform", args, function, setUnboxing);
+		stepList.add(step);
+
 		return this;
 	}
 
