@@ -185,9 +185,8 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 		elementClass = Edge.class;
 
 		// Step Update
-		Class[] args = new Class[labels.length];
-		for (int i = 0; i < labels.length; i++)
-			args[i] = String.class;
+		Class[] args = { labels.getClass() };
+
 		// TODO: Confirm warning on parameter type
 		Step step = new Step(this.getClass().getName(), "outE", args, labels);
 		stepList.add(step);
@@ -211,9 +210,8 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 		elementClass = Edge.class;
 
 		// Step Update
-		Class[] args = new Class[labels.length];
-		for (int i = 0; i < labels.length; i++)
-			args[i] = String.class;
+		Class[] args = { labels.getClass() };
+
 		// TODO: Confirm warning on parameter type
 		Step step = new Step(this.getClass().getName(), "inE", args, labels);
 		stepList.add(step);
