@@ -401,10 +401,10 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 		stream = stream.distinct();
 
 		// Step Update
-		Class[] args = { };
+		Class[] args = {};
 		Step step = new Step(this.getClass().getName(), "dedup", args);
 		stepList.add(step);
-		
+
 		return this;
 	}
 
@@ -415,6 +415,11 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 			double dr = r.nextDouble();
 			return dr > lowerBound;
 		});
+
+		// Step Update
+		Class[] args = { Double.class };
+		Step step = new Step(this.getClass().getName(), "random", args, lowerBound);
+		stepList.add(step);
 
 		return this;
 	}
