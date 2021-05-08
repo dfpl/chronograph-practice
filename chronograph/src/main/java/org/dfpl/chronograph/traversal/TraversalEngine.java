@@ -529,7 +529,12 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 	@Override
 	public GremlinFluentPipeline limit(Long maxSize) {
 		stream = stream.limit(maxSize);
-		
+
+		// Step Update
+		Class[] args = { Long.class };
+		Step step = new Step(this.getClass().getName(), "limit", args, maxSize);
+		stepList.add(step);
+
 		return this;
 	}
 
