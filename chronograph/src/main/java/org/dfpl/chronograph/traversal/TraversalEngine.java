@@ -407,10 +407,7 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 		Random r = new Random();
 		stream = stream.filter(e -> {
 			double dr = r.nextDouble();
-			if (dr > lowerBound)
-				return true;
-			else
-				return false;
+			return dr > lowerBound;
 		});
 
 		return this;
