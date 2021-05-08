@@ -506,6 +506,11 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 			return predicate.test((E) entry);
 		});
 
+		// Step Update
+		Class[] args = { Predicate.class };
+		Step step = new Step(this.getClass().getName(), "filter", args, predicate);
+		stepList.add(step);
+
 		return this;
 	}
 
