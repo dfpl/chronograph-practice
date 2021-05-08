@@ -19,7 +19,6 @@ import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInA
 
 public class SideEffect {
 
-	@SuppressWarnings("unused")
 	@Test
 	public void sideEffectWithFunction() {
 		Graph graph = new ChronoGraph();
@@ -42,6 +41,7 @@ public class SideEffect {
 		}).toList();
 
 		assertThat(vSet, containsInAnyOrder(a, b, c));
+		assertThat(vertices, containsInAnyOrder(a, b, c));
 	}
 
 	@Test
@@ -56,9 +56,10 @@ public class SideEffect {
 
 		Set<Vertex> vertices = new HashSet<Vertex>();
 
-		engine.sideEffect(vertices);
+		List<Vertex> engineResult = engine.sideEffect(vertices).toList();
 
 		assertThat(vertices, containsInAnyOrder(a, b, c));
+		assertThat(engineResult, containsInAnyOrder(a, b, c));
 	}
 
 }
