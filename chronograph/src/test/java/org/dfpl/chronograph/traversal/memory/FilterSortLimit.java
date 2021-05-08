@@ -5,11 +5,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
+import org.dfpl.chronograph.common.Tokens.NC;
 import org.dfpl.chronograph.crud.memory.ChronoGraph;
 import org.dfpl.chronograph.traversal.TraversalEngine;
 import org.junit.Test;
 
-import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 
@@ -19,30 +19,54 @@ import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInA
 public class FilterSortLimit {
 
 	@Test
-	public void getElementsWithPropKeyAndValue() {
+	public void HasWithPropKeyAndValue() {
 		Graph graph = new ChronoGraph();
 
 		Vertex a = graph.addVertex("A");
 		Vertex b = graph.addVertex("B");
 		Vertex c = graph.addVertex("C");
 
-		a.setProperty("test", true); // included
-		b.setProperty("test", false);
-		c.setProperty("not", true);
-
-		Edge abLikes = graph.addEdge(a, b, "likes");
-		Edge acLikes = graph.addEdge(a, c, "likes");
-		Edge abLoves = graph.addEdge(a, b, "loves");
-		Edge ccLoves = graph.addEdge(c, c, "loves");
-
-		abLikes.setProperty("test", true);
-		abLoves.setProperty("test", true);
-		acLikes.setProperty("test", false);
-		ccLoves.setProperty("notest", "a");
+		a.setProperty("isOdd", true); // included
+		b.setProperty("isOdd", false);
+		c.setProperty("weight", 7);
 
 		TraversalEngine engine = new TraversalEngine(graph, graph.getVertices(), Vertex.class, false);
 
-		assert (engine.has("test", true).toList().size() == 1);
+		assertThat(engine.has("isOdd", true).toList(), containsInAnyOrder(a));
+	}
+
+	@Test
+	public void HasWithPropKey() {
+		Graph graph = new ChronoGraph();
+
+		Vertex a = graph.addVertex("A");
+		Vertex b = graph.addVertex("B");
+		Vertex c = graph.addVertex("C");
+
+		a.setProperty("isOdd", true); // included
+		b.setProperty("isOdd", false); // included
+		c.setProperty("weight", 7);
+
+		TraversalEngine engine = new TraversalEngine(graph, graph.getVertices(), Vertex.class, false);
+
+		assertThat(engine.has("isOdd").toList(), containsInAnyOrder(a, b));
+	}
+
+	@Test
+	public void HasWithToken() {
+		Graph graph = new ChronoGraph();
+
+		Vertex a = graph.addVertex("A");
+		Vertex b = graph.addVertex("B");
+		Vertex c = graph.addVertex("C");
+
+		a.setProperty("isOdd", true); // included
+		b.setProperty("isOdd", false);
+		c.setProperty("weight", 7);
+
+		TraversalEngine engine = new TraversalEngine(graph, graph.getVertices(), Vertex.class, false);
+
+		assertThat(engine.has("weight", NC.$eq, 7).toList(), containsInAnyOrder(c));
 	}
 
 	@Test
