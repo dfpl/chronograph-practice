@@ -542,10 +542,16 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 
 	@Override
 	public <E> GremlinFluentPipeline sideEffect(Collection<E> collection) {
+		
 		stream = stream.map(e -> {
 			collection.add((E) e);
 			return e;
 		});
+
+		// Step Update
+		Class[] args = { Collection.class };
+		Step step = new Step(this.getClass().getName(), "sideEffect", args, collection);
+		stepList.add(step);
 
 		return this;
 	}
