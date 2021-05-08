@@ -277,6 +277,13 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 
 		// Set the class of element
 		elementClass = Vertex.class;
+		
+
+		// Step Update
+		Class[] args = { labels.getClass() };
+		// TODO: Confirm warning on parameter type
+		Step step = new Step(this.getClass().getName(), "out", args, labels);
+		stepList.add(step);
 
 		// return the extended stream
 		return this;
@@ -295,6 +302,14 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 
 		// Set the class of element
 		elementClass = Vertex.class;
+		
+
+		// Step Update
+		Class[] args = { labels.getClass() };
+		// TODO: Confirm warning on parameter type
+		Step step = new Step(this.getClass().getName(), "in", args, labels);
+		stepList.add(step);
+
 
 		// return the extended stream
 		return this;
