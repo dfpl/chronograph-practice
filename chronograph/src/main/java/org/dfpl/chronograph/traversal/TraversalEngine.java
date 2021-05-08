@@ -142,7 +142,7 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 	@Override
 	public GremlinFluentPipeline element(Class<? extends Element> elementClass) {
 		// Check the type of input
-		if (!elementClass.equals(Vertex.class) || !elementClass.equals(Edge.class))
+		if (!(elementClass.equals(Vertex.class) || elementClass.equals(Edge.class)))
 			throw new IllegalArgumentException("The argument should be one of Vertex.class or Edge.class");
 
 		if (elementClass.equals(Vertex.class)) {
@@ -151,19 +151,21 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 
 			// Set the class of element
 			this.elementClass = Vertex.class;
-
-			// return the extended stream
-			return this;
 		} else {
 			// Modify stream
 			stream = stream.map(e -> g.getEdge((String) e)).filter(e -> e != null);
 
 			// Set the class of element
 			this.elementClass = Edge.class;
-
-			// return the extended stream
-			return this;
 		}
+
+		// Step Update
+		Class[] args = { Class.class };
+		Step step = new Step(this.getClass().getName(), "element", args);
+		stepList.add(step);
+
+		// return the extended stream
+		return this;
 	}
 
 	// -------------------Transform: Vertex to Edge ----------------------
@@ -182,6 +184,14 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 		// Set the class of element
 		elementClass = Edge.class;
 
+		// Step Update
+		Class[] args = new Class[labels.length];
+		for (int i = 0; i < labels.length; i++)
+			args[i] = String.class;
+		// TODO: Confirm warning on parameter type
+		Step step = new Step(this.getClass().getName(), "outE", args, labels);
+		stepList.add(step);
+
 		// return the extended stream
 		return this;
 	}
@@ -199,6 +209,14 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 
 		// Set the class of element
 		elementClass = Edge.class;
+
+		// Step Update
+		Class[] args = new Class[labels.length];
+		for (int i = 0; i < labels.length; i++)
+			args[i] = String.class;
+		// TODO: Confirm warning on parameter type
+		Step step = new Step(this.getClass().getName(), "inE", args, labels);
+		stepList.add(step);
 
 		// return the extended stream
 		return this;
