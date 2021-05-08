@@ -49,13 +49,13 @@ public class GraphToElement {
 		Vertex b = graph.addVertex("B");
 		Vertex c = graph.addVertex("C");
 
-		a.setProperty("test", true);
-		b.setProperty("test", false);
-		c.setProperty("not", true);
+		a.setProperty("isOdd", true);
+		b.setProperty("isOdd", false);
+		c.setProperty("isOdd", true);
 
 		TraversalEngine engine = new TraversalEngine(graph, graph, Graph.class, false);
 
-		assert (engine.V("test", true).toList().size() == 1);
+		assert (engine.V("isOdd", false).toList().size() == 1);
 	}
 
 	@Test
@@ -71,13 +71,13 @@ public class GraphToElement {
 		Edge abLoves = graph.addEdge(a, b, "loves");
 		Edge ccLoves = graph.addEdge(c, c, "loves");
 
-		abLikes.setProperty("test", true);
-		abLoves.setProperty("test", true);
-		acLikes.setProperty("test", false);
-		ccLoves.setProperty("notest", "a");
+		abLikes.setProperty("isOdd", true);
+		abLoves.setProperty("isOdd", true);
+		acLikes.setProperty("isOdd", false);
+		ccLoves.setProperty("weight", 2);
 
 		TraversalEngine engine = new TraversalEngine(graph, graph, Graph.class, false);
 
-		assert (engine.E("test", true).toList().size() == 2);
+		assert (engine.E("isOdd", true).toList().size() == 2);
 	}
 }

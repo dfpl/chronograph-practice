@@ -49,7 +49,9 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 		elementClass = Vertex.class;
 
 		// Step Update
-		// TODO:
+		Class[] args = {};
+		Step step = new Step(this.getClass().getName(), "V", args);
+		stepList.add(step);
 
 		// return the extended stream
 		return this;
@@ -67,9 +69,7 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 		elementClass = Vertex.class;
 
 		// Step Update
-		Class[] args = new Class[1];
-		args[0] = String.class;
-		args[1] = Object.class;
+		Class[] args = { String.class, Object.class };
 		Step step = new Step(this.getClass().getName(), "V", args, key, value);
 		stepList.add(step);
 
@@ -88,6 +88,11 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 		// Set the class of element
 		elementClass = Edge.class;
 
+		// Step Update
+		Class[] args = {};
+		Step step = new Step(this.getClass().getName(), "E", args);
+		stepList.add(step);
+
 		// return the extended stream
 		return this;
 	}
@@ -102,6 +107,11 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 
 		// Set the class of element
 		elementClass = Edge.class;
+
+		// Step Update
+		Class[] args = { String.class, Object.class };
+		Step step = new Step(this.getClass().getName(), "E", args, key, value);
+		stepList.add(step);
 
 		// return the extended stream
 		return this;
@@ -119,6 +129,11 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 
 		// Set the class of element
 		elementClass = String.class;
+
+		// Step Update
+		Class[] args = {};
+		Step step = new Step(this.getClass().getName(), "id", args);
+		stepList.add(step);
 
 		// return the extended stream
 		return this;
@@ -439,7 +454,7 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 			collection.add((E) e);
 			return e;
 		});
-		
+
 		return this;
 	}
 
@@ -449,7 +464,7 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 			function.apply((E) e);
 			return e;
 		});
-		
+
 		return this;
 	}
 
