@@ -361,7 +361,7 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 	}
 
 	@Override
-	public <I, C> GremlinFluentPipeline transform(Function<I, C> function, boolean setUnboxing) {
+	public <I, C> GremlinFluentPipeline transform(Function<I, C> function, Boolean setUnboxing) {
 		if (setUnboxing) {
 			stream = stream.flatMap(entry -> {
 				if (isParallel)
@@ -388,7 +388,6 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 
 		// Step Update
 		Class[] args = { Function.class, Boolean.class };
-		// TODO: No Such Method Exception
 		Step step = new Step(this.getClass().getName(), "transform", args, function, setUnboxing);
 		stepList.add(step);
 

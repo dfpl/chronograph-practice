@@ -236,7 +236,7 @@ public interface GremlinFluentPipeline {
 	 *                     emitted.
 	 * @return the extended Pipeline
 	 */
-	public <I, C> GremlinFluentPipeline transform(Function<I, C> function, boolean setUnboxing);
+	public <I, C> GremlinFluentPipeline transform(Function<I, C> function, Boolean setUnboxing);
 
 	// -------------------Filter/Sort/Limit ----------------------
 
