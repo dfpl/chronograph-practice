@@ -263,8 +263,6 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 
 	@Override
 	public GremlinFluentPipeline gather() {
-		// Check the type of input
-
 		// Modify stream
 		List intermediate = stream.collect(Collectors.toList());
 		if (isParallel)
@@ -282,8 +280,6 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 
 	@Override
 	public GremlinFluentPipeline scatter() {
-		// Check the type of input
-
 		// Modify stream
 		if (elementClass.equals(List.class)) {
 			stream = stream.flatMap(list -> {
@@ -292,6 +288,8 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 				else
 					return ((List) list).stream();
 			});
+
+			// Set the class of element and collection
 			elementClass = collectionClass;
 			collectionClass = null;
 		}
@@ -337,7 +335,6 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 
 	@Override
 	public GremlinFluentPipeline random(Double lowerBound) {
-
 		Random r = new Random();
 		stream = stream.filter(e -> {
 			double dr = r.nextDouble();
@@ -360,8 +357,6 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 			return ((Element) element).getPropertyKeys().contains(key);
 		});
 
-		// Set the class of element: no change of element class
-
 		// return the extended stream
 		return this;
 	}
@@ -376,8 +371,6 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 			Object val = ((Element) element).getProperty(key);
 			return val != null && val.equals(value);
 		});
-
-		// Set the class of element: no change of element class
 
 		// return the extended stream
 		return this;
@@ -411,8 +404,6 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 			}
 		});
 
-		// Set the class of element: no change of element class
-
 		// return the extended stream
 		return this;
 	}
@@ -422,12 +413,12 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 		stream = stream.filter(entry -> {
 			return predicate.test((E) entry);
 		});
+
 		return this;
 	}
 
 	@Override
 	public GremlinFluentPipeline sort(Comparator comparator) {
-		// TODO: find more elegance way
 		stream = stream.sorted(comparator);
 
 		return this;
@@ -436,6 +427,7 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 	@Override
 	public GremlinFluentPipeline limit(long maxSize) {
 		stream = stream.limit(maxSize);
+
 		return this;
 	}
 
@@ -447,6 +439,7 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 			collection.add((E) e);
 			return e;
 		});
+		
 		return this;
 	}
 
@@ -456,6 +449,7 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 			function.apply((E) e);
 			return e;
 		});
+		
 		return this;
 	}
 
