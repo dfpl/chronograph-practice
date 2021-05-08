@@ -350,7 +350,7 @@ public interface GremlinFluentPipeline {
 	 * @param maxSize
 	 * @return the extended Pipeline
 	 */
-	public GremlinFluentPipeline limit(long maxSize);
+	public GremlinFluentPipeline limit(Long maxSize);
 
 	// ------------------- Side Effect ----------------------
 
