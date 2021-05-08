@@ -518,6 +518,11 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 	public GremlinFluentPipeline sort(Comparator comparator) {
 		stream = stream.sorted(comparator);
 
+		// Step Update
+		Class[] args = { Comparator.class };
+		Step step = new Step(this.getClass().getName(), "sort", args, comparator);
+		stepList.add(step);
+
 		return this;
 	}
 
