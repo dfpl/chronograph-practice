@@ -434,6 +434,11 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 			return ((Element) element).getPropertyKeys().contains(key);
 		});
 
+		// Step Update
+		Class[] args = { String.class };
+		Step step = new Step(this.getClass().getName(), "has", args, key);
+		stepList.add(step);
+
 		// return the extended stream
 		return this;
 	}
@@ -448,6 +453,11 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 			Object val = ((Element) element).getProperty(key);
 			return val != null && val.equals(value);
 		});
+
+		// Step Update
+		Class[] args = { String.class, Object.class };
+		Step step = new Step(this.getClass().getName(), "has", args, key, value);
+		stepList.add(step);
 
 		// return the extended stream
 		return this;
@@ -480,6 +490,11 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 				return false;
 			}
 		});
+
+		// Step Update
+		Class[] args = { String.class, NC.class, Object.class };
+		Step step = new Step(this.getClass().getName(), "has", args, key, t, value);
+		stepList.add(step);
 
 		// return the extended stream
 		return this;
