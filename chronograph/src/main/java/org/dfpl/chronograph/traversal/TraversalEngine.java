@@ -542,7 +542,7 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 
 	@Override
 	public <E> GremlinFluentPipeline sideEffect(Collection<E> collection) {
-		
+
 		stream = stream.map(e -> {
 			collection.add((E) e);
 			return e;
@@ -611,14 +611,31 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 	// ------------------- Aggregation ----------------------
 	@Override
 	public <I, T> Map<T, List<I>> groupBy(Function<I, T> classifier) {
-		// TODO Auto-generated method stub
-		return null;
+		if (isParallel)
+			stream = stream.parallel();
+
+		Map<Object, ?> groupedEntries = stream.collect(Collectors.groupingBy(i -> classifier.apply((I) i)));
+
+		Class[] args = { Function.class };
+		Step step = new Step(this.getClass().getName(), "groupBy", args, classifier);
+		stepList.add(step);
+
+		return (Map<T, List<I>>) groupedEntries;
 	}
 
 	@Override
 	public <I, T> Map<T, Long> groupCount(Function<I, T> classifier) {
-		// TODO Auto-generated method stub
-		return null;
+		if (isParallel)
+			stream = stream.parallel();
+
+		Map<T, Long> groupedEntries = stream
+				.collect(Collectors.groupingBy(entry -> classifier.apply((I) entry), Collectors.counting()));
+
+		Class[] args = { Function.class };
+		Step step = new Step(this.getClass().getName(), "groupCount", args, classifier);
+		stepList.add(step);
+
+		return groupedEntries;
 	}
 
 	@Override
