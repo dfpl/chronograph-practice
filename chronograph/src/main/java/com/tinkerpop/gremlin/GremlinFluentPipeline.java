@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -236,7 +237,8 @@ public interface GremlinFluentPipeline {
 	 *                     emitted.
 	 * @return the extended Pipeline
 	 */
-	public <I, C> GremlinFluentPipeline transform(Function<I, C> function, Boolean setUnboxing);
+	public <I, C> GremlinFluentPipeline transform(Function<I, C> function, Class<?> elementClass,
+			Class<?> collectionClass, boolean setUnboxing);
 
 	// -------------------Filter/Sort/Limit ----------------------
 
@@ -460,7 +462,7 @@ public interface GremlinFluentPipeline {
 	 * @param classifier
 	 * @return the extended Pipeline
 	 */
-	public <T> T reduce(T base, BinaryOperator<T> reducer);
+	public Optional<?> reduce(BinaryOperator<?> reducer);
 
 	/**
 	 * 

@@ -25,6 +25,7 @@ public class GremlinPipeline {
 	protected boolean isParallel;
 	protected ArrayList<Step> stepList;
 	protected HashMap<String, Integer> stepIndex;
+	protected int loopCount;
 
 	/**
 	 * Initialize TraversalEngine
@@ -38,6 +39,8 @@ public class GremlinPipeline {
 	 * @param isParallel   if true, steps are executed in parallel
 	 */
 	public GremlinPipeline(Graph graph, Object starts, Class<?> elementClass, boolean isParallel) {
+		this.g = graph;
+
 		if (starts instanceof Graph || starts instanceof Vertex || starts instanceof Edge) {
 			stream = Stream.of(starts);
 		} else if (starts instanceof Collection) {

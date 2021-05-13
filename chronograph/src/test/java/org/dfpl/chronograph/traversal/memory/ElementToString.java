@@ -52,8 +52,8 @@ public class ElementToString {
 		Vertex c = graph.addVertex("C");
 
 		TraversalEngine vEngine = new TraversalEngine(graph, graph, Graph.class, false);
-
-		assertThat(vEngine.element(Vertex.class).toList(), containsInAnyOrder("A", "B", "C"));
+		// id to its graph element (vertex, edge)
+		assertThat(vEngine.V().id().element(Vertex.class).toList(), containsInAnyOrder("A", "B", "C"));
 
 		graph.addEdge(a, b, "likes");
 		graph.addEdge(a, c, "likes");
@@ -61,7 +61,8 @@ public class ElementToString {
 
 		TraversalEngine eEngine = new TraversalEngine(graph, graph, Graph.class, false);
 
-		assertThat(eEngine.element(Edge.class).toList(), containsInAnyOrder("A|likes|B", "A|likes|C", "C|loves|C"));
+		assertThat(eEngine.E().id().element(Edge.class).toList(),
+				containsInAnyOrder("A|likes|B", "A|likes|C", "C|loves|C"));
 	}
 
 }

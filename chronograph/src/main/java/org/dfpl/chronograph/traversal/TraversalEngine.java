@@ -1,12 +1,10 @@
 package org.dfpl.chronograph.traversal;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -17,7 +15,6 @@ import java.util.stream.Collectors;
 
 import org.dfpl.chronograph.common.Step;
 import org.dfpl.chronograph.common.Tokens.NC;
-import org.dfpl.chronograph.crud.memory.ChronoGraph;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
@@ -147,7 +144,10 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 
 		if (elementClass.equals(Vertex.class)) {
 			// Modify stream
-			stream = stream.map(e -> g.getVertex((String) e)).filter(e -> e != null);
+			stream = stream.map(e -> {
+				Vertex v = g.getVertex((String) e);
+				return v;
+			}).filter(e -> e != null);
 
 			// Set the class of element
 			this.elementClass = Vertex.class;
@@ -187,8 +187,7 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 		// Step Update
 		Class[] args = { labels.getClass() };
 
-		// TODO: Confirm warning on parameter type
-		Step step = new Step(this.getClass().getName(), "outE", args, labels);
+		Step step = new Step(this.getClass().getName(), "outE", args, (Object[]) labels);
 		stepList.add(step);
 
 		// return the extended stream
@@ -212,8 +211,7 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 		// Step Update
 		Class[] args = { labels.getClass() };
 
-		// TODO: Confirm warning on parameter type
-		Step step = new Step(this.getClass().getName(), "inE", args, labels);
+		Step step = new Step(this.getClass().getName(), "inE", args, (Object[]) labels);
 		stepList.add(step);
 
 		// return the extended stream
@@ -280,8 +278,8 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 
 		// Step Update
 		Class[] args = { labels.getClass() };
-		// TODO: Confirm warning on parameter type
-		Step step = new Step(this.getClass().getName(), "out", args, labels);
+
+		Step step = new Step(this.getClass().getName(), "out", args, (Object[]) labels);
 		stepList.add(step);
 
 		// return the extended stream
@@ -304,8 +302,8 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 
 		// Step Update
 		Class[] args = { labels.getClass() };
-		// TODO: Confirm warning on parameter type
-		Step step = new Step(this.getClass().getName(), "in", args, labels);
+
+		Step step = new Step(this.getClass().getName(), "in", args, (Object[]) labels);
 		stepList.add(step);
 
 		// return the extended stream
@@ -339,12 +337,13 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 	@Override
 	public GremlinFluentPipeline scatter() {
 		// Modify stream
-		if (elementClass.equals(List.class)) {
+		if (elementClass.equals(List.class) || elementClass.equals(Collection.class)
+				|| elementClass.equals(Set.class)) {
 			stream = stream.flatMap(list -> {
 				if (isParallel)
-					return ((List) list).parallelStream();
+					return ((Collection) list).parallelStream();
 				else
-					return ((List) list).stream();
+					return ((Collection) list).stream();
 			});
 
 			// Set the class of element and collection
@@ -361,7 +360,8 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 	}
 
 	@Override
-	public <I, C> GremlinFluentPipeline transform(Function<I, C> function, Boolean setUnboxing) {
+	public <I, C> GremlinFluentPipeline transform(Function<I, C> function, Class<?> elementClass,
+			Class<?> collectionClass, boolean setUnboxing) {
 		if (setUnboxing) {
 			stream = stream.flatMap(entry -> {
 				if (isParallel)
@@ -372,23 +372,18 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 
 		} else {
 			stream = stream.map(entry -> {
-				elementClass = entry.getClass();
 				return (C) function.apply((I) entry);
 			});
 		}
 
-		// TODO: have to check
-//		try {
-//			Type sooper = getClass().getGenericSuperclass();
-//			Type t = ((ParameterizedType) sooper).getActualTypeArguments()[0];
-//			elementClass = Class.forName(t.toString());
-//		} catch (ClassNotFoundException e) {
-//			// Not occurred
-//		}
+		// Set the class of element and collection
+		this.elementClass = elementClass;
+		this.collectionClass = collectionClass;
 
 		// Step Update
-		Class[] args = { Function.class, Boolean.class };
-		Step step = new Step(this.getClass().getName(), "transform", args, function, setUnboxing);
+		Class[] args = { Function.class, Class.class, Class.class, boolean.class };
+		Step step = new Step(this.getClass().getName(), "transform", args, function, elementClass, collectionClass,
+				setUnboxing);
 		stepList.add(step);
 
 		return this;
@@ -611,9 +606,6 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 	// ------------------- Aggregation ----------------------
 	@Override
 	public <I, T> Map<T, List<I>> groupBy(Function<I, T> classifier) {
-		if (isParallel)
-			stream = stream.parallel();
-
 		Map<Object, ?> groupedEntries = stream.collect(Collectors.groupingBy(i -> classifier.apply((I) i)));
 
 		Class[] args = { Function.class };
@@ -625,9 +617,6 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 
 	@Override
 	public <I, T> Map<T, Long> groupCount(Function<I, T> classifier) {
-		if (isParallel)
-			stream = stream.parallel();
-
 		Map<T, Long> groupedEntries = stream
 				.collect(Collectors.groupingBy(entry -> classifier.apply((I) entry), Collectors.counting()));
 
@@ -639,9 +628,15 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 	}
 
 	@Override
-	public <T> T reduce(T base, BinaryOperator<T> reducer) {
-		// TODO Auto-generated method stub
-		return null;
+	public Optional reduce(BinaryOperator reducer) {
+
+		Optional reduced = stream.reduce(reducer);
+
+		Class[] args = { BinaryOperator.class };
+		Step step = new Step(this.getClass().getName(), "reduce", args, reducer);
+		stepList.add(step);
+
+		return reduced;
 	}
 
 	@Override
@@ -663,24 +658,4 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 		}
 	}
 
-	public static void main(String[] args) {
-		ChronoGraph g = new ChronoGraph();
-		Vertex v1 = g.addVertex("1");
-		Vertex v2 = g.addVertex("2");
-		Vertex v3 = g.addVertex("3");
-
-		g.addEdge(v1, v2, "l");
-		g.addEdge(v1, v3, "l");
-
-		System.out.println(new TraversalEngine(g, g, Graph.class, false).V().outE("l").toList());
-
-		java.util.Set<Integer> s1 = java.util.Set.of(1, 2, 3);
-		java.util.Set<Integer> s2 = java.util.Set.of(2, 3, 4);
-
-		// flatMap of set.streams has redundancy~ it is ok
-		HashMap<Integer, Set<Integer>> map = new HashMap<Integer, Set<Integer>>();
-		map.put(1, s1);
-		map.put(2, s2);
-		System.out.println(map.entrySet().stream().flatMap(m -> m.getValue().stream()).collect(Collectors.toList()));
-	}
 }

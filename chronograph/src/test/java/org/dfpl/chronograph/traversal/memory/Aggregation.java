@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import org.dfpl.chronograph.crud.memory.ChronoGraph;
 import org.dfpl.chronograph.traversal.TraversalEngine;
@@ -79,6 +80,34 @@ public class Aggregation {
 
 		assertThat(map.size(), is(2));
 		assertEquals(map, expectedMap);
+	}
+
+	@Test
+	public void reduceLastIDVertex() {
+		Graph graph = new ChronoGraph();
+
+		Vertex a = graph.addVertex("A");
+		Vertex b = graph.addVertex("B");
+		Vertex c = graph.addVertex("C");
+
+		a.setProperty("isOdd", true);
+		b.setProperty("isOdd", false);
+		c.setProperty("isOdd", true);
+
+		TraversalEngine engine = new TraversalEngine(graph, graph.getVertices(), Vertex.class, false);
+
+		Vertex v = (Vertex) engine.reduce(new BinaryOperator<Vertex>() {
+
+			@Override
+			public Vertex apply(Vertex t, Vertex u) {
+				if (t.getId().compareTo(u.getId()) > 0)
+					return t;
+				else
+					return u;
+			}
+		}).get();
+
+		assertThat(v.getId(), is("C"));
 	}
 
 }
