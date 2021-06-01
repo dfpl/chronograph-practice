@@ -15,10 +15,10 @@ import com.tinkerpop.blueprints.Vertex;
 public class BetweennessBlueprints {
 
 	public static void main(String[] args) {
-		BetweennessBlueprints bc = new BetweennessBlueprints();
-		Graph g = bc.createStaticGraph();
-		bc.betweennessCentrality(g);
-		bc.printCentrality(g);
+		BetweennessBlueprints bb = new BetweennessBlueprints();
+		Graph g = bb.createStaticGraph();
+		bb.betweennessCentrality(g);
+		bb.printCentrality(g);
 
 	}
 
