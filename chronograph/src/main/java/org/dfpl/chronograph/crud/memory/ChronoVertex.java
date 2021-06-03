@@ -3,11 +3,16 @@ package org.dfpl.chronograph.crud.memory;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.NavigableSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.dfpl.chronograph.common.TemporalRelation;
+
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Event;
+import com.tinkerpop.blueprints.Time;
 import com.tinkerpop.blueprints.Vertex;
 
 /**
@@ -153,6 +158,43 @@ public class ChronoVertex implements Vertex {
 	@Override
 	public int hashCode() {
 		return id.hashCode();
+	}
+
+	@Override
+	public <T extends Event> T addEvent(Time time) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T extends Event> NavigableSet<T> getEvents(Time time, TemporalRelation tr) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T extends Event> T getEvent(Time time, TemporalRelation tr) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void removeEvents(Time time, TemporalRelation tr) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setOrderByStart(boolean setOrderByStart) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public <T extends Event> NavigableSet<T> getEvents(Time time, TemporalRelation tr, boolean awareOutEvents,
+			boolean awareInEvents) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

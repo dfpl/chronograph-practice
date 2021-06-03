@@ -16,7 +16,7 @@ import com.tinkerpop.blueprints.Vertex;
  * The in-memory implementation of temporal graph database.
  *
  * @author Jaewook Byun, Ph.D., Assistant Professor, Department of Software,
- *         Sejong University (slightly modify interface)
+ *         Sejong University
  */
 public class ChronoGraph implements Graph {
 

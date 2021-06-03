@@ -59,14 +59,6 @@ public class Tokens {
 		$ne
 	}
 
-	/**
-	 * Allen Temporal Relations
-	 */
-	public static enum TemporalRelation {
-		isBefore, isAfter, meets, isMetBy, overlapsWith, isOverlappedBy, starts, isStartedBy, during, contains,
-		finishes, isFinishedBy, cotemporal
-	}
-
 	public static enum Conjunction {
 		$and, $or
 	}

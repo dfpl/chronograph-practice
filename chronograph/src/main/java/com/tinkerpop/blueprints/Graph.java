@@ -129,4 +129,5 @@ public interface Graph {
 	 * important for implementations that utilize disk-based serializations.
 	 */
 	public void shutdown();
+	
 }

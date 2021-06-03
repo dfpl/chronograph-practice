@@ -1,6 +1,9 @@
 package com.tinkerpop.blueprints;
 
 import java.util.Collection;
+import java.util.NavigableSet;
+
+import org.dfpl.chronograph.common.TemporalRelation;
 
 /**
  * A vertex maintains pointers to both a set of incoming and outgoing edges. The
@@ -50,4 +53,21 @@ public interface Vertex extends Element {
 	 * Remove the element from the graph.
 	 */
 	public void remove();
+	
+	/**
+	 * Return events of this element that are matched with tr for time In addition
+	 * to getEvents(time, tr), the method includes in-going vertex event for
+	 * out-going edge events if aware out events and out-going vertex event for
+	 * in-going edge events if aware in events.
+	 * 
+	 * 
+	 * @param <T>
+	 * @param time
+	 * @param tr
+	 * @param awareOutEvents
+	 * @param awareInEvents
+	 * @return NavigableSet of VertexEvent or EdgeEvent
+	 */
+	public <T extends Event> NavigableSet<T> getEvents(Time time, TemporalRelation tr, boolean awareOutEvents,
+			boolean awareInEvents);
 }
