@@ -23,6 +23,6 @@ public abstract class VertexEvent extends Event {
 	 * @param labels    labels to retain
 	 * @return NavigableSet of VertexEvent or EdgeEvent
 	 */
-	abstract public <T extends Event> NavigableSet<T> getVertexEvents(Time time, Direction direction,
+	abstract public <T extends Event> NavigableSet<T> getVertexEvents(Direction direction,
 			TemporalRelation tr, String[] labels);
 }
