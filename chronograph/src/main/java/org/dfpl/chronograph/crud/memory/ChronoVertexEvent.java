@@ -17,7 +17,7 @@ public class ChronoVertexEvent extends VertexEvent {
 	}
 
 	@Override
-	public <T extends Event> NavigableSet<T> getVertexEvents(Time time, Direction direction, TemporalRelation tr,
+	public <T extends Event> NavigableSet<T> getVertexEvents(Direction direction, TemporalRelation tr,
 			String[] labels) {
 		// TODO Auto-generated method stub
 		return null;
