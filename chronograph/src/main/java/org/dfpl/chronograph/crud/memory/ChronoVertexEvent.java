@@ -22,5 +22,4 @@ public class ChronoVertexEvent extends VertexEvent {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

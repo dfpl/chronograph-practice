@@ -16,8 +16,6 @@ public abstract class VertexEvent extends Event {
 	 * multiple events for a pair, a chronologically closest event is chosen. If
 	 * there are multiple closest events, one of events having any label is chosen.
 	 * 
-	 * @param <T>
-	 * @param time
 	 * @param direction OUT or IN
 	 * @param tr        Allen Temporal Relation
 	 * @param labels    labels to retain

@@ -1,10 +1,13 @@
 package org.dfpl.chronograph.crud.memory;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.dfpl.chronograph.common.TemporalRelation;
@@ -26,11 +29,16 @@ public class ChronoVertex implements Vertex {
 	private ChronoGraph g;
 	private String id;
 	private HashMap<String, Object> properties;
+	private NavigableSet<ChronoVertexEvent> events;
 
 	ChronoVertex(ChronoGraph g, String id) {
 		this.id = id;
 		this.g = g;
 		this.properties = new HashMap<String, Object>();
+
+		this.events = new TreeSet<>((ChronoVertexEvent e1, ChronoVertexEvent e2) -> {
+			return e1.getTime().compareTo(e2.getTime());
+		});
 	}
 
 	@SuppressWarnings("unchecked")
@@ -160,10 +168,12 @@ public class ChronoVertex implements Vertex {
 		return id.hashCode();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Event> T addEvent(Time time) {
-		// TODO Auto-generated method stub
-		return null;
+		ChronoVertexEvent event = new ChronoVertexEvent(this, time);
+		this.events.add(event);
+		return (T) event;
 	}
 
 	@Override
@@ -181,13 +191,12 @@ public class ChronoVertex implements Vertex {
 	@Override
 	public void removeEvents(Time time, TemporalRelation tr) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void setOrderByStart(boolean setOrderByStart) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
