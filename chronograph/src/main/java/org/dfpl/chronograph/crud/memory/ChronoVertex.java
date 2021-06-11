@@ -182,9 +182,16 @@ public class ChronoVertex implements Vertex {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Event> T getEvent(Time time, TemporalRelation tr) {
-		// TODO Auto-generated method stub
+		for (Iterator<ChronoVertexEvent> eIter = this.events.iterator(); eIter.hasNext();) {
+			ChronoVertexEvent event = eIter.next();
+
+			if (event.getTime().checkTemporalRelation(time, tr))
+				return (T) event;
+		}
+
 		return null;
 	}
 
