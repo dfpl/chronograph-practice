@@ -87,6 +87,37 @@ public class ChronoVertexTest {
 		fail("Not implemented yet");
 	}
 
+	@Test
+	public void testSetOrderByStart() {
+		Time time5 = new TimeInstant(5);
+		ChronoVertexEvent event5 = a.addEvent(time5);
+
+		Time time7 = new TimeInstant(7);
+		ChronoVertexEvent event7 = a.addEvent(time7);
+
+		Time time9 = new TimeInstant(9);
+		ChronoVertexEvent event9 = a.addEvent(time9);
+
+		// Default
+		assert (a.getEvent(time5, TemporalRelation.isAfter).equals(event7));
+
+		// Set orderByStart to true when it is already true
+		a.setOrderByStart(true);
+		assert (a.getEvent(time5, TemporalRelation.isAfter).equals(event7));
+
+		// Set orderByStart from true to false
+		a.setOrderByStart(false);
+		assert (a.getEvent(time5, TemporalRelation.isAfter).equals(event9));
+
+		// Set orderByStart to false when it's already false
+		a.setOrderByStart(false);
+		assert (a.getEvent(time5, TemporalRelation.isAfter).equals(event9));
+
+		// Set orderByStart from false to true
+		a.setOrderByStart(true);
+		assert (a.getEvent(time5, TemporalRelation.isAfter).equals(event7));
+	}
+
 	@After
 	public void tearDown() throws Exception {
 		g.removeVertex(a);
