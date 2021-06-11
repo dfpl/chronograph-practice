@@ -30,6 +30,7 @@ public class ChronoVertex implements Vertex {
 	private String id;
 	private HashMap<String, Object> properties;
 	private NavigableSet<ChronoVertexEvent> events;
+	private boolean orderByStart;
 
 	ChronoVertex(ChronoGraph g, String id) {
 		this.id = id;
@@ -39,6 +40,8 @@ public class ChronoVertex implements Vertex {
 		this.events = new TreeSet<>((ChronoVertexEvent e1, ChronoVertexEvent e2) -> {
 			return e1.getTime().compareTo(e2.getTime());
 		});
+		
+		this.orderByStart = true;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -201,9 +204,11 @@ public class ChronoVertex implements Vertex {
 	}
 
 	@Override
-	public void setOrderByStart(boolean setOrderByStart) {
-		// TODO Auto-generated method stub
-
+	public void setOrderByStart(boolean orderByStart) {
+		if (this.orderByStart == orderByStart) return;
+		
+		this.orderByStart = orderByStart;
+		this.events = this.events.descendingSet();
 	}
 
 	@Override

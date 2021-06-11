@@ -19,6 +19,7 @@ import com.tinkerpop.blueprints.Vertex;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class ChronoVertexTest {
 
@@ -44,7 +45,7 @@ public class ChronoVertexTest {
 	}
 
 	@Test
-	public void testGetEvent() {
+	public void testGetEventWithTimeInstants() {
 		Time time5 = new TimeInstant(5);
 		ChronoVertexEvent event5 = a.addEvent(time5);
 
@@ -74,6 +75,16 @@ public class ChronoVertexTest {
 		assert (a.getEvent(time9, TemporalRelation.meets) == null);
 		assert (a.getEvent(time9, TemporalRelation.overlapsWith) == null);
 		assert (a.getEvent(time9, TemporalRelation.starts) == null);
+	}
+
+	@Test
+	public void testGetEventWithTimePeriods() {
+		fail("Not implemented yet");
+	}
+
+	@Test
+	public void testGetEventWithTimePeriodAndTimeInstant() {
+		fail("Not implemented yet");
 	}
 
 	@After
