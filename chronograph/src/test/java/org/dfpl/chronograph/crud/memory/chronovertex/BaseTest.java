@@ -2,6 +2,9 @@ package org.dfpl.chronograph.crud.memory.chronovertex;
 
 import static org.junit.Assert.*;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
+
 import java.util.stream.Collectors;
 
 import org.dfpl.chronograph.crud.memory.ChronoGraph;
@@ -64,12 +67,17 @@ public class BaseTest {
 	}
 
 	@Test
-	public void testGetEdges_WithDirectionOut() {
+	public void testGetEdges_WithDirectionOut() {		
 		assertTrue(a.getEdges(Direction.OUT, "likes").stream().map(e -> e.getId()).sorted().collect(Collectors.toList())
 				.toString().equals("[A|likes|B, A|likes|C]"));
 		assertTrue(a.getEdges(Direction.OUT, "likes", "loves").stream().map(e -> e.getId()).sorted()
 				.collect(Collectors.toList()).toString().equals("[A|likes|B, A|likes|C, A|loves|B]"));
-
+	}
+	
+	@Test
+	public void testGetVertices() {
+		assertThat(a.getVertices(Direction.OUT, (String[]) null ), containsInAnyOrder(b,c));
+		
 		assertTrue(a.getVertices(Direction.OUT, "likes", "loves").stream().map(e -> e.getId()).sorted()
 				.collect(Collectors.toList()).toString().equals("[B, C]"));
 	}

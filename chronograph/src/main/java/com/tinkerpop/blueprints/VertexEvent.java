@@ -12,9 +12,9 @@ public abstract class VertexEvent extends Event {
 	}
 
 	/**
-	 * Return neighbor vertex events per a pair (out vertex, in vertex) If there are
-	 * multiple events for a pair, a chronologically closest event is chosen. If
-	 * there are multiple closest events, one of events having any label is chosen.
+	 * Return neighbor vertex events per a pair (out vertex, in vertex) 
+	 * If there are multiple events for a pair, a chronologically closest event is chosen.
+	 * If there are multiple closest events, one of events having any label is chosen.
 	 * 
 	 * @param direction OUT or IN
 	 * @param tr        Allen Temporal Relation

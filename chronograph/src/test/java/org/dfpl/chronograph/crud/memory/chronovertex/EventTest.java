@@ -2,6 +2,9 @@ package org.dfpl.chronograph.crud.memory.chronovertex;
 
 import static org.junit.Assert.*;
 
+import java.util.NavigableSet;
+import java.util.TreeSet;
+
 import org.dfpl.chronograph.common.TemporalRelation;
 import org.dfpl.chronograph.crud.memory.ChronoGraph;
 import org.dfpl.chronograph.crud.memory.ChronoVertexEvent;
@@ -16,6 +19,7 @@ import com.tinkerpop.blueprints.Vertex;
 
 public class EventTest {
 	Graph g = new ChronoGraph();
+	
 	Vertex a;
 	Time time5;
 	Time time7;
@@ -38,7 +42,6 @@ public class EventTest {
 
 		time9 = new TimeInstant(9);
 		event9 = a.addEvent(time9);
-
 	}
 
 	@After
@@ -84,6 +87,36 @@ public class EventTest {
 
 	@Test
 	public void testGetEvent_WithTimeInstantAndTimePeriod() {
+		fail("Not implemented yet");
+	}
+	
+	@Test
+	public void testGetEvents_WithTimeInstants() {
+		NavigableSet<ChronoVertexEvent> validEvents = new TreeSet<>((ChronoVertexEvent e1, ChronoVertexEvent e2) -> {
+			return e1.getTime().compareTo(e2.getTime());
+		});
+		validEvents.add(event7);
+		validEvents.add(event9);
+		
+		NavigableSet<ChronoVertexEvent> retrievedEvents = a.getEvents(time5, TemporalRelation.isAfter);
+		
+		assertEquals(retrievedEvents.size(), 2);
+		assertTrue(retrievedEvents.containsAll(validEvents));
+	}
+	
+	@Test
+	public void testGetEvents_WithTimePeriods() {
+		// s
+		fail("Not implemented yet");
+	}
+
+	@Test
+	public void testGetEvents_WithTimePeriodAndTimeInstant() {
+		fail("Not implemented yet");
+	}
+
+	@Test
+	public void testGetEvents_WithTimeInstantAndTimePeriod() {
 		fail("Not implemented yet");
 	}
 

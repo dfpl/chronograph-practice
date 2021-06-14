@@ -1,7 +1,6 @@
 package org.dfpl.chronograph.crud.memory;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -179,10 +178,22 @@ public class ChronoVertex implements Vertex {
 		return (T) event;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Event> NavigableSet<T> getEvents(Time time, TemporalRelation tr) {
-		// TODO Auto-generated method stub
-		return null;
+		NavigableSet<ChronoVertexEvent> validEvents = new TreeSet<>((ChronoVertexEvent e1, ChronoVertexEvent e2) -> {
+			if (this.orderByStart)
+				return e1.getTime().compareTo(e2.getTime());
+			return e2.getTime().compareTo(e1.getTime());
+		});
+
+		for (Iterator<ChronoVertexEvent> eIter = this.events.iterator(); eIter.hasNext();) {
+			ChronoVertexEvent event = eIter.next();
+
+			if (event.getTime().checkTemporalRelation(time, tr))
+				validEvents.add(event);
+		}
+		return (NavigableSet<T>) validEvents;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -200,9 +211,9 @@ public class ChronoVertex implements Vertex {
 
 	@Override
 	public void removeEvents(Time time, TemporalRelation tr) {
-		for(Iterator<ChronoVertexEvent> eIter = this.events.iterator(); eIter.hasNext();) {
+		for (Iterator<ChronoVertexEvent> eIter = this.events.iterator(); eIter.hasNext();) {
 			ChronoVertexEvent event = eIter.next();
-			
+
 			if (event.getTime().checkTemporalRelation(time, tr))
 				eIter.remove();
 		}
@@ -217,11 +228,32 @@ public class ChronoVertex implements Vertex {
 		this.events = this.events.descendingSet();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Event> NavigableSet<T> getEvents(Time time, TemporalRelation tr, boolean awareOutEvents,
 			boolean awareInEvents) {
-		// TODO Auto-generated method stub
-		return null;
+
+		NavigableSet<ChronoVertexEvent> validEvents = new TreeSet<>((ChronoVertexEvent e1, ChronoVertexEvent e2) -> {
+			if (this.orderByStart)
+				return e1.getTime().compareTo(e2.getTime());
+			return e2.getTime().compareTo(e1.getTime());
+		});
+
+		validEvents.addAll(this.getEvents(time, tr));
+
+		if (awareOutEvents) {
+			this.getVertices(Direction.OUT, (String[]) null).forEach(n -> {
+				validEvents.addAll(n.getEvents(time, tr));
+			});
+		}
+
+		if (awareInEvents) {
+			this.getVertices(Direction.IN, (String[]) null).forEach(n -> {
+				validEvents.addAll(n.getEvents(time, tr));
+			});
+		}
+
+		return (NavigableSet<T>) validEvents;
 	}
 
 }
