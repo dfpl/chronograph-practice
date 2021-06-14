@@ -1,4 +1,4 @@
-package org.dfpl.chronograph.traversal.memory;
+package org.dfpl.chronograph.traversal.traversalengine;
 
 import static org.junit.Assert.*;
 

@@ -18,7 +18,7 @@ import com.tinkerpop.blueprints.Element;
  * @author Jaewook Byun, Ph.D., Assistant Professor, Department of Software,
  *         Sejong University (slightly modify interface)
  * @param <S> a type of start traverser
- * @param <E> a type of end traverser
+ * @param <GraphToElement> a type of end traverser
  */
 public interface GremlinFluentPipeline {
 

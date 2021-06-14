@@ -79,11 +79,17 @@ public class ChronoVertexTest {
 
 	@Test
 	public void testGetEventWithTimePeriods() {
+		// s
 		fail("Not implemented yet");
 	}
 
 	@Test
 	public void testGetEventWithTimePeriodAndTimeInstant() {
+		fail("Not implemented yet");
+	}
+	
+	@Test
+	public void testGetEventWithTimeInstantAndTimePeriod() {
 		fail("Not implemented yet");
 	}
 
