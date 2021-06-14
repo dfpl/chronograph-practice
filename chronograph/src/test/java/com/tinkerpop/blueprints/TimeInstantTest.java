@@ -1,4 +1,4 @@
-package org.dfpl.chronograph.crud.memory.temporal;
+package com.tinkerpop.blueprints;
 
 import static org.junit.Assert.*;
 
@@ -8,9 +8,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import com.tinkerpop.blueprints.TimeInstant;
-import com.tinkerpop.blueprints.TimePeriod;
 
 public class TimeInstantTest {
 
@@ -61,86 +58,86 @@ public class TimeInstantTest {
 	}
 
 	@Test
-	public void testWithEqualTimeInstants() {
+	public void testCheckTemporalRelations_WithTimeInstants() {
 		long t = 5;
 		TimeInstant first = new TimeInstant(t);
 		TimeInstant second = new TimeInstant(t);
 
 		checkResults(first, second);
 
-		assert (containsResult == false);
-		assert (cotemporalResult == true);
-		assert (duringResult == false);
-		assert (finishesResult == false);
-		assert (isAfterResult == false);
-		assert (isBeforeResult == false);
-		assert (isFinishedByResult == false);
-		assert (isMetByResult == false);
-		assert (isOverlappedByResult == false);
-		assert (isStartedByResult == false);
-		assert (meetsResult == false);
-		assert (overlapsWithResult == false);
-		assert (startsResult == false);
+		assertEquals(containsResult, false);
+		assertEquals(cotemporalResult, true);
+		assertEquals(duringResult, false);
+		assertEquals(finishesResult, false);
+		assertEquals(isAfterResult, false);
+		assertEquals(isBeforeResult, false);
+		assertEquals(isFinishedByResult, false);
+		assertEquals(isMetByResult, false);
+		assertEquals(isOverlappedByResult, false);
+		assertEquals(isStartedByResult, false);
+		assertEquals(meetsResult, false);
+		assertEquals(overlapsWithResult, false);
+		assertEquals(startsResult, false);
 	}
 
 	@Test
-	public void testWithUnequalInstants() {
+	public void testCheckTemporalRelations_WithUnequalInstants() {
 		TimeInstant first = new TimeInstant((long) 5);
 		TimeInstant second = new TimeInstant((long) 7);
 
 		checkResults(first, second);
 
-		assert (containsResult == false);
-		assert (cotemporalResult == false);
-		assert (duringResult == false);
-		assert (finishesResult == false);
-		assert (isAfterResult == false);
-		assert (isBeforeResult == true);
-		assert (isFinishedByResult == false);
-		assert (isMetByResult == false);
-		assert (isOverlappedByResult == false);
-		assert (isStartedByResult == false);
-		assert (meetsResult == false);
-		assert (overlapsWithResult == false);
-		assert (startsResult == false);
+		assertEquals (containsResult, false);
+		assertEquals (cotemporalResult, false);
+		assertEquals (duringResult, false);
+		assertEquals (finishesResult, false);
+		assertEquals (isAfterResult, false);
+		assertEquals (isBeforeResult, true);
+		assertEquals (isFinishedByResult, false);
+		assertEquals (isMetByResult, false);
+		assertEquals (isOverlappedByResult, false);
+		assertEquals (isStartedByResult, false);
+		assertEquals (meetsResult, false);
+		assertEquals (overlapsWithResult, false);
+		assertEquals (startsResult, false);
 
 		checkResults(second, first);
 
-		assert (containsResult == false);
-		assert (cotemporalResult == false);
-		assert (duringResult == false);
-		assert (finishesResult == false);
-		assert (isAfterResult == true);
-		assert (isBeforeResult == false);
-		assert (isFinishedByResult == false);
-		assert (isMetByResult == false);
-		assert (isOverlappedByResult == false);
-		assert (isStartedByResult == false);
-		assert (meetsResult == false);
-		assert (overlapsWithResult == false);
-		assert (startsResult == false);
+		assertEquals(containsResult, false);
+		assertEquals(cotemporalResult, false);
+		assertEquals(duringResult, false);
+		assertEquals(finishesResult, false);
+		assertEquals(isAfterResult, true);
+		assertEquals(isBeforeResult, false);
+		assertEquals(isFinishedByResult, false);
+		assertEquals(isMetByResult, false);
+		assertEquals(isOverlappedByResult, false);
+		assertEquals(isStartedByResult, false);
+		assertEquals(meetsResult, false);
+		assertEquals(overlapsWithResult, false);
+		assertEquals(startsResult, false);
 	}
 
 	@Test
-	public void testWithTimePeriod() {
+	public void testCheckTemporalRelations_WithTimePeriod() {
 		TimeInstant first = new TimeInstant((long) 5);
 		TimePeriod second = new TimePeriod((long) 5, (long) 7);
 
 		checkResults(first, second);
 
-		assert (containsResult == false);
-		assert (cotemporalResult == false);
-		assert (duringResult == false);
-		assert (finishesResult == false);
-		assert (isAfterResult == false);
-		assert (isBeforeResult == false);
-		assert (isFinishedByResult == false);
-		assert (isMetByResult == false);
-		assert (isOverlappedByResult == false);
-		assert (isStartedByResult == false);
-		assert (meetsResult == true);
-		assert (overlapsWithResult == false);
-		assert (startsResult == true);
+		assertEquals(containsResult, false);
+		assertEquals(cotemporalResult, false);
+		assertEquals(duringResult, false);
+		assertEquals(finishesResult, false);
+		assertEquals(isAfterResult, false);
+		assertEquals(isBeforeResult, false);
+		assertEquals(isFinishedByResult, false);
+		assertEquals(isMetByResult, false);
+		assertEquals(isOverlappedByResult, false);
+		assertEquals(isStartedByResult, false);
+		assertEquals(meetsResult, true);
+		assertEquals(overlapsWithResult, false);
+		assertEquals(startsResult, true);
 	}
 
 }
