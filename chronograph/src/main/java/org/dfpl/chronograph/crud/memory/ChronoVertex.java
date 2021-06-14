@@ -40,7 +40,7 @@ public class ChronoVertex implements Vertex {
 		this.events = new TreeSet<>((ChronoVertexEvent e1, ChronoVertexEvent e2) -> {
 			return e1.getTime().compareTo(e2.getTime());
 		});
-		
+
 		this.orderByStart = true;
 	}
 
@@ -200,13 +200,19 @@ public class ChronoVertex implements Vertex {
 
 	@Override
 	public void removeEvents(Time time, TemporalRelation tr) {
-		// TODO Auto-generated method stub
+		for(Iterator<ChronoVertexEvent> eIter = this.events.iterator(); eIter.hasNext();) {
+			ChronoVertexEvent event = eIter.next();
+			
+			if (event.getTime().checkTemporalRelation(time, tr))
+				eIter.remove();
+		}
 	}
 
 	@Override
 	public void setOrderByStart(boolean orderByStart) {
-		if (this.orderByStart == orderByStart) return;
-		
+		if (this.orderByStart == orderByStart)
+			return;
+
 		this.orderByStart = orderByStart;
 		this.events = this.events.descendingSet();
 	}

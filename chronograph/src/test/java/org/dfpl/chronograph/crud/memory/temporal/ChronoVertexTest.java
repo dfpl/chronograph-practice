@@ -99,6 +99,7 @@ public class ChronoVertexTest {
 		ChronoVertexEvent event9 = a.addEvent(time9);
 
 		// Default
+		assert (a.getEvent(time7, TemporalRelation.isBefore).equals(event5));
 		assert (a.getEvent(time5, TemporalRelation.isAfter).equals(event7));
 
 		// Set orderByStart to true when it is already true
@@ -116,6 +117,32 @@ public class ChronoVertexTest {
 		// Set orderByStart from false to true
 		a.setOrderByStart(true);
 		assert (a.getEvent(time5, TemporalRelation.isAfter).equals(event7));
+	}
+
+	@Test
+	public void testRemoveEventsWithTimeInstants() {
+		// Sequence: event5 -> event 7-> event9
+		Time time5 = new TimeInstant(5);
+		ChronoVertexEvent event5 = a.addEvent(time5);
+
+		Time time7 = new TimeInstant(7);
+		ChronoVertexEvent event7 = a.addEvent(time7);
+
+		Time time9 = new TimeInstant(9);
+		ChronoVertexEvent event9 = a.addEvent(time9);
+		
+		// Check before remove
+		assert (a.getEvent(time5, TemporalRelation.isBefore) == null);
+		assert (a.getEvent(time5, TemporalRelation.cotemporal).equals(event5));
+		assert (a.getEvent(time5, TemporalRelation.isAfter).equals(event7));
+		
+		// Remove events after time 5
+		a.removeEvents(time5, TemporalRelation.isAfter);
+		assert (a.getEvent(time5, TemporalRelation.isAfter) == null);
+		
+		// Remove events at time 5
+		a.removeEvents(time5, TemporalRelation.cotemporal);
+		assert (a.getEvent(time5, TemporalRelation.cotemporal) == null);	
 	}
 
 	@After
