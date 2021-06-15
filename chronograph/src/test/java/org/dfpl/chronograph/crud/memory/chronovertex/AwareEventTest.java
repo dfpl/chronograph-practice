@@ -3,7 +3,6 @@ package org.dfpl.chronograph.crud.memory.chronovertex;
 import static org.junit.Assert.*;
 
 import java.util.NavigableSet;
-import java.util.Objects;
 
 import org.dfpl.chronograph.common.TemporalRelation;
 import org.dfpl.chronograph.crud.memory.ChronoGraph;
@@ -14,7 +13,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Event;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Time;
