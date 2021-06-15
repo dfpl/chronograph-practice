@@ -30,15 +30,18 @@ public class TimePeriod extends TimeInstant {
 	@Override
 	public int compareTo(Time o) {
 		if (o instanceof TimePeriod) {
-			TimePeriod op = (TimePeriod) o;
-			if (orderByStart && op.orderByStart)
-				return (s < op.s) ? -1 : ((s == op.s) ? 0 : 1);
-			else if (orderByStart && !op.orderByStart)
-				return (s < op.f) ? -1 : ((s == op.f) ? 0 : 1);
-			else if (!orderByStart && op.orderByStart)
-				return (f < op.s) ? -1 : ((f == op.s) ? 0 : 1);
-			else
-				return (f < op.f) ? -1 : ((f == op.f) ? 0 : 1);
+			TimePeriod first = this;
+			TimePeriod second = (TimePeriod) o;
+			if (!first.orderByStart)
+				first = new TimePeriod(this.f, this.s);
+			if (!second.orderByStart)
+				second = new TimePeriod(second.f, second.s);
+
+			int startDiff = (first.s < second.s) ? -1 : ((first.s == second.s) ? 0 : 1);
+			if (startDiff != 0)
+				return startDiff;
+
+			return (first.f < second.f) ? -1 : ((first.f == second.f) ? 0 : 1);
 		} else {
 			TimeInstant oi = (TimeInstant) o;
 			if (orderByStart)
@@ -102,7 +105,7 @@ public class TimePeriod extends TimeInstant {
 			}
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return this.s + " " + this.f;
