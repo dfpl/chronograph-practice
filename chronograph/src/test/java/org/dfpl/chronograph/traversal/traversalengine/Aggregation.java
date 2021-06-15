@@ -66,7 +66,7 @@ public class Aggregation {
 			}
 		});
 
-		assertEquals(map.size(), 2);
+		assertEquals(2, map.size());
 		assertThat(map, IsMapContaining.hasEntry(true, Arrays.asList(a, c)));
 		assertThat(map, IsMapContaining.hasEntry(false, Arrays.asList(b)));
 	}
@@ -91,7 +91,7 @@ public class Aggregation {
 			}
 		};
 
-		assertEquals(map.size(), 2);
+		assertEquals(2, map.size());
 		assertEquals(map, expectedMap);
 	}
 
@@ -110,7 +110,7 @@ public class Aggregation {
 			}
 		}).get();
 
-		assertEquals(v.getId(), "C");
+		assertEquals("C", v.getId());
 	}
 
 }

@@ -64,7 +64,7 @@ public class GatherScatter {
 
 		List<List<Vertex>> vertices = engine.gather().toList();
 
-		assertEquals(vertices.size(), 1);
+		assertEquals(1, vertices.size());
 		assertThat(vertices.get(0), contains(a, b, c));
 	}
 
@@ -104,7 +104,7 @@ public class GatherScatter {
 
 		}, Collection.class, Edge.class, false).toList();
 
-		assertEquals(edges.size(), 1);
+		assertEquals(1, edges.size());
 		assertThat(edges.get(0), containsInAnyOrder(abLikes, acLikes));
 	}
 
@@ -121,7 +121,7 @@ public class GatherScatter {
 
 		}, Collection.class, Edge.class, false).scatter().toList();
 
-		assertEquals(edges.size(), 2);
+		assertEquals(2, edges.size());
 		assertThat(edges, containsInAnyOrder(abLikes, acLikes));
 	}
 

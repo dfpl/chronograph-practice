@@ -53,14 +53,14 @@ public class EventTest {
 		event9 = a.addEvent(time9);
 		
 		assertNull(a.getEvent(time5, TemporalRelation.isBefore));
-		assertEquals(a.getEvent(time5, TemporalRelation.cotemporal), event5);
-		assertEquals(a.getEvent(time5, TemporalRelation.isAfter), event7);
+		assertEquals(event5, a.getEvent(time5, TemporalRelation.cotemporal));
+		assertEquals(event7, a.getEvent(time5, TemporalRelation.isAfter));
 
-		assertEquals(a.getEvent(time7, TemporalRelation.isBefore), event5);
-		assertEquals(a.getEvent(time7, TemporalRelation.cotemporal), event7);
-		assertEquals(a.getEvent(time7, TemporalRelation.isAfter), event9);
+		assertEquals(event5, a.getEvent(time7, TemporalRelation.isBefore));
+		assertEquals(event7, a.getEvent(time7, TemporalRelation.cotemporal));
+		assertEquals(event9, a.getEvent(time7, TemporalRelation.isAfter));
 
-		assertEquals(a.getEvent(time9, TemporalRelation.isBefore), event5);
+		assertEquals(event5, a.getEvent(time9, TemporalRelation.isBefore));
 		assertNull(a.getEvent(time9, TemporalRelation.isAfter));
 		assertNull(a.getEvent(time9, TemporalRelation.during));
 		assertNull(a.getEvent(time9, TemporalRelation.finishes));
@@ -119,7 +119,7 @@ public class EventTest {
 		
 		NavigableSet<ChronoVertexEvent> retrievedEvents = a.getEvents(time5, TemporalRelation.isAfter);
 		
-		assertEquals(retrievedEvents.size(), 2);
+		assertEquals(2, retrievedEvents.size());
 		assertTrue(retrievedEvents.containsAll(validEvents));
 	}
 	
@@ -150,24 +150,24 @@ public class EventTest {
 		event9 = a.addEvent(time9);
 		
 		// Default
-		assertEquals(a.getEvent(time7, TemporalRelation.isBefore), event5);
-		assertEquals(a.getEvent(time5, TemporalRelation.isAfter), event7);
+		assertEquals(event5, a.getEvent(time7, TemporalRelation.isBefore));
+		assertEquals(event7, a.getEvent(time5, TemporalRelation.isAfter));
 
 		// Set orderByStart to true when it is already true
 		a.setOrderByStart(true);
-		assertEquals(a.getEvent(time5, TemporalRelation.isAfter), event7);
+		assertEquals(event7, a.getEvent(time5, TemporalRelation.isAfter));
 
 		// Set orderByStart from true to false
 		a.setOrderByStart(false);
-		assertEquals(a.getEvent(time5, TemporalRelation.isAfter), event9);
+		assertEquals(event9, a.getEvent(time5, TemporalRelation.isAfter));
 
 		// Set orderByStart to false when it's already false
 		a.setOrderByStart(false);
-		assertEquals(a.getEvent(time5, TemporalRelation.isAfter), event9);
+		assertEquals(event9, a.getEvent(time5, TemporalRelation.isAfter));
 
 		// Set orderByStart from false to true
 		a.setOrderByStart(true);
-		assertEquals(a.getEvent(time5, TemporalRelation.isAfter), event7);
+		assertEquals(event7, a.getEvent(time5, TemporalRelation.isAfter));
 	}
 
 	@Test
@@ -183,8 +183,8 @@ public class EventTest {
 		
 		// Check before remove
 		assertNull(a.getEvent(time5, TemporalRelation.isBefore));
-		assertEquals(a.getEvent(time5, TemporalRelation.cotemporal), event5);
-		assertEquals(a.getEvent(time5, TemporalRelation.isAfter), event7);
+		assertEquals(event5, a.getEvent(time5, TemporalRelation.cotemporal));
+		assertEquals(event7, a.getEvent(time5, TemporalRelation.isAfter));
 
 		// Remove events after time 5
 		a.removeEvents(time5, TemporalRelation.isAfter);

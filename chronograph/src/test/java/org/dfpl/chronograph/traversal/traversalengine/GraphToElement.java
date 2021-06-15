@@ -55,7 +55,7 @@ public class GraphToElement {
 	public void testV() {
 		TraversalEngine engine = new TraversalEngine(graph, graph, Graph.class, false);
 
-		assertEquals(engine.V().toList().size(), 3);
+		assertEquals(3, engine.V().toList().size());
 	}
 
 	@Test
@@ -63,7 +63,7 @@ public class GraphToElement {
 		Graph emptyGraph = new ChronoGraph();
 		TraversalEngine engine = new TraversalEngine(emptyGraph, emptyGraph, Graph.class, false);
 
-		assertEquals(engine.V().toList().size(), 0);
+		assertEquals(0, engine.V().toList().size());
 	}
 
 	@Test
@@ -74,7 +74,7 @@ public class GraphToElement {
 
 		TraversalEngine engine = new TraversalEngine(graph, graph, Graph.class, false);
 
-		assertEquals(engine.V("isOdd", false).toList().size(), 1);
+		assertEquals(1, engine.V("isOdd", false).toList().size());
 	}
 
 	@Test
@@ -85,7 +85,7 @@ public class GraphToElement {
 
 		TraversalEngine engine = new TraversalEngine(graph, graph, Graph.class, false);
 
-		assertEquals(engine.V("isOdd", 1).toList().size(), 0);
+		assertEquals(0, engine.V("isOdd", 1).toList().size());
 	}
 
 	@Test
@@ -101,7 +101,7 @@ public class GraphToElement {
 		
 		TraversalEngine engine = new TraversalEngine(graph, graph, Graph.class, false);
 
-		assertEquals(engine.E().toList().size(), 0);
+		assertEquals(0, engine.E().toList().size());
 	}
 
 	@Test
@@ -113,13 +113,13 @@ public class GraphToElement {
 
 		TraversalEngine engine = new TraversalEngine(graph, graph, Graph.class, false);
 
-		assertEquals(engine.E("isOdd", true).toList().size(), 2);
+		assertEquals(2, engine.E("isOdd", true).toList().size());
 	}
 	
 	@Test
 	public void testE_WithoutProperties() {
 		TraversalEngine engine = new TraversalEngine(graph, graph, Graph.class, false);
 
-		assertEquals(engine.E("isOdd", true).toList().size(), 0);
+		assertEquals(0, engine.E("isOdd", true).toList().size());
 	}
 }

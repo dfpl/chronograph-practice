@@ -46,8 +46,8 @@ public class VertexTest {
 		g.addVertex("A");
 
 		// -----------------------------------------------------//
-		assertEquals(g.getVertices().size(), 1);
-		assertEquals(g.getVertex("A").getId(), "A");
+		assertEquals(1, g.getVertices().size());
+		assertEquals("A", g.getVertex("A").getId());
 
 		g.addVertex("B");
 		g.addVertex("C");

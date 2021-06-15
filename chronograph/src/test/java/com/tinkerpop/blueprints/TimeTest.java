@@ -65,19 +65,19 @@ public class TimeTest {
 
 		checkResults(first, second);
 
-		assertEquals(containsResult, false);
-		assertEquals(cotemporalResult, true);
-		assertEquals(duringResult, false);
-		assertEquals(finishesResult, false);
-		assertEquals(isAfterResult, false);
-		assertEquals(isBeforeResult, false);
-		assertEquals(isFinishedByResult, false);
-		assertEquals(isMetByResult, false);
-		assertEquals(isOverlappedByResult, false);
-		assertEquals(isStartedByResult, false);
-		assertEquals(meetsResult, false);
-		assertEquals(overlapsWithResult, false);
-		assertEquals(startsResult, false);
+		assertEquals(false, containsResult);
+		assertEquals(true, cotemporalResult);
+		assertEquals(false, duringResult);
+		assertEquals(false, finishesResult);
+		assertEquals(false, isAfterResult);
+		assertEquals(false, isBeforeResult);
+		assertEquals(false, isFinishedByResult);
+		assertEquals(false, isMetByResult);
+		assertEquals(false, isOverlappedByResult);
+		assertEquals(false, isStartedByResult);
+		assertEquals(false, meetsResult);
+		assertEquals(false, overlapsWithResult);
+		assertEquals(false, startsResult);
 	}
 
 	@Test
@@ -87,19 +87,19 @@ public class TimeTest {
 
 		checkResults(first, second);
 
-		assertEquals(containsResult, false);
-		assertEquals(cotemporalResult, false);
-		assertEquals(duringResult, false);
-		assertEquals(finishesResult, false);
-		assertEquals(isAfterResult, false);
-		assertEquals(isBeforeResult, false);
-		assertEquals(isFinishedByResult, false);
-		assertEquals(isMetByResult, false);
-		assertEquals(isOverlappedByResult, false);
-		assertEquals(isStartedByResult, false);
-		assertEquals(meetsResult, true);
-		assertEquals(overlapsWithResult, false);
-		assertEquals(startsResult, true);
+		assertEquals(false, containsResult);
+		assertEquals(false, cotemporalResult);
+		assertEquals(false, duringResult);
+		assertEquals(false, finishesResult);
+		assertEquals(false, isAfterResult);
+		assertEquals(false, isBeforeResult);
+		assertEquals(false, isFinishedByResult);
+		assertEquals(false, isMetByResult);
+		assertEquals(false, isOverlappedByResult);
+		assertEquals(false, isStartedByResult);
+		assertEquals(true, meetsResult);
+		assertEquals(false, overlapsWithResult);
+		assertEquals(true, startsResult);
 	}
 
 	@Test
@@ -109,19 +109,19 @@ public class TimeTest {
 
 		checkResults(first, second);
 
-		assertEquals(containsResult, false);
-		assertEquals(cotemporalResult, false);
-		assertEquals(duringResult, false);
-		assertEquals(finishesResult, false);
-		assertEquals(isAfterResult, false);
-		assertEquals(isBeforeResult, false);
-		assertEquals(isFinishedByResult, false);
-		assertEquals(isMetByResult, true);
-		assertEquals(isOverlappedByResult, false);
-		assertEquals(isStartedByResult, true);
-		assertEquals(meetsResult, false);
-		assertEquals(overlapsWithResult, false);
-		assertEquals(startsResult, false);
+		assertEquals(false, containsResult);
+		assertEquals(false, cotemporalResult);
+		assertEquals(false, duringResult);
+		assertEquals(false, finishesResult);
+		assertEquals(false, isAfterResult);
+		assertEquals(false, isBeforeResult);
+		assertEquals(false, isFinishedByResult);
+		assertEquals(true, isMetByResult);
+		assertEquals(false, isOverlappedByResult);
+		assertEquals(true, isStartedByResult);
+		assertEquals(false, meetsResult);
+		assertEquals(false, overlapsWithResult);
+		assertEquals(false, startsResult);
 	}
 
 	@Test
@@ -131,19 +131,19 @@ public class TimeTest {
 
 		checkResults(first, second);
 
-		assertEquals(containsResult, false);
-		assertEquals(cotemporalResult, false);
-		assertEquals(duringResult, false);
-		assertEquals(finishesResult, false);
-		assertEquals(isAfterResult, false);
-		assertEquals(isBeforeResult, false);
-		assertEquals(isFinishedByResult, true);
-		assertEquals(isMetByResult, false);
-		assertEquals(isOverlappedByResult, false);
-		assertEquals(isStartedByResult, false);
-		assertEquals(meetsResult, false);
-		assertEquals(overlapsWithResult, false);
-		assertEquals(startsResult, false);
+		assertEquals(false, containsResult);
+		assertEquals(false, cotemporalResult);
+		assertEquals(false, duringResult);
+		assertEquals(false, finishesResult);
+		assertEquals(false, isAfterResult);
+		assertEquals(false, isBeforeResult);
+		assertEquals(true, isFinishedByResult);
+		assertEquals(false, isMetByResult);
+		assertEquals(false, isOverlappedByResult);
+		assertEquals(false, isStartedByResult);
+		assertEquals(false, meetsResult);
+		assertEquals(false, overlapsWithResult);
+		assertEquals(false, startsResult);
 	}
 
 }

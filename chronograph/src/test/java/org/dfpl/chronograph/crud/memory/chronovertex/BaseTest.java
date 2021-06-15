@@ -95,7 +95,7 @@ public class BaseTest {
 
 	@Test
 	public void testAddAndRemoveProperty() {
-		assertEquals(a.getPropertyKeys().size(), 0);
+		assertEquals(0, a.getPropertyKeys().size());
 
 		// Add properties
 		a.setProperty("name", "J. B.");
@@ -104,12 +104,12 @@ public class BaseTest {
 		// Assert added properties
 		assertTrue(a.getProperty("name").toString().equals("J. B."));
 		assertTrue(a.getProperty("title").toString().equals("Prof."));
-		assertEquals(a.getPropertyKeys().size(), 2);
+		assertEquals(2, a.getPropertyKeys().size());
 
 		// Assert removal of properties
 		a.removeProperty("name");
 		assertNull(a.getProperty("name"));
-		assertEquals(a.getPropertyKeys().size(), 1);
+		assertEquals(1, a.getPropertyKeys().size());
 	}
 
 }
