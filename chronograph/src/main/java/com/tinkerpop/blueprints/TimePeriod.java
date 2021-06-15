@@ -29,7 +29,7 @@ public class TimePeriod extends TimeInstant {
 
 	@Override
 	public int compareTo(Time o) {
-		if (o instanceof TimeInstant) {
+		if (o instanceof TimePeriod) {
 			TimePeriod op = (TimePeriod) o;
 			if (orderByStart && op.orderByStart)
 				return (s < op.s) ? -1 : ((s == op.s) ? 0 : 1);
@@ -50,25 +50,7 @@ public class TimePeriod extends TimeInstant {
 
 	@Override
 	public boolean checkTemporalRelation(Time t, TemporalRelation tr) {
-		if (t instanceof TimeInstant) {
-			TimeInstant ti = (TimeInstant) t;
-			switch (tr) {
-			case isBefore:
-				return f < ti.getTime();
-			case isAfter:
-				return s > ti.getTime();
-			case meets:
-			case isFinishedBy:
-				return f == ti.getTime();
-			case isMetBy:
-			case isStartedBy:
-				return s == ti.getTime();
-			case contains:
-				return s > ti.getTime() && f < ti.getTime();
-			default:
-				return false;
-			}
-		} else {
+		if (t instanceof TimePeriod) {
 			TimePeriod tp = (TimePeriod) t;
 			switch (tr) {
 			case isBefore:
@@ -95,6 +77,24 @@ public class TimePeriod extends TimeInstant {
 				return s > tp.s && f == tp.f;
 			case isFinishedBy:
 				return s < tp.s && f == tp.f;
+			default:
+				return false;
+			}
+		} else {
+			TimeInstant ti = (TimeInstant) t;
+			switch (tr) {
+			case isBefore:
+				return f < ti.getTime();
+			case isAfter:
+				return s > ti.getTime();
+			case meets:
+			case isFinishedBy:
+				return f == ti.getTime();
+			case isMetBy:
+			case isStartedBy:
+				return s == ti.getTime();
+			case contains:
+				return s > ti.getTime() && f < ti.getTime();
 			default:
 				return false;
 			}

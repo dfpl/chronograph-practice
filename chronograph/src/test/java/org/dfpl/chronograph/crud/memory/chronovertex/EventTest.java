@@ -51,7 +51,6 @@ public class EventTest {
 
 	@Test
 	public void testGetEvent_WithTimeInstants() {
-
 		assertNull(a.getEvent(time5, TemporalRelation.isBefore));
 		assertEquals(a.getEvent(time5, TemporalRelation.cotemporal), event5);
 		assertEquals(a.getEvent(time5, TemporalRelation.isAfter), event7);

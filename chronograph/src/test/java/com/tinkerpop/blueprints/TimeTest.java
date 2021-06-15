@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class TimeInstantTest {
+public class TimeTest {
 
 	boolean isBeforeResult;
 	boolean isAfterResult;
@@ -41,7 +41,7 @@ public class TimeInstantTest {
 	public void tearDown() throws Exception {
 	}
 
-	public void checkResults(TimeInstant first, TimeInstant second) {
+	public void checkResults(Time first, Time second) {
 		containsResult = first.checkTemporalRelation(second, TemporalRelation.contains);
 		cotemporalResult = first.checkTemporalRelation(second, TemporalRelation.cotemporal);
 		duringResult = first.checkTemporalRelation(second, TemporalRelation.during);
@@ -58,7 +58,7 @@ public class TimeInstantTest {
 	}
 
 	@Test
-	public void testCheckTemporalRelations_WithTimeInstants() {
+	public void testCheckTemporalRelations_TimeInstants() {
 		long t = 5;
 		TimeInstant first = new TimeInstant(t);
 		TimeInstant second = new TimeInstant(t);
@@ -81,45 +81,7 @@ public class TimeInstantTest {
 	}
 
 	@Test
-	public void testCheckTemporalRelations_WithUnequalInstants() {
-		TimeInstant first = new TimeInstant((long) 5);
-		TimeInstant second = new TimeInstant((long) 7);
-
-		checkResults(first, second);
-
-		assertEquals (containsResult, false);
-		assertEquals (cotemporalResult, false);
-		assertEquals (duringResult, false);
-		assertEquals (finishesResult, false);
-		assertEquals (isAfterResult, false);
-		assertEquals (isBeforeResult, true);
-		assertEquals (isFinishedByResult, false);
-		assertEquals (isMetByResult, false);
-		assertEquals (isOverlappedByResult, false);
-		assertEquals (isStartedByResult, false);
-		assertEquals (meetsResult, false);
-		assertEquals (overlapsWithResult, false);
-		assertEquals (startsResult, false);
-
-		checkResults(second, first);
-
-		assertEquals(containsResult, false);
-		assertEquals(cotemporalResult, false);
-		assertEquals(duringResult, false);
-		assertEquals(finishesResult, false);
-		assertEquals(isAfterResult, true);
-		assertEquals(isBeforeResult, false);
-		assertEquals(isFinishedByResult, false);
-		assertEquals(isMetByResult, false);
-		assertEquals(isOverlappedByResult, false);
-		assertEquals(isStartedByResult, false);
-		assertEquals(meetsResult, false);
-		assertEquals(overlapsWithResult, false);
-		assertEquals(startsResult, false);
-	}
-
-	@Test
-	public void testCheckTemporalRelations_WithTimePeriod() {
+	public void testCheckTemporalRelations_TimeInstantAndTimePeriod() {
 		TimeInstant first = new TimeInstant((long) 5);
 		TimePeriod second = new TimePeriod((long) 5, (long) 7);
 
@@ -138,6 +100,50 @@ public class TimeInstantTest {
 		assertEquals(meetsResult, true);
 		assertEquals(overlapsWithResult, false);
 		assertEquals(startsResult, true);
+	}
+
+	@Test
+	public void testCheckTemporalRelation_TimePeriodAndTimeInstant() {
+		TimePeriod first = new TimePeriod(5, 10);
+		TimeInstant second = new TimeInstant(5);
+
+		checkResults(first, second);
+
+		assertEquals(containsResult, false);
+		assertEquals(cotemporalResult, false);
+		assertEquals(duringResult, false);
+		assertEquals(finishesResult, false);
+		assertEquals(isAfterResult, false);
+		assertEquals(isBeforeResult, false);
+		assertEquals(isFinishedByResult, false);
+		assertEquals(isMetByResult, true);
+		assertEquals(isOverlappedByResult, false);
+		assertEquals(isStartedByResult, true);
+		assertEquals(meetsResult, false);
+		assertEquals(overlapsWithResult, false);
+		assertEquals(startsResult, false);
+	}
+
+	@Test
+	public void testCheckTemporalRelation_TimePeriods() {
+		TimePeriod first = new TimePeriod(5, 10);
+		TimePeriod second = new TimePeriod(6, 10);
+
+		checkResults(first, second);
+
+		assertEquals(containsResult, false);
+		assertEquals(cotemporalResult, false);
+		assertEquals(duringResult, false);
+		assertEquals(finishesResult, false);
+		assertEquals(isAfterResult, false);
+		assertEquals(isBeforeResult, false);
+		assertEquals(isFinishedByResult, true);
+		assertEquals(isMetByResult, false);
+		assertEquals(isOverlappedByResult, false);
+		assertEquals(isStartedByResult, false);
+		assertEquals(meetsResult, false);
+		assertEquals(overlapsWithResult, false);
+		assertEquals(startsResult, false);
 	}
 
 }
