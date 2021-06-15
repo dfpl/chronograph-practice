@@ -79,8 +79,7 @@ public class AwareEventTest {
 
 		NavigableSet<Event> cotemporalAtTime5 = a.getEvents(time5, TemporalRelation.cotemporal, false, false);
 		assertEquals(1, cotemporalAtTime5.size());
-		assertEquals(a, cotemporalAtTime5.first().getElement());
-		assertEquals(time5, cotemporalAtTime5.first().getTime());
+		assertEquals(event5, cotemporalAtTime5.first());
 	}
 
 	@Test
