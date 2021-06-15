@@ -24,7 +24,7 @@ public class ChronoVertexEvent extends VertexEvent {
 	public <T extends Event> NavigableSet<T> getVertexEvents(Direction direction, TemporalRelation tr,
 			String[] labels) {
 		NavigableSet<ChronoVertexEvent> validEvents = new TreeSet<>((ChronoVertexEvent e1, ChronoVertexEvent e2) -> {
-			return e1.getTime().compareTo(e2.getTime());
+			return e1.compareTo(e2);
 		});
 
 		Collection<Vertex> neighborVertices = ((ChronoVertex) this.getElement()).getVertices(direction, labels);

@@ -37,7 +37,7 @@ public class ChronoVertex implements Vertex {
 		this.properties = new HashMap<String, Object>();
 
 		this.events = new TreeSet<>((ChronoVertexEvent e1, ChronoVertexEvent e2) -> {
-			return e1.getTime().compareTo(e2.getTime());
+			return e1.compareTo(e2);
 		});
 
 		this.orderByStart = true;
@@ -183,8 +183,8 @@ public class ChronoVertex implements Vertex {
 	public <T extends Event> NavigableSet<T> getEvents(Time time, TemporalRelation tr) {
 		NavigableSet<ChronoVertexEvent> validEvents = new TreeSet<>((ChronoVertexEvent e1, ChronoVertexEvent e2) -> {
 			if (this.orderByStart)
-				return e1.getTime().compareTo(e2.getTime());
-			return e2.getTime().compareTo(e1.getTime());
+				return e1.compareTo(e2);
+			return e2.compareTo(e1);
 		});
 
 		for (Iterator<ChronoVertexEvent> eIter = this.events.iterator(); eIter.hasNext();) {
