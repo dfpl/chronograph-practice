@@ -242,12 +242,9 @@ public class ChronoVertex implements Vertex {
 		validEvents.addAll(this.getEvents(time, tr));
 
 		if (awareOutEvents) {
-			for (Vertex n : this.getVertices(Direction.OUT, (String[]) null)) {
+			this.getVertices(Direction.OUT, (String[]) null).forEach(n -> {
 				validEvents.addAll(n.getEvents(time, tr));
-			}
-//			this.getVertices(Direction.OUT, (String[]) null).forEach(n -> {
-//				validEvents.addAll(n.getEvents(time, tr));
-//			});
+			});
 		}
 
 		if (awareInEvents) {
