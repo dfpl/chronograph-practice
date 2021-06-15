@@ -77,6 +77,8 @@ public class TimePeriod extends TimeInstant {
 				return s > tp.s && f == tp.f;
 			case isFinishedBy:
 				return s < tp.s && f == tp.f;
+			case cotemporal:
+				return s == tp.s && f == tp.f;
 			default:
 				return false;
 			}
@@ -99,5 +101,10 @@ public class TimePeriod extends TimeInstant {
 				return false;
 			}
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return this.s + " " + this.f;
 	}
 }

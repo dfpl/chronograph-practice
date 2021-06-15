@@ -15,6 +15,7 @@ import org.junit.Test;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Time;
 import com.tinkerpop.blueprints.TimeInstant;
+import com.tinkerpop.blueprints.TimePeriod;
 import com.tinkerpop.blueprints.Vertex;
 
 public class EventTest {
@@ -33,15 +34,6 @@ public class EventTest {
 	public void setUp() throws Exception {
 		g = new ChronoGraph();
 		a = g.addVertex("A");
-
-		time5 = new TimeInstant(5);
-		event5 = a.addEvent(time5);
-
-		time7 = new TimeInstant(7);
-		event7 = a.addEvent(time7);
-
-		time9 = new TimeInstant(9);
-		event9 = a.addEvent(time9);
 	}
 
 	@After
@@ -51,6 +43,15 @@ public class EventTest {
 
 	@Test
 	public void testGetEvent_WithTimeInstants() {
+		time5 = new TimeInstant(5);
+		event5 = a.addEvent(time5);
+
+		time7 = new TimeInstant(7);
+		event7 = a.addEvent(time7);
+
+		time9 = new TimeInstant(9);
+		event9 = a.addEvent(time9);
+		
 		assertNull(a.getEvent(time5, TemporalRelation.isBefore));
 		assertEquals(a.getEvent(time5, TemporalRelation.cotemporal), event5);
 		assertEquals(a.getEvent(time5, TemporalRelation.isAfter), event7);
@@ -75,8 +76,18 @@ public class EventTest {
 
 	@Test
 	public void testGetEvent_WithTimePeriods() {
-		// s
-		fail("Not implemented yet");
+		TimePeriod time5to9 = new TimePeriod(5,9);
+		TimePeriod time9to10 = new TimePeriod(9,10);
+		TimePeriod time10to15 = new TimePeriod(10,15);
+		
+		ChronoVertexEvent event5to9 = a.addEvent(time5to9);
+		ChronoVertexEvent event9to10 = a.addEvent(time9to10);
+		ChronoVertexEvent event10to15 = a.addEvent(time10to15);
+		
+		assertNull(a.getEvent(time5to9, TemporalRelation.isBefore));
+		assertEquals(event10to15, a.getEvent(time5to9, TemporalRelation.isAfter));
+		assertEquals(event5to9, a.getEvent(time9to10, TemporalRelation.meets));
+		assertEquals(event5to9, a.getEvent(time5to9, TemporalRelation.cotemporal));
 	}
 
 	@Test
@@ -91,8 +102,17 @@ public class EventTest {
 	
 	@Test
 	public void testGetEvents_WithTimeInstants() {
+		time5 = new TimeInstant(5);
+		event5 = a.addEvent(time5);
+
+		time7 = new TimeInstant(7);
+		event7 = a.addEvent(time7);
+
+		time9 = new TimeInstant(9);
+		event9 = a.addEvent(time9);
+		
 		NavigableSet<ChronoVertexEvent> validEvents = new TreeSet<>((ChronoVertexEvent e1, ChronoVertexEvent e2) -> {
-			return e1.getTime().compareTo(e2.getTime());
+			return e1.compareTo(e2);
 		});
 		validEvents.add(event7);
 		validEvents.add(event9);
@@ -104,8 +124,7 @@ public class EventTest {
 	}
 	
 	@Test
-	public void testGetEvents_WithTimePeriods() {
-		// s
+	public void testGetEvents_WithTimePeriods() {		
 		fail("Not implemented yet");
 	}
 
@@ -121,6 +140,15 @@ public class EventTest {
 
 	@Test
 	public void testSetOrderByStart() {
+		time5 = new TimeInstant(5);
+		event5 = a.addEvent(time5);
+
+		time7 = new TimeInstant(7);
+		event7 = a.addEvent(time7);
+
+		time9 = new TimeInstant(9);
+		event9 = a.addEvent(time9);
+		
 		// Default
 		assertEquals(a.getEvent(time7, TemporalRelation.isBefore), event5);
 		assertEquals(a.getEvent(time5, TemporalRelation.isAfter), event7);
@@ -144,6 +172,15 @@ public class EventTest {
 
 	@Test
 	public void testRemoveEvents_WithTimeInstants() {
+		time5 = new TimeInstant(5);
+		event5 = a.addEvent(time5);
+
+		time7 = new TimeInstant(7);
+		event7 = a.addEvent(time7);
+
+		time9 = new TimeInstant(9);
+		event9 = a.addEvent(time9);
+		
 		// Check before remove
 		assertNull(a.getEvent(time5, TemporalRelation.isBefore));
 		assertEquals(a.getEvent(time5, TemporalRelation.cotemporal), event5);
