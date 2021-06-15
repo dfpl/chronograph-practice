@@ -3,6 +3,7 @@ package org.dfpl.chronograph.crud.memory.chronovertex;
 import static org.junit.Assert.*;
 
 import java.util.NavigableSet;
+import java.util.Objects;
 
 import org.dfpl.chronograph.common.TemporalRelation;
 import org.dfpl.chronograph.crud.memory.ChronoGraph;
@@ -103,13 +104,11 @@ public class AwareEventTest {
 		event7 = b.addEvent(time7);
 		event9 = b.addEvent(time9);
 
-		// TODO: Confirm how treeset determines equality
-//		assertEquals(2, a.getEvents(time5, TemporalRelation.cotemporal, true, false).size());
+		assertEquals(2, a.getEvents(time5, TemporalRelation.cotemporal, true, false).size());
 
 		NavigableSet<Event> isAfterEvents = a.getEvents(time5, TemporalRelation.isAfter, true, false);
 		assertEquals(2, isAfterEvents.size());
 		assertTrue(isAfterEvents.contains(event7));
 		assertTrue(isAfterEvents.contains(event9));
 	}
-
 }

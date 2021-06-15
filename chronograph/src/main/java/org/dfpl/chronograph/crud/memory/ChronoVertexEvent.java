@@ -26,17 +26,17 @@ public class ChronoVertexEvent extends VertexEvent {
 		NavigableSet<ChronoVertexEvent> validEvents = new TreeSet<>((ChronoVertexEvent e1, ChronoVertexEvent e2) -> {
 			return e1.getTime().compareTo(e2.getTime());
 		});
-		
+
 		Collection<Vertex> neighborVertices = ((ChronoVertex) this.getElement()).getVertices(direction, labels);
-		
-		for(Iterator<Vertex> vIter = neighborVertices.iterator(); vIter.hasNext(); ) {
+
+		for (Iterator<Vertex> vIter = neighborVertices.iterator(); vIter.hasNext();) {
 			Vertex vertex = vIter.next();
 			Event currEvent = vertex.getEvent(getTime(), tr);
-			if(currEvent != null) {
+			if (currEvent != null) {
 				validEvents.add((ChronoVertexEvent) currEvent);
 			}
 		}
-		
+
 		return (NavigableSet<T>) validEvents;
 	}
 }

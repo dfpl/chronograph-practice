@@ -235,16 +235,19 @@ public class ChronoVertex implements Vertex {
 
 		NavigableSet<ChronoVertexEvent> validEvents = new TreeSet<>((ChronoVertexEvent e1, ChronoVertexEvent e2) -> {
 			if (this.orderByStart)
-				return e1.getTime().compareTo(e2.getTime());
-			return e2.getTime().compareTo(e1.getTime());
+				return e1.compareTo(e2);
+			return e2.compareTo(e1);
 		});
 
 		validEvents.addAll(this.getEvents(time, tr));
 
 		if (awareOutEvents) {
-			this.getVertices(Direction.OUT, (String[]) null).forEach(n -> {
+			for (Vertex n : this.getVertices(Direction.OUT, (String[]) null)) {
 				validEvents.addAll(n.getEvents(time, tr));
-			});
+			}
+//			this.getVertices(Direction.OUT, (String[]) null).forEach(n -> {
+//				validEvents.addAll(n.getEvents(time, tr));
+//			});
 		}
 
 		if (awareInEvents) {
