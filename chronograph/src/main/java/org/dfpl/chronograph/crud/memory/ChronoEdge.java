@@ -1,8 +1,10 @@
 package org.dfpl.chronograph.crud.memory;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.dfpl.chronograph.common.TemporalRelation;
 
@@ -27,6 +29,8 @@ public class ChronoEdge implements Edge {
 	private String label;
 	private Vertex in;
 	private HashMap<String, Object> properties;
+	private NavigableSet<ChronoEdgeEvent> events;
+	private boolean orderByStart;
 
 	public ChronoEdge(Graph g, Vertex out, String label, Vertex in) {
 		this.g = g;
@@ -35,6 +39,12 @@ public class ChronoEdge implements Edge {
 		this.in = in;
 		this.id = out.toString() + "|" + label + "|" + in.toString();
 		this.properties = new HashMap<String, Object>();
+
+		this.events = new TreeSet<>((ChronoEdgeEvent e1, ChronoEdgeEvent e2) -> {
+			return e1.compareTo(e2);
+		});
+
+		this.orderByStart = true;
 	}
 
 	@Override
@@ -100,33 +110,60 @@ public class ChronoEdge implements Edge {
 		return id;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Event> T addEvent(Time time) {
-		// TODO Auto-generated method stub
-		return null;
+		ChronoEdgeEvent event = new ChronoEdgeEvent(this, time);
+		this.events.add(event);
+		return (T) event;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Event> NavigableSet<T> getEvents(Time time, TemporalRelation tr) {
-		// TODO Auto-generated method stub
-		return null;
+		NavigableSet<ChronoEdgeEvent> validEvents = new TreeSet<>((ChronoEdgeEvent e1, ChronoEdgeEvent e2) -> {
+			if (this.orderByStart)
+				return e1.compareTo(e2);
+			return e2.compareTo(e1);
+		});
+
+		for (Iterator<ChronoEdgeEvent> eIter = this.events.iterator(); eIter.hasNext();) {
+			ChronoEdgeEvent event = eIter.next();
+
+			if (event.getTime().checkTemporalRelation(time, tr))
+				validEvents.add(event);
+		}
+		return (NavigableSet<T>) validEvents;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Event> T getEvent(Time time, TemporalRelation tr) {
-		// TODO Auto-generated method stub
+		for (Iterator<ChronoEdgeEvent> eIter = this.events.iterator(); eIter.hasNext();) {
+			ChronoEdgeEvent event = eIter.next();
+
+			if (event.getTime().checkTemporalRelation(time, tr))
+				return (T) event;
+		}
 		return null;
 	}
 
 	@Override
 	public void removeEvents(Time time, TemporalRelation tr) {
-		// TODO Auto-generated method stub
-		
+		for (Iterator<ChronoEdgeEvent> eIter = this.events.iterator(); eIter.hasNext();) {
+			ChronoEdgeEvent event = eIter.next();
+
+			if (event.getTime().checkTemporalRelation(time, tr))
+				eIter.remove();
+		}
 	}
 
 	@Override
-	public void setOrderByStart(boolean setOrderByStart) {
-		// TODO Auto-generated method stub
-		
+	public void setOrderByStart(boolean orderByStart) {
+		if (this.orderByStart == orderByStart)
+			return;
+
+		this.orderByStart = orderByStart;
+		this.events = this.events.descendingSet();
 	}
 }

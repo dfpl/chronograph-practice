@@ -105,5 +105,5 @@ public interface Element {
 	/**
 	 * Keep the order of valid events by its start time or not if necessary
 	 */
-	public void setOrderByStart(boolean setOrderByStart);
+	public void setOrderByStart(boolean orderByStart);
 }
