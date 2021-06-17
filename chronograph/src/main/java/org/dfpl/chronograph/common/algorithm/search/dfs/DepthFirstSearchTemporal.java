@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 
@@ -25,7 +23,6 @@ public class DepthFirstSearchTemporal {
 
 	static HashMap<Vertex, Time> gamma;
 	static HashMap<Vertex, Vertex> predecessors;
-	static HashMap<Edge, List<Event>> traversedEvents;
 
 	public static void main(String[] args) throws IOException {
 		Graph g;
@@ -42,13 +39,13 @@ public class DepthFirstSearchTemporal {
 //		printInfo(g);
 
 		// ------- EXAMPLE: Small Graph 2 --------
-//		g = createSmallGraph2();
-//		source = g.getVertex("A");
-//		time = new TimeInstant(2);
-//
-//		DFS(g, source, time, "links");
-//
-//		printInfo(g);
+		g = createSmallGraph2();
+		source = g.getVertex("A");
+		time = new TimeInstant(1);
+
+		DFS(g, source, time, "links");
+
+		printInfo(g);
 
 		// ------- EXAMPLE: Small Graph 3 --------
 //		g = createSmallGraph3();
@@ -60,13 +57,13 @@ public class DepthFirstSearchTemporal {
 //		printInfo(g);
 
 		// ------- EXAMPLE: Large Graph--------
-		g = createLargeGraph();
-
-		source = g.getVertex("582");
-		time = new TimeInstant(0);
-
-		DFS(g, source, time, "emails");
-		printInfo(g);
+//		g = createLargeGraph();
+//
+//		source = g.getVertex("582");
+//		time = new TimeInstant(0);
+//
+//		DFS(g, source, time, "emails");
+//		printInfo(g);
 	}
 
 	public static void printInfo(Graph g) {
@@ -78,7 +75,6 @@ public class DepthFirstSearchTemporal {
 	public static void DFS(Graph g, Vertex source, Time time, String... labels) {
 		gamma = new HashMap<>();
 		predecessors = new HashMap<>();
-		traversedEvents = new HashMap<Edge, List<Event>>();
 
 		gamma.put(source, time);
 
@@ -89,29 +85,22 @@ public class DepthFirstSearchTemporal {
 			});
 
 			for (Edge edge : u.getEdges(Direction.OUT, labels)) {
-				List<Event> tempEvents = traversedEvents.get(edge);
+				if (edge.getProperty("traversed") != null)
+					continue;
 
-				for (Event event : edge.getEvents(gamma.get(u), TemporalRelation.isAfter)) {
-					if (tempEvents == null || !tempEvents.contains(event))
-						validEvents.add((ChronoEdgeEvent) event);
-				}
-				for (Event event : edge.getEvents(gamma.get(u), TemporalRelation.cotemporal)) {
-					if (tempEvents == null || !tempEvents.contains(event))
-						validEvents.add((ChronoEdgeEvent) event);
-				}
+				Event event = edge.getEvent(gamma.get(u), TemporalRelation.isAfter);
+				if (event != null)
+					validEvents.add((ChronoEdgeEvent) event);
+				event = edge.getEvent(gamma.get(u), TemporalRelation.cotemporal);
+				if (event != null)
+					validEvents.add((ChronoEdgeEvent) event);
 			}
 
 			if (!validEvents.isEmpty()) {
 				ChronoEdgeEvent traverseEvent = validEvents.first();
 
 				Edge e = ((Edge) traverseEvent.getElement());
-				if (traversedEvents.get(e) == null) {
-					List<Event> tempEvents = new LinkedList<>();
-					tempEvents.add(traverseEvent);
-					traversedEvents.put(e, tempEvents);
-				} else {
-					traversedEvents.get(e).add(traverseEvent);
-				}
+				e.setProperty("traversed", true);
 
 				Vertex v = ((Edge) traverseEvent.getElement()).getVertex(Direction.IN);
 				if (gamma.get(v) == null || gamma.get(v).compareTo(traverseEvent.getTime()) == 1) {
@@ -159,6 +148,10 @@ public class DepthFirstSearchTemporal {
 			toFrom.addEvent(time);
 		}
 		br.close();
+
+		for (Edge e : g.getEdges()) {
+			e.setOrderByStart(false);
+		}
 
 		return g;
 	}
@@ -223,6 +216,10 @@ public class DepthFirstSearchTemporal {
 		Edge ec = e.addEdge("links", c);
 		ec.addEvent(time14);
 
+		for (Edge edge : g.getEdges()) {
+			edge.setOrderByStart(false);
+		}
+
 		return g;
 	}
 
@@ -265,6 +262,10 @@ public class DepthFirstSearchTemporal {
 		// Edges from F
 		Edge fg = f.addEdge("links", g);
 		fg.addEvent(time3);
+
+		for (Edge edge : graph.getEdges()) {
+			edge.setOrderByStart(false);
+		}
 
 		return graph;
 	}
@@ -314,6 +315,10 @@ public class DepthFirstSearchTemporal {
 		// Edges from G
 		Edge ga = g.addEdge("links", a);
 		ga.addEvent(time9);
+
+		for (Edge edge : graph.getEdges()) {
+			edge.setOrderByStart(false);
+		}
 
 		return graph;
 	}
