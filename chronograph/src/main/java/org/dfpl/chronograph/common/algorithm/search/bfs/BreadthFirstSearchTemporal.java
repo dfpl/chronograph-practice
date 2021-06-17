@@ -31,12 +31,22 @@ public class BreadthFirstSearchTemporal {
 		Graph g;
 		Vertex source;
 		Time time;
-		
-		// Small scale-graph
-		g = createSmallGraph();
+
+		// Small Scale Graph 1
+//		g = createSmallGraph1();
+//
+//		source = g.getVertex("A");
+//		time = new TimeInstant(3);
+//
+//		BFS(g, source, time, "links");
+//
+//		printInfo(g);
+
+		// Small scale-graph 2
+		g = createSmallGraph2();
 
 		source = g.getVertex("A");
-		time = new TimeInstant(3);
+		time = new TimeInstant(1);
 
 		BFS(g, source, time, "links");
 
@@ -92,16 +102,19 @@ public class BreadthFirstSearchTemporal {
 				ChronoEdgeEvent minVisitEvent = e.getEvent(time, TemporalRelation.isAfter);
 				if (minVisitEvent != null)
 					events.add(minVisitEvent);
+				minVisitEvent = e.getEvent(time, TemporalRelation.cotemporal);
+				if (minVisitEvent != null)
+					events.add(minVisitEvent);
 			}
 
 			for (ChronoEdgeEvent event : events) {
 				Vertex v = ((Edge) event.getElement()).getVertex(Direction.IN);
-				
-				if( visitingTimes.get(v) == null || event.getTime().compareTo(visitingTimes.get(v)) == -1 ) {
+
+				if (visitingTimes.get(v) == null || event.getTime().compareTo(visitingTimes.get(v)) == -1) {
 					distances.put(v, distances.get(u) + 1);
 					visitingTimes.put(v, event.getTime());
 					predecessors.put(v, u);
-					
+
 					if (!Q.contains(v)) {
 						Q.add(v);
 					}
@@ -167,7 +180,7 @@ public class BreadthFirstSearchTemporal {
 		return g;
 	}
 
-	public static Graph createSmallGraph() {
+	public static Graph createSmallGraph1() {
 		Graph g = new ChronoGraph();
 
 		Vertex a = g.addVertex("A");
@@ -228,5 +241,48 @@ public class BreadthFirstSearchTemporal {
 		ec.addEvent(time14);
 
 		return g;
+	}
+
+	public static Graph createSmallGraph2() {
+		Graph graph = new ChronoGraph();
+
+		Vertex a = graph.addVertex("A");
+		Vertex b = graph.addVertex("B");
+		Vertex c = graph.addVertex("C");
+		Vertex f = graph.addVertex("F");
+		Vertex g = graph.addVertex("G");
+
+		Time time2 = new TimeInstant(2);
+		Time time3 = new TimeInstant(3);
+		Time time4 = new TimeInstant(4);
+		Time time5 = new TimeInstant(5);
+		Time time7 = new TimeInstant(7);
+
+		// Edges from A
+		Edge ab = a.addEdge("links", b);
+		ab.addEvent(time2);
+
+		Edge af = a.addEdge("links", f);
+		af.addEvent(time7);
+
+		Edge ac = a.addEdge("links", c);
+		ac.addEvent(time4);
+
+		// Edges from B
+		Edge ba = b.addEdge("links", a);
+		ba.addEvent(time5);
+
+		Edge bf = b.addEdge("links", f);
+		bf.addEvent(time3);
+
+		// Edges from C
+		Edge cf = c.addEdge("links", f);
+		cf.addEvent(time5);
+
+		// Edges from F
+		Edge fg = f.addEdge("links", g);
+		fg.addEvent(time3);
+
+		return graph;
 	}
 }
