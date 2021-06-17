@@ -28,25 +28,29 @@ public class BreadthFirstSearchTemporal {
 	static Map<Vertex, Time> visitingTimes;
 
 	public static void main(String[] args) throws IOException {
+		Graph g;
+		Vertex source;
+		Time time;
+		
 		// Small scale-graph
-//		Graph g = createSmallGraph();
-//
-//		Vertex source = g.getVertex("A");
-//		Time time = new TimeInstant(3);
-//
-//		BFS(g, source, time, "links");
-//
-//		printInfo(g);
+		g = createSmallGraph();
 
-		// ------ Large-scale graph
-		Graph g = createLargeGraph();
+		source = g.getVertex("A");
+		time = new TimeInstant(3);
 
-		Vertex source = g.getVertex("582");
-		Time time = new TimeInstant(0);
-
-		BFS(g, source, time, "emails");
+		BFS(g, source, time, "links");
 
 		printInfo(g);
+
+		// ------ Large-scale graph
+//		g = createLargeGraph();
+//
+//		source = g.getVertex("582");
+//		time = new TimeInstant(0);
+//
+//		BFS(g, source, time, "emails");
+//
+//		printInfo(g);
 	}
 
 	public static void printInfo(Graph g) {
@@ -72,8 +76,6 @@ public class BreadthFirstSearchTemporal {
 		visitingTimes = initVisitingTimes(g);
 		Queue<Vertex> Q = new LinkedList<>();
 
-		source.setProperty("traversed", true);
-
 		distances.put(source, (double) 0);
 		visitingTimes.put(source, time);
 		Q.add(source);
@@ -82,53 +84,30 @@ public class BreadthFirstSearchTemporal {
 			Vertex u = Q.poll();
 			time = visitingTimes.get(u);
 
+			// Get all edges with the least time in ascending order
 			NavigableSet<ChronoEdgeEvent> events = new TreeSet<>((ChronoEdgeEvent e1, ChronoEdgeEvent e2) -> {
 				return e1.compareTo(e2);
 			});
-
 			for (Edge e : u.getEdges(Direction.OUT, labels)) {
 				ChronoEdgeEvent minVisitEvent = e.getEvent(time, TemporalRelation.isAfter);
-				if (minVisitEvent != null)
-					events.add(minVisitEvent);
-				minVisitEvent = e.getEvent(time, TemporalRelation.cotemporal);
 				if (minVisitEvent != null)
 					events.add(minVisitEvent);
 			}
 
 			for (ChronoEdgeEvent event : events) {
 				Vertex v = ((Edge) event.getElement()).getVertex(Direction.IN);
-
-				if (v.getProperty("traversed").equals(true))
-					continue;
-
-				if (!Q.contains(v)) {
-					v.setProperty("traversed", true);
-
-					Q.add(v);
-
+				
+				if( visitingTimes.get(v) == null || event.getTime().compareTo(visitingTimes.get(v)) == -1 ) {
 					distances.put(v, distances.get(u) + 1);
 					visitingTimes.put(v, event.getTime());
 					predecessors.put(v, u);
-				} else {
-					if (Q.contains(v) && distances.get(v) == distances.get(u) + 1) {
-						v.setProperty("traversed", true);
-
-						if (visitingTimes.get(v).compareTo(time) > 1) {
-							visitingTimes.put(v, time);
-							predecessors.put(v, u);
-						}
-					} else {
-						v.setProperty("traversed", true);
-						if (visitingTimes.get(v).compareTo(time) > 1) {
-							distances.put(v, distances.get(u) + 1);
-							visitingTimes.put(v, time);
-							predecessors.put(v, u);
-						}
+					
+					if (!Q.contains(v)) {
+						Q.add(v);
 					}
 				}
 
 			}
-
 		}
 	}
 
@@ -184,9 +163,6 @@ public class BreadthFirstSearchTemporal {
 			toFrom.addEvent(time);
 		}
 		br.close();
-
-		for (Vertex v : g.getVertices())
-			v.setProperty("traversed", false);
 
 		return g;
 	}
@@ -250,9 +226,6 @@ public class BreadthFirstSearchTemporal {
 		// Edges from E
 		Edge ec = e.addEdge("links", c);
 		ec.addEvent(time14);
-
-		for (Vertex v : g.getVertices())
-			v.setProperty("traversed", false);
 
 		return g;
 	}
