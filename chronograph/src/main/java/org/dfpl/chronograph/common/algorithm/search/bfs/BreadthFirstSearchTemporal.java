@@ -32,7 +32,7 @@ public class BreadthFirstSearchTemporal {
 		Vertex source;
 		Time time;
 
-		// Small Scale Graph 1
+		// -------- Example: Small Scale Graph 1 -------
 //		g = createSmallGraph1();
 //
 //		source = g.getVertex("A");
@@ -42,11 +42,20 @@ public class BreadthFirstSearchTemporal {
 //
 //		printInfo(g);
 
-		// Small scale-graph 2
-		g = createSmallGraph2();
+		// -------- Example: Small Scale Graph 2 -------
+//		g = createSmallGraph2();
+//
+//		source = g.getVertex("A");
+//		time = new TimeInstant(1);
+//
+//		BFS(g, source, time, "links");
+//
+//		printInfo(g);
 
+		// -------- Example: Small Scale Graph 3 -------
+		g = createSmallGraph3();
 		source = g.getVertex("A");
-		time = new TimeInstant(1);
+		time = new TimeInstant(3);
 
 		BFS(g, source, time, "links");
 
@@ -252,6 +261,59 @@ public class BreadthFirstSearchTemporal {
 		// Edges from F
 		Edge fg = f.addEdge("links", g);
 		fg.addEvent(time3);
+
+		return graph;
+	}
+
+	public static Graph createSmallGraph3() {
+		Graph graph = new ChronoGraph();
+
+		Vertex a = graph.addVertex("A");
+		Vertex b = graph.addVertex("B");
+		Vertex c = graph.addVertex("C");
+		Vertex f = graph.addVertex("F");
+		Vertex g = graph.addVertex("G");
+
+		Time time3 = new TimeInstant(3);
+		Time time5 = new TimeInstant(5);
+		Time time6 = new TimeInstant(6);
+		Time time7 = new TimeInstant(7);
+		Time time8 = new TimeInstant(8);
+		Time time9 = new TimeInstant(9);
+
+		// Edges from A
+		Edge af = a.addEdge("links", f);
+		af.addEvent(time3);
+		af.addEvent(time7);
+
+		Edge ab = a.addEdge("links", b);
+		ab.addEvent(time6);
+
+		// Edges from B
+		Edge bc = b.addEdge("links", c);
+		bc.addEvent(time7);
+
+		Edge ba = b.addEdge("links", a);
+		ba.addEvent(time8);
+
+		// Edges from C
+		Edge cb = c.addEdge("links", b);
+		cb.addEvent(time6);
+
+		// Edges from F
+		Edge fc = f.addEdge("links", c);
+		fc.addEvent(time5);
+
+		Edge fg = f.addEdge("links", g);
+		fg.addEvent(time7);
+
+		// Edges from G
+		Edge ga = g.addEdge("links", a);
+		ga.addEvent(time9);
+
+		for (Edge edge : graph.getEdges()) {
+			edge.setOrderByStart(false);
+		}
 
 		return graph;
 	}
