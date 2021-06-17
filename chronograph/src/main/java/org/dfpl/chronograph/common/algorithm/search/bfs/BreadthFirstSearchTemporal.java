@@ -24,8 +24,8 @@ import com.tinkerpop.blueprints.Vertex;
 public class BreadthFirstSearchTemporal {
 
 	static Map<Vertex, Vertex> predecessors;
-	static Map<Vertex, Double> distances;
-	static Map<Vertex, Time> visitingTimes;
+	static Map<Vertex, Integer> distances;
+	static Map<Vertex, Time> gamma;
 
 	public static void main(String[] args) throws IOException {
 		Graph g;
@@ -65,34 +65,24 @@ public class BreadthFirstSearchTemporal {
 
 	public static void printInfo(Graph g) {
 		for (Vertex v : g.getVertices()) {
-			System.out.println(v + " dist: " + distances.get(v) + " pred: " + predecessors.get(v) + " time: "
-					+ visitingTimes.get(v));
+			System.out.println(
+					v + " dist: " + distances.get(v) + " pred: " + predecessors.get(v) + " time: " + gamma.get(v));
 		}
-	}
-
-	public static Map<Vertex, Vertex> initPredecessors(Graph g) {
-		Map<Vertex, Vertex> predecessors = new HashMap<>();
-
-		for (Vertex v : g.getVertices()) {
-			predecessors.put(v, null);
-		}
-
-		return predecessors;
 	}
 
 	public static void BFS(Graph g, Vertex source, Time time, String... labels) {
-		predecessors = initPredecessors(g);
-		distances = initDistances(g);
-		visitingTimes = initVisitingTimes(g);
+		predecessors = new HashMap<>();
+		distances = new HashMap<>();
+		gamma = new HashMap<>();
 		Queue<Vertex> Q = new LinkedList<>();
 
-		distances.put(source, (double) 0);
-		visitingTimes.put(source, time);
+		distances.put(source, 0);
+		gamma.put(source, time);
 		Q.add(source);
 
 		while (!Q.isEmpty()) {
 			Vertex u = Q.poll();
-			time = visitingTimes.get(u);
+			time = gamma.get(u);
 
 			// Get all edges with the least time in ascending order
 			NavigableSet<ChronoEdgeEvent> events = new TreeSet<>((ChronoEdgeEvent e1, ChronoEdgeEvent e2) -> {
@@ -110,9 +100,9 @@ public class BreadthFirstSearchTemporal {
 			for (ChronoEdgeEvent event : events) {
 				Vertex v = ((Edge) event.getElement()).getVertex(Direction.IN);
 
-				if (visitingTimes.get(v) == null || event.getTime().compareTo(visitingTimes.get(v)) == -1) {
+				if (gamma.get(v) == null || event.getTime().compareTo(gamma.get(v)) == -1) {
 					distances.put(v, distances.get(u) + 1);
-					visitingTimes.put(v, event.getTime());
+					gamma.put(v, event.getTime());
 					predecessors.put(v, u);
 
 					if (!Q.contains(v)) {
@@ -122,26 +112,6 @@ public class BreadthFirstSearchTemporal {
 
 			}
 		}
-	}
-
-	public static Map<Vertex, Double> initDistances(Graph g) {
-		Map<Vertex, Double> distances = new HashMap<>();
-
-		for (Vertex v : g.getVertices()) {
-			distances.put(v, Double.POSITIVE_INFINITY);
-		}
-
-		return distances;
-	}
-
-	public static Map<Vertex, Time> initVisitingTimes(Graph g) {
-		Map<Vertex, Time> vt = new HashMap<>();
-
-		for (Vertex v : g.getVertices()) {
-			vt.put(v, null);
-		}
-
-		return vt;
 	}
 
 	public static Graph createLargeGraph() throws IOException {
