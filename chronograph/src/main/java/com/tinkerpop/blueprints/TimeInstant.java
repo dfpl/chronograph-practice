@@ -70,4 +70,9 @@ public class TimeInstant extends Time {
 			}
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return Long.toString(s);
+	}
 }
