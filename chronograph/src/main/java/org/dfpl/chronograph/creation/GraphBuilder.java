@@ -1,125 +1,29 @@
-package org.dfpl.chronograph.common.algorithm.search.dfs;
+package org.dfpl.chronograph.creation;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.NavigableSet;
-import java.util.TreeSet;
 
-import org.dfpl.chronograph.common.TemporalRelation;
-import org.dfpl.chronograph.crud.memory.ChronoEdgeEvent;
 import org.dfpl.chronograph.crud.memory.ChronoGraph;
 
-import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Event;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Time;
 import com.tinkerpop.blueprints.TimeInstant;
 import com.tinkerpop.blueprints.Vertex;
 
-public class DepthFirstSearchTemporal {
+public class GraphBuilder {
 
-	static HashMap<Vertex, Time> gamma;
-	static HashMap<Vertex, Vertex> predecessors;
-
-	public static void main(String[] args) throws IOException {
-		Graph g;
-		Vertex source;
-		Time time;
-
-		// ------- EXAMPLE: Small Graph 1 --------
-//		g = createSmallGraph1();
-//		source = g.getVertex("A");
-//		time = new TimeInstant(3);
-//
-//		DFS(g, source, time, "links");
-//
-//		printInfo(g);
-
-		// ------- EXAMPLE: Small Graph 2 --------
-		g = createSmallGraph2();
-		source = g.getVertex("A");
-		time = new TimeInstant(1);
-
-		DFS(g, source, time, "links");
-
-		printInfo(g);
-
-		// ------- EXAMPLE: Small Graph 3 --------
-//		g = createSmallGraph3();
-//		source = g.getVertex("A");
-//		time = new TimeInstant(3);
-//
-//		DFS(g, source, time, "links");
-//
-//		printInfo(g);
-
-		// ------- EXAMPLE: Large Graph--------
-//		g = createLargeGraph();
-//
-//		source = g.getVertex("582");
-//		time = new TimeInstant(0);
-//
-//		DFS(g, source, time, "emails");
-//		printInfo(g);
-	}
-
-	public static void printInfo(Graph g) {
-		for (Vertex v : g.getVertices()) {
-			System.out.println(v + " Time: " + gamma.get(v) + " Pred: " + predecessors.get(v));
-		}
-	}
-
-	public static void DFS(Graph g, Vertex source, Time time, String... labels) {
-		gamma = new HashMap<>();
-		predecessors = new HashMap<>();
-
-		gamma.put(source, time);
-
-		Vertex u = source;
-		while (true) {
-			NavigableSet<ChronoEdgeEvent> validEvents = new TreeSet<>((ChronoEdgeEvent e1, ChronoEdgeEvent e2) -> {
-				return e2.compareTo(e1);
-			});
-
-			for (Edge edge : u.getEdges(Direction.OUT, labels)) {
-				if (edge.getProperty("traversed") != null)
-					continue;
-
-				Event event = edge.getEvent(gamma.get(u), TemporalRelation.isAfter);
-				if (event != null)
-					validEvents.add((ChronoEdgeEvent) event);
-				event = edge.getEvent(gamma.get(u), TemporalRelation.cotemporal);
-				if (event != null)
-					validEvents.add((ChronoEdgeEvent) event);
-			}
-
-			if (!validEvents.isEmpty()) {
-				ChronoEdgeEvent traverseEvent = validEvents.first();
-
-				Edge e = ((Edge) traverseEvent.getElement());
-				e.setProperty("traversed", true);
-
-				Vertex v = ((Edge) traverseEvent.getElement()).getVertex(Direction.IN);
-				if (gamma.get(v) == null || gamma.get(v).compareTo(traverseEvent.getTime()) == 1) {
-					predecessors.put(v, u);
-					gamma.put(v, traverseEvent.getTime());
-					u = v;
-				}
-			} else {
-				u = predecessors.get(u);
-				if (u == null)
-					break;
-			}
-		}
-	}
-
-	public static Graph createLargeGraph() throws IOException {
+	/**
+	 * http://snap.stanford.edu/data/email-Eu-core-temporal.html
+	 * 
+	 * @return G with e(from|sendEmailTo|to)_t
+	 * @throws IOException
+	 */
+	public static Graph createSNAPEmailEuCoreTemporal(String fileLoc) throws IOException {
 		Graph g = new ChronoGraph();
 
-		BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\haifa\\Downloads\\emails.txt"));
+		BufferedReader br = new BufferedReader(new FileReader(fileLoc));
 		while (true) {
 			String line = br.readLine();
 			if (line == null)
@@ -139,8 +43,8 @@ public class DepthFirstSearchTemporal {
 			} catch (Exception e) {
 				to = g.getVertex(arr[1]);
 			}
-			Edge fromTo = g.addEdge(from, to, "emails");
-			Edge toFrom = g.addEdge(to, from, "emails");
+			Edge fromTo = g.addEdge(from, to, "sendEmailTo");
+			Edge toFrom = g.addEdge(to, from, "sendEmailTo");
 
 			Time time = new TimeInstant(Integer.parseInt(arr[2]));
 
@@ -148,10 +52,6 @@ public class DepthFirstSearchTemporal {
 			toFrom.addEvent(time);
 		}
 		br.close();
-
-		for (Edge e : g.getEdges()) {
-			e.setOrderByStart(false);
-		}
 
 		return g;
 	}
@@ -216,10 +116,6 @@ public class DepthFirstSearchTemporal {
 		Edge ec = e.addEdge("links", c);
 		ec.addEvent(time14);
 
-		for (Edge edge : g.getEdges()) {
-			edge.setOrderByStart(false);
-		}
-
 		return g;
 	}
 
@@ -262,10 +158,6 @@ public class DepthFirstSearchTemporal {
 		// Edges from F
 		Edge fg = f.addEdge("links", g);
 		fg.addEvent(time3);
-
-		for (Edge edge : graph.getEdges()) {
-			edge.setOrderByStart(false);
-		}
 
 		return graph;
 	}

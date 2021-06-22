@@ -1,4 +1,4 @@
-package org.dfpl.chronograph.common.algorithm.centrality.betweenness;
+package org.dfpl.chronograph.algorithm.general.centrality.betweenness;
 
 import java.util.List;
 

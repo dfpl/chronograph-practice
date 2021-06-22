@@ -1,13 +1,10 @@
-package org.dfpl.chronograph.common.algorithm.search.bfs;
+package org.dfpl.chronograph.algorithm.temporal.search.dfs;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
 import java.util.NavigableSet;
-import java.util.Queue;
 import java.util.TreeSet;
 
 import org.dfpl.chronograph.common.TemporalRelation;
@@ -16,109 +13,105 @@ import org.dfpl.chronograph.crud.memory.ChronoGraph;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Event;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Time;
 import com.tinkerpop.blueprints.TimeInstant;
 import com.tinkerpop.blueprints.Vertex;
 
-public class BreadthFirstSearchTemporal {
+public class DepthFirstSearchTemporal {
 
-	static Map<Vertex, Vertex> predecessors;
-	static Map<Vertex, Integer> distances;
-	static Map<Vertex, Time> gamma;
+	static HashMap<Vertex, Time> gamma;
+	static HashMap<Vertex, Vertex> predecessors;
 
 	public static void main(String[] args) throws IOException {
 		Graph g;
 		Vertex source;
 		Time time;
 
-		// -------- Example: Small Scale Graph 1 -------
+		// ------- EXAMPLE: Small Graph 1 --------
 //		g = createSmallGraph1();
-//
 //		source = g.getVertex("A");
 //		time = new TimeInstant(3);
 //
-//		BFS(g, source, time, "links");
+//		DFS(g, source, time, "links");
 //
 //		printInfo(g);
 
-		// -------- Example: Small Scale Graph 2 -------
-//		g = createSmallGraph2();
-//
-//		source = g.getVertex("A");
-//		time = new TimeInstant(1);
-//
-//		BFS(g, source, time, "links");
-//
-//		printInfo(g);
-
-		// -------- Example: Small Scale Graph 3 -------
-		g = createSmallGraph3();
+		// ------- EXAMPLE: Small Graph 2 --------
+		g = createSmallGraph2();
 		source = g.getVertex("A");
-		time = new TimeInstant(3);
+		time = new TimeInstant(1);
 
-		BFS(g, source, time, "links");
+		DFS(g, source, time, "links");
 
 		printInfo(g);
 
-		// ------ Large-scale graph
+		// ------- EXAMPLE: Small Graph 3 --------
+//		g = createSmallGraph3();
+//		source = g.getVertex("A");
+//		time = new TimeInstant(3);
+//
+//		DFS(g, source, time, "links");
+//
+//		printInfo(g);
+
+		// ------- EXAMPLE: Large Graph--------
 //		g = createLargeGraph();
 //
 //		source = g.getVertex("582");
 //		time = new TimeInstant(0);
 //
-//		BFS(g, source, time, "emails");
-//
+//		DFS(g, source, time, "emails");
 //		printInfo(g);
 	}
 
 	public static void printInfo(Graph g) {
 		for (Vertex v : g.getVertices()) {
-			System.out.println(
-					v + " dist: " + distances.get(v) + " pred: " + predecessors.get(v) + " time: " + gamma.get(v));
+			System.out.println(v + " Time: " + gamma.get(v) + " Pred: " + predecessors.get(v));
 		}
 	}
 
-	public static void BFS(Graph g, Vertex source, Time time, String... labels) {
-		predecessors = new HashMap<>();
-		distances = new HashMap<>();
+	public static void DFS(Graph g, Vertex source, Time time, String... labels) {
 		gamma = new HashMap<>();
-		Queue<Vertex> Q = new LinkedList<>();
+		predecessors = new HashMap<>();
 
-		distances.put(source, 0);
 		gamma.put(source, time);
-		Q.add(source);
 
-		while (!Q.isEmpty()) {
-			Vertex u = Q.poll();
-			time = gamma.get(u);
-
-			// Get all edges with the least time in ascending order
-			NavigableSet<ChronoEdgeEvent> events = new TreeSet<>((ChronoEdgeEvent e1, ChronoEdgeEvent e2) -> {
-				return e1.compareTo(e2);
+		Vertex u = source;
+		while (true) {
+			NavigableSet<ChronoEdgeEvent> validEvents = new TreeSet<>((ChronoEdgeEvent e1, ChronoEdgeEvent e2) -> {
+				return e2.compareTo(e1);
 			});
-			for (Edge e : u.getEdges(Direction.OUT, labels)) {
-				ChronoEdgeEvent minVisitEvent = e.getEvent(time, TemporalRelation.isAfter);
-				if (minVisitEvent != null)
-					events.add(minVisitEvent);
-				minVisitEvent = e.getEvent(time, TemporalRelation.cotemporal);
-				if (minVisitEvent != null)
-					events.add(minVisitEvent);
+
+			for (Edge edge : u.getEdges(Direction.OUT, labels)) {
+				if (edge.getProperty("traversed") != null)
+					continue;
+
+				Event event = edge.getEvent(gamma.get(u), TemporalRelation.isAfter);
+				if (event != null)
+					validEvents.add((ChronoEdgeEvent) event);
+				event = edge.getEvent(gamma.get(u), TemporalRelation.cotemporal);
+				if (event != null)
+					validEvents.add((ChronoEdgeEvent) event);
 			}
 
-			for (ChronoEdgeEvent event : events) {
-				Vertex v = ((Edge) event.getElement()).getVertex(Direction.IN);
+			if (!validEvents.isEmpty()) {
+				ChronoEdgeEvent traverseEvent = validEvents.first();
 
-				if (gamma.get(v) == null || event.getTime().compareTo(gamma.get(v)) == -1) {
-					distances.put(v, distances.get(u) + 1);
-					gamma.put(v, event.getTime());
+				Edge e = ((Edge) traverseEvent.getElement());
+				e.setProperty("traversed", true);
+
+				Vertex v = ((Edge) traverseEvent.getElement()).getVertex(Direction.IN);
+				if (gamma.get(v) == null || gamma.get(v).compareTo(traverseEvent.getTime()) == 1) {
 					predecessors.put(v, u);
-
-					if (!Q.contains(v)) {
-						Q.add(v);
-					}
+					gamma.put(v, traverseEvent.getTime());
+					u = v;
 				}
-
+			} else {
+				u = predecessors.get(u);
+				if (u == null)
+					break;
 			}
 		}
 	}
@@ -155,6 +148,10 @@ public class BreadthFirstSearchTemporal {
 			toFrom.addEvent(time);
 		}
 		br.close();
+
+		for (Edge e : g.getEdges()) {
+			e.setOrderByStart(false);
+		}
 
 		return g;
 	}
@@ -219,6 +216,10 @@ public class BreadthFirstSearchTemporal {
 		Edge ec = e.addEdge("links", c);
 		ec.addEvent(time14);
 
+		for (Edge edge : g.getEdges()) {
+			edge.setOrderByStart(false);
+		}
+
 		return g;
 	}
 
@@ -261,6 +262,10 @@ public class BreadthFirstSearchTemporal {
 		// Edges from F
 		Edge fg = f.addEdge("links", g);
 		fg.addEvent(time3);
+
+		for (Edge edge : graph.getEdges()) {
+			edge.setOrderByStart(false);
+		}
 
 		return graph;
 	}
@@ -317,4 +322,5 @@ public class BreadthFirstSearchTemporal {
 
 		return graph;
 	}
+
 }

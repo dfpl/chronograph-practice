@@ -1,4 +1,4 @@
-package org.dfpl.chronograph.common.algorithm.search.bfs;
+package org.dfpl.chronograph.algorithm.general.search.bfs;
 
 import java.util.ArrayList;
 

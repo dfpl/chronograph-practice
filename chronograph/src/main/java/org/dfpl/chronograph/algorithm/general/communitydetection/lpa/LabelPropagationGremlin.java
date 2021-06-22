@@ -1,4 +1,4 @@
-package org.dfpl.chronograph.common.algorithm.communitydetection.lpa;
+package org.dfpl.chronograph.algorithm.general.communitydetection.lpa;
 
 import java.util.Collection;
 import java.util.Comparator;
