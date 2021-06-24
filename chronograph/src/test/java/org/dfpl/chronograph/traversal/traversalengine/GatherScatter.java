@@ -25,104 +25,83 @@ import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInA
 import static org.hamcrest.Matchers.*;
 
 public class GatherScatter {
-	Graph graph;
-	Vertex a;
-	Vertex b;
-	Vertex c;
-	Edge abLikes;
-	Edge acLikes;
-	Edge ccLoves;
+    Graph graph;
+    Vertex a;
+    Vertex b;
+    Vertex c;
+    Edge abLikes;
+    Edge acLikes;
+    Edge ccLoves;
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception {
+    }
 
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception {
+    }
 
-	@Before
-	public void setUp() throws Exception {
-		graph = new ChronoGraph();
+    @Before
+    public void setUp() throws Exception {
+        graph = new ChronoGraph();
 
-		a = graph.addVertex("A");
-		b = graph.addVertex("B");
-		c = graph.addVertex("C");
+        a = graph.addVertex("A");
+        b = graph.addVertex("B");
+        c = graph.addVertex("C");
 
-		abLikes = graph.addEdge(a, b, "likes");
-		acLikes = graph.addEdge(a, c, "likes");
-		ccLoves = graph.addEdge(c, c, "loves");
-	}
+        abLikes = graph.addEdge(a, b, "likes");
+        acLikes = graph.addEdge(a, c, "likes");
+        ccLoves = graph.addEdge(c, c, "loves");
+    }
 
-	@After
-	public void tearDown() throws Exception {
-	}
+    @After
+    public void tearDown() throws Exception {
+    }
 
-	@Test
-	public void testGather() {
-		TraversalEngine engine = new TraversalEngine(graph, graph.getVertices(), Vertex.class, false);
+    @Test
+    public void testGather() {
+        TraversalEngine engine = new TraversalEngine(graph, graph.getVertices(), Vertex.class, false);
 
-		List<List<Vertex>> vertices = engine.gather().toList();
+        List<List<Vertex>> vertices = engine.gather().toList();
 
-		assertEquals(1, vertices.size());
-		assertThat(vertices.get(0), contains(a, b, c));
-	}
+        assertEquals(1, vertices.size());
+        assertThat(vertices.get(0), contains(a, b, c));
+    }
 
-	@Test
-	public void testScatter() {
-		TraversalEngine engine = new TraversalEngine(graph, graph.getVertices(), Vertex.class, false);
+    @Test
+    public void testScatter() {
+        TraversalEngine engine = new TraversalEngine(graph, graph.getVertices(), Vertex.class, false);
 
-		assertThat(engine.scatter().toList(), containsInAnyOrder("A", "B", "C"));
-	}
+        assertThat(engine.scatter().toList(), containsInAnyOrder("A", "B", "C"));
+    }
 
-	@Test
-	public void testTransform_WithUnboxing() {
-		TraversalEngine unboxEngine = new TraversalEngine(graph, a, Vertex.class, false);
+    @Test
+    public void testTransform_WithUnboxing() {
+        TraversalEngine unboxEngine = new TraversalEngine(graph, a, Vertex.class, false);
 
-		List<Edge> edges = unboxEngine.transform(new Function<Vertex, Collection<Edge>>() {
+        List<Edge> edges = unboxEngine.transform((Function<Vertex, Collection<Edge>>) t -> t.getEdges(Direction.OUT, "likes"), Edge.class, null, true).toList();
 
-			@Override
-			public Collection<Edge> apply(Vertex t) {
-				return t.getEdges(Direction.OUT, "likes");
-			}
+        assertThat(edges, containsInAnyOrder(abLikes, acLikes));
+    }
 
-		}, Edge.class, null, true).toList();
+    @Test
+    public void testTransform_WithoutUnboxing() {
+        TraversalEngine engine = new TraversalEngine(graph, a, Vertex.class, false);
 
-		assertThat(edges, containsInAnyOrder(abLikes, acLikes));
-	}
+        List<Set<Edge>> edges = engine.transform((Function<Vertex, Collection<Edge>>) t -> t.getEdges(Direction.OUT, "likes"), Collection.class, Edge.class, false).toList();
 
-	@Test
-	public void testTransform_WithoutUnboxing() {
-		TraversalEngine engine = new TraversalEngine(graph, a, Vertex.class, false);
+        assertEquals(1, edges.size());
+        assertThat(edges.get(0), containsInAnyOrder(abLikes, acLikes));
+    }
 
-		List<Set<Edge>> edges = engine.transform(new Function<Vertex, Collection<Edge>>() {
+    @Test
+    public void testTransform_WithoutUnboxingWithScatter() {
+        TraversalEngine engine = new TraversalEngine(graph, a, Vertex.class, false);
 
-			@Override
-			public Collection<Edge> apply(Vertex t) {
-				return t.getEdges(Direction.OUT, "likes");
-			}
+        List<Edge> edges = engine.transform((Function<Vertex, Collection<Edge>>) t -> t.getEdges(Direction.OUT, "likes"), Collection.class, Edge.class, false).scatter().toList();
 
-		}, Collection.class, Edge.class, false).toList();
-
-		assertEquals(1, edges.size());
-		assertThat(edges.get(0), containsInAnyOrder(abLikes, acLikes));
-	}
-
-	@Test
-	public void testTransform_WithoutUnboxingWithScatter() {
-		TraversalEngine engine = new TraversalEngine(graph, a, Vertex.class, false);
-
-		List<Edge> edges = engine.transform(new Function<Vertex, Collection<Edge>>() {
-
-			@Override
-			public Collection<Edge> apply(Vertex t) {
-				return t.getEdges(Direction.OUT, "likes");
-			}
-
-		}, Collection.class, Edge.class, false).scatter().toList();
-
-		assertEquals(2, edges.size());
-		assertThat(edges, containsInAnyOrder(abLikes, acLikes));
-	}
+        assertEquals(2, edges.size());
+        assertThat(edges, containsInAnyOrder(abLikes, acLikes));
+    }
 
 }

@@ -1,7 +1,5 @@
 package org.dfpl.chronograph.traversal.traversalengine;
 
-import static org.junit.Assert.*;
-
 import org.dfpl.chronograph.crud.memory.ChronoGraph;
 import org.dfpl.chronograph.traversal.TraversalEngine;
 import org.junit.After;
@@ -17,46 +15,46 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 
 public class VertexToVertex {
-	
-	Graph graph;
-	Vertex a;
-	Vertex b;
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
+    Graph graph;
+    Vertex a;
+    Vertex b;
 
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception {
+    }
 
-	@Before
-	public void setUp() throws Exception {
-		Graph graph = new ChronoGraph();
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception {
+    }
 
-		a = graph.addVertex("A");
-		b = graph.addVertex("B");
+    @Before
+    public void setUp() throws Exception {
+        Graph graph = new ChronoGraph();
 
-		graph.addEdge(a, b, "likes");
-		graph.addEdge(a, a, "loves");
-	}
+        a = graph.addVertex("A");
+        b = graph.addVertex("B");
 
-	@After
-	public void tearDown() throws Exception {
-	}
+        graph.addEdge(a, b, "likes");
+        graph.addEdge(a, a, "loves");
+    }
 
-	@Test
-	public void testOut() {
-		TraversalEngine engine = new TraversalEngine(graph, a, Vertex.class, false);
+    @After
+    public void tearDown() throws Exception {
+    }
 
-		assertThat(engine.out("likes", "loves").toList(), containsInAnyOrder(a, b));
-	}
+    @Test
+    public void testOut() {
+        TraversalEngine engine = new TraversalEngine(graph, a, Vertex.class, false);
 
-	@Test
-	public void testIn() {
-		TraversalEngine engine = new TraversalEngine(graph, a, Vertex.class, false);
+        assertThat(engine.out("likes", "loves").toList(), containsInAnyOrder(a, b));
+    }
 
-		assertThat(engine.in("likes", "loves").toList(), containsInAnyOrder(a));
-	}
+    @Test
+    public void testIn() {
+        TraversalEngine engine = new TraversalEngine(graph, a, Vertex.class, false);
+
+        assertThat(engine.in("likes", "loves").toList(), containsInAnyOrder(a));
+    }
 
 }

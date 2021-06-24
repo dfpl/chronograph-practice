@@ -5,12 +5,10 @@ import static org.junit.Assert.assertEquals;
 
 import org.hamcrest.collection.IsMapContaining;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
+
 import org.dfpl.chronograph.crud.memory.ChronoGraph;
 import org.dfpl.chronograph.traversal.TraversalEngine;
 import org.junit.After;
@@ -24,93 +22,76 @@ import com.tinkerpop.blueprints.Vertex;
 
 public class Aggregation {
 
-	Graph graph;
-	Vertex a;
-	Vertex b;
-	Vertex c;
+    Graph graph;
+    Vertex a;
+    Vertex b;
+    Vertex c;
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception {
+    }
 
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception {
+    }
 
-	@Before
-	public void setUp() throws Exception {
-		graph = new ChronoGraph();
+    @Before
+    public void setUp() throws Exception {
+        graph = new ChronoGraph();
 
-		a = graph.addVertex("A");
-		b = graph.addVertex("B");
-		c = graph.addVertex("C");
+        a = graph.addVertex("A");
+        b = graph.addVertex("B");
+        c = graph.addVertex("C");
 
-		a.setProperty("isOdd", true);
-		b.setProperty("isOdd", false);
-		c.setProperty("isOdd", true);
-	}
+        a.setProperty("isOdd", true);
+        b.setProperty("isOdd", false);
+        c.setProperty("isOdd", true);
+    }
 
-	@After
-	public void tearDown() throws Exception {
-	}
+    @After
+    public void tearDown() throws Exception {
+    }
 
-	@Test
-	public void testGroupBy() {
-		TraversalEngine engine = new TraversalEngine(graph, graph.getVertices(), Vertex.class, false);
+    @Test
+    public void testGroupBy() {
+        TraversalEngine engine = new TraversalEngine(graph, graph.getVertices(), Vertex.class, false);
 
-		Map<Boolean, List<Vertex>> map = engine.groupBy(new Function<Vertex, Boolean>() {
+        Map<Boolean, List<Vertex>> map = engine.groupBy(t -> t.getProperty("isOdd"));
 
-			@Override
-			public Boolean apply(Vertex t) {
-				return t.getProperty("isOdd");
-			}
-		});
+        assertEquals(2, map.size());
+        assertThat(map, IsMapContaining.hasEntry(true, Arrays.asList(a, c)));
+        assertThat(map, IsMapContaining.hasEntry(false, Collections.singletonList(b)));
+    }
 
-		assertEquals(2, map.size());
-		assertThat(map, IsMapContaining.hasEntry(true, Arrays.asList(a, c)));
-		assertThat(map, IsMapContaining.hasEntry(false, Arrays.asList(b)));
-	}
+    @Test
+    public void testGroupCount() {
+        TraversalEngine engine = new TraversalEngine(graph, graph.getVertices(), Vertex.class, false);
 
-	@Test
-	public void testGroupCount() {
-		TraversalEngine engine = new TraversalEngine(graph, graph.getVertices(), Vertex.class, false);
+        Map<Boolean, Long> map = engine.groupCount((Function<Vertex, Boolean>) t -> t.getProperty("isOdd"));
 
-		Map<Boolean, Long> map = engine.groupCount(new Function<Vertex, Boolean>() {
+        Map<Boolean, Long> expectedMap = new HashMap<>() {
+            {
+                put(true, 2L);
+                put(false, 1L);
+            }
+        };
 
-			@Override
-			public Boolean apply(Vertex t) {
-				return t.getProperty("isOdd");
-			}
-		});
+        assertEquals(2, map.size());
+        assertEquals(map, expectedMap);
+    }
 
-		@SuppressWarnings("serial")
-		Map<Boolean, Long> expectedMap = new HashMap<Boolean, Long>() {
-			{
-				put(true, Long.valueOf(2));
-				put(false, Long.valueOf(1));
-			}
-		};
+    @Test
+    public void testReduce_LastIDVertex() {
+        TraversalEngine engine = new TraversalEngine(graph, graph.getVertices(), Vertex.class, false);
 
-		assertEquals(2, map.size());
-		assertEquals(map, expectedMap);
-	}
+        Vertex v = (Vertex) engine.reduce((BinaryOperator<Vertex>) (t, u) -> {
+            if (t.getId().compareTo(u.getId()) > 0)
+                return t;
+            else
+                return u;
+        }).get();
 
-	@Test
-	public void testReduce_LastIDVertex() {
-		TraversalEngine engine = new TraversalEngine(graph, graph.getVertices(), Vertex.class, false);
-
-		Vertex v = (Vertex) engine.reduce(new BinaryOperator<Vertex>() {
-
-			@Override
-			public Vertex apply(Vertex t, Vertex u) {
-				if (t.getId().compareTo(u.getId()) > 0)
-					return t;
-				else
-					return u;
-			}
-		}).get();
-
-		assertEquals("C", v.getId());
-	}
+        assertEquals("C", v.getId());
+    }
 
 }

@@ -15,50 +15,50 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 
 public class VertexToEdge {
-	
-	Graph graph;
-	Vertex a;
-	Vertex b;
-	Vertex c;
-	Edge abLikes;
-	Edge acLikes;
-	Edge abLoves;
-	Edge ccLoves;
-	
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
 
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
+    Graph graph;
+    Vertex a;
+    Vertex b;
+    Vertex c;
+    Edge abLikes;
+    Edge acLikes;
+    Edge abLoves;
+    Edge ccLoves;
 
-	@Before
-	public void setUp() throws Exception {
-		graph = new ChronoGraph();
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception {
+    }
 
-		a = graph.addVertex("A");
-		b = graph.addVertex("B");
-		c = graph.addVertex("C");
-		
-		abLikes = graph.addEdge(a, b, "likes");
-		acLikes = graph.addEdge(a, c, "likes");
-		abLoves = graph.addEdge(a, b, "loves");
-		ccLoves = graph.addEdge(c, c, "loves");
-	}
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception {
+    }
 
-	@Test
-	public void testOutE() {
-		TraversalEngine engine = new TraversalEngine(graph, a, Vertex.class, false);
+    @Before
+    public void setUp() throws Exception {
+        graph = new ChronoGraph();
 
-		assertThat(engine.outE("likes").toList(), containsInAnyOrder("A|likes|B", "A|likes|C"));
-	}
+        a = graph.addVertex("A");
+        b = graph.addVertex("B");
+        c = graph.addVertex("C");
 
-	@Test
-	public void testInE() {
-		TraversalEngine engine = new TraversalEngine(graph, c, Vertex.class, false);
+        abLikes = graph.addEdge(a, b, "likes");
+        acLikes = graph.addEdge(a, c, "likes");
+        abLoves = graph.addEdge(a, b, "loves");
+        ccLoves = graph.addEdge(c, c, "loves");
+    }
 
-		assertThat(engine.inE("likes", "loves").toList(), containsInAnyOrder("A|likes|C", "C|loves|C"));
-	}
+    @Test
+    public void testOutE() {
+        TraversalEngine engine = new TraversalEngine(graph, a, Vertex.class, false);
+
+        assertThat(engine.outE("likes").toList(), containsInAnyOrder("A|likes|B", "A|likes|C"));
+    }
+
+    @Test
+    public void testInE() {
+        TraversalEngine engine = new TraversalEngine(graph, c, Vertex.class, false);
+
+        assertThat(engine.inE("likes", "loves").toList(), containsInAnyOrder("A|likes|C", "C|loves|C"));
+    }
 
 }
