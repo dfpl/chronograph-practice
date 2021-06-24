@@ -38,6 +38,43 @@ public class GraphBuilder {
         return g;
     }
 
+    public static Graph createSmallStaticGraph2() {
+        Graph g = new ChronoGraph();
+
+        Vertex a = g.addVertex("A");
+        Vertex b = g.addVertex("B");
+        Vertex c = g.addVertex("C");
+        Vertex d = g.addVertex("D");
+        Vertex e = g.addVertex("E");
+        Vertex f = g.addVertex("F");
+
+        g.addEdge(a, b, "link");
+        g.addEdge(b, a, "link");
+
+        g.addEdge(a, c, "link");
+        g.addEdge(c, a, "link");
+
+        g.addEdge(c, b, "link");
+        g.addEdge(b, c, "link");
+
+        g.addEdge(c, d, "link");
+        g.addEdge(d, c, "link");
+
+        g.addEdge(b, d, "link");
+        g.addEdge(d, b, "link");
+
+        g.addEdge(d, e, "link");
+        g.addEdge(e, d, "link");
+
+        g.addEdge(e, f, "link");
+        g.addEdge(f, e, "link");
+
+        g.addEdge(d, f, "link");
+        g.addEdge(f, d, "link");
+
+        return g;
+    }
+
     /**
      * http://snap.stanford.edu/data/email-Eu-core-temporal.html
      *
