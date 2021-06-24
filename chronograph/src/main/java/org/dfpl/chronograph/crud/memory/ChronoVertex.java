@@ -1,21 +1,10 @@
 package org.dfpl.chronograph.crud.memory;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.NavigableSet;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.tinkerpop.blueprints.*;
 import org.dfpl.chronograph.common.TemporalRelation;
-
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Event;
-import com.tinkerpop.blueprints.Time;
-import com.tinkerpop.blueprints.Vertex;
 
 /**
  * The in-memory implementation of temporal graph database.
@@ -36,9 +25,7 @@ public class ChronoVertex implements Vertex {
 		this.g = g;
 		this.properties = new HashMap<String, Object>();
 
-		this.events = new TreeSet<>((ChronoVertexEvent e1, ChronoVertexEvent e2) -> {
-			return e1.compareTo(e2);
-		});
+		this.events = new TreeSet<>(Event::compareTo);
 
 		this.orderByStart = true;
 	}
@@ -173,9 +160,53 @@ public class ChronoVertex implements Vertex {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Event> T addEvent(Time time) {
-		ChronoVertexEvent event = new ChronoVertexEvent(this, time);
-		this.events.add(event);
-		return (T) event;
+		NavigableSet<ChronoVertexEvent> eventsToMerge = new TreeSet<>(Event::compareTo);
+		NavigableSet<ChronoVertexEvent> eventsToExtend = new TreeSet<>(Event::compareTo);
+
+		for(Iterator<ChronoVertexEvent> eIter = this.events.iterator(); eIter.hasNext();){
+			ChronoVertexEvent event = eIter.next();
+			Time existingTime = event.getTime();
+
+			// Null conditions
+			if (time.checkTemporalRelation(existingTime, TemporalRelation.cotemporal)) return null;
+			if ( time.checkTemporalRelation(existingTime, TemporalRelation.during) ||
+				time.checkTemporalRelation(existingTime, TemporalRelation.starts) ||
+				time.checkTemporalRelation(existingTime, TemporalRelation.finishes)
+			) return null;
+
+			// Merge conditions
+			if (time instanceof TimePeriod && (
+				time.checkTemporalRelation(existingTime, TemporalRelation.contains) ||
+				time.checkTemporalRelation(existingTime, TemporalRelation.isStartedBy) ||
+				time.checkTemporalRelation(existingTime, TemporalRelation.isFinishedBy)
+			)) eventsToMerge.add(event);
+
+			// Extend conditions
+			if (time instanceof TimePeriod &&  existingTime instanceof TimePeriod && (
+				time.checkTemporalRelation(existingTime, TemporalRelation.isOverlappedBy) ||
+					time.checkTemporalRelation(existingTime, TemporalRelation.overlapsWith) ||
+					time.checkTemporalRelation(existingTime, TemporalRelation.meets) ||
+					time.checkTemporalRelation(existingTime, TemporalRelation.isMetBy)
+			)) eventsToExtend.add(event);
+		}
+
+		if (!eventsToMerge.isEmpty())
+			this.events.removeAll(eventsToMerge);
+
+		if(!eventsToExtend.isEmpty()){
+			TimePeriod startTime = (TimePeriod) eventsToExtend.first().getTime();
+			TimePeriod finishTime = (TimePeriod) eventsToExtend.last().getTime();
+			if( time.compareTo(startTime) < 0)
+				startTime = (TimePeriod) time;
+			else
+				finishTime = (TimePeriod) time;
+			time = new TimePeriod( startTime.getS(), finishTime.getF());
+			this.events.removeAll(eventsToExtend);
+		}
+
+		ChronoVertexEvent newEvent = new ChronoVertexEvent(this, time);
+		this.events.add(newEvent);
+		return (T) newEvent;
 	}
 
 	@SuppressWarnings("unchecked")

@@ -55,54 +55,32 @@ public class TimePeriod extends TimeInstant {
 	public boolean checkTemporalRelation(Time t, TemporalRelation tr) {
 		if (t instanceof TimePeriod) {
 			TimePeriod tp = (TimePeriod) t;
-			switch (tr) {
-			case isBefore:
-				return f < tp.s;
-			case isAfter:
-				return s > tp.f;
-			case meets:
-				return f == tp.s;
-			case isMetBy:
-				return s == tp.f;
-			case overlapsWith:
-				return s < tp.s && f > tp.s && f < tp.f;
-			case isOverlappedBy:
-				return f > tp.s && s < tp.f && f > tp.f;
-			case starts:
-				return s == tp.s && f < tp.f;
-			case isStartedBy:
-				return s == tp.s && f > tp.f;
-			case during:
-				return s > tp.s && f < tp.f;
-			case contains:
-				return s < tp.s && f > tp.f;
-			case finishes:
-				return s > tp.s && f == tp.f;
-			case isFinishedBy:
-				return s < tp.s && f == tp.f;
-			case cotemporal:
-				return s == tp.s && f == tp.f;
-			default:
-				return false;
-			}
+			return switch (tr) {
+				case isBefore -> f < tp.s;
+				case isAfter -> s > tp.f;
+				case meets -> f == tp.s;
+				case isMetBy -> s == tp.f;
+				case overlapsWith -> s < tp.s && f > tp.s && f < tp.f;
+				case isOverlappedBy -> f > tp.s && s < tp.f && f > tp.f;
+				case starts -> s == tp.s && f < tp.f;
+				case isStartedBy -> s == tp.s && f > tp.f;
+				case during -> s > tp.s && f < tp.f;
+				case contains -> s < tp.s && f > tp.f;
+				case finishes -> s > tp.s && f == tp.f;
+				case isFinishedBy -> s < tp.s && f == tp.f;
+				case cotemporal -> s == tp.s && f == tp.f;
+				default -> false;
+			};
 		} else {
 			TimeInstant ti = (TimeInstant) t;
-			switch (tr) {
-			case isBefore:
-				return f < ti.getTime();
-			case isAfter:
-				return s > ti.getTime();
-			case meets:
-			case isFinishedBy:
-				return f == ti.getTime();
-			case isMetBy:
-			case isStartedBy:
-				return s == ti.getTime();
-			case contains:
-				return s > ti.getTime() && f < ti.getTime();
-			default:
-				return false;
-			}
+			return switch (tr) {
+				case isBefore -> f < ti.getTime();
+				case isAfter -> s > ti.getTime();
+				case meets, isFinishedBy -> f == ti.getTime();
+				case isMetBy, isStartedBy -> s == ti.getTime();
+				case contains -> s < ti.getTime() && f > ti.getTime();
+				default -> false;
+			};
 		}
 	}
 
@@ -110,4 +88,9 @@ public class TimePeriod extends TimeInstant {
 	public String toString() {
 		return this.s + " " + this.f;
 	}
+
+	public long getF() {
+		return f;
+	}
+
 }

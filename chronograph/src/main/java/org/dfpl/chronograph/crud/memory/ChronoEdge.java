@@ -114,6 +114,7 @@ public class ChronoEdge implements Edge {
 	@Override
 	public <T extends Event> T addEvent(Time time) {
 		ChronoEdgeEvent event = new ChronoEdgeEvent(this, time);
+		// TODO: Disjointness
 		this.events.add(event);
 		return (T) event;
 	}
