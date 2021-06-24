@@ -23,3 +23,8 @@
 hs_err_pid*
 
 target/
+
+
+# Idea
+.idea/
+chronograph/chronograph.iml
