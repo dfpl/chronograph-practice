@@ -15,7 +15,7 @@ import com.tinkerpop.gremlin.GremlinFluentPipeline;
 
 public class LabelPropagationGremlin {
 
-    public Graph compute(Graph g) {
+    public Graph compute(Graph g, String... labels) {
         // Set initial value as label
         int i = 0;
         for (Vertex v : g.getVertices()) {
@@ -33,7 +33,7 @@ public class LabelPropagationGremlin {
                 v.setProperty("oldValue", v.getProperty("value"));
 
             pipeline.V().as("s").transform((Function<Vertex, Collection<Vertex>>) v ->
-                    v.getVertices(Direction.OUT, "link"),
+                    v.getVertices(Direction.OUT, labels),
                 Collection.class, Vertex.class,
                 false)
                 .sideEffect((Function<Collection<Vertex>, Collection<Vertex>>) s -> {

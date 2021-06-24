@@ -10,7 +10,7 @@ public class LabelPropagationGremlinTest {
     public void testSmallScaleGraph2() {
         LabelPropagationGremlin lpg = new LabelPropagationGremlin();
         Graph g = createSmallStaticGraph2();
-        lpg.compute(g);
+        lpg.compute(g, "link");
         lpg.printLabels(g);
     }
 }
