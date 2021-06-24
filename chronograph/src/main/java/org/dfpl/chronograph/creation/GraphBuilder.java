@@ -14,6 +14,30 @@ import com.tinkerpop.blueprints.Vertex;
 
 public class GraphBuilder {
 
+    public static Graph createSmallStaticGraph1() {
+        Graph g = new ChronoGraph();
+
+        Vertex a = g.addVertex("A");
+        Vertex b = g.addVertex("B");
+        Vertex c = g.addVertex("C");
+        Vertex d = g.addVertex("D");
+        Vertex e = g.addVertex("E");
+
+        g.addEdge(a, c, "link");
+        g.addEdge(c, a, "link");
+
+        g.addEdge(b, c, "link");
+        g.addEdge(c, b, "link");
+
+        g.addEdge(c, d, "link");
+        g.addEdge(d, c, "link");
+
+        g.addEdge(d, e, "link");
+        g.addEdge(e, d, "link");
+
+        return g;
+    }
+
     /**
      * http://snap.stanford.edu/data/email-Eu-core-temporal.html
      *
@@ -56,7 +80,7 @@ public class GraphBuilder {
         return g;
     }
 
-    public static Graph createSmallGraph1() {
+    public static Graph createSmallTemporalGraph1() {
         Graph g = new ChronoGraph();
 
         Vertex a = g.addVertex("A");
@@ -119,7 +143,7 @@ public class GraphBuilder {
         return g;
     }
 
-    public static Graph createSmallGraph2() {
+    public static Graph createSmallTemporalGraph2() {
         Graph graph = new ChronoGraph();
 
         Vertex a = graph.addVertex("A");
@@ -162,7 +186,7 @@ public class GraphBuilder {
         return graph;
     }
 
-    public static Graph createSmallGraph3() {
+    public static Graph createSmallTemporalGraph3() {
         Graph graph = new ChronoGraph();
 
         Vertex a = graph.addVertex("A");

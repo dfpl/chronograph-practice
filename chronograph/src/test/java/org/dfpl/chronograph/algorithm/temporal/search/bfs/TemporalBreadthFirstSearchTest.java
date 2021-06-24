@@ -16,7 +16,7 @@ public class TemporalBreadthFirstSearchTest {
     public void testSmallScaleGraph1() {
         TemporalBreadthFirstSearch tbfs = new TemporalBreadthFirstSearch();
 
-        Graph g = GraphBuilder.createSmallGraph1();
+        Graph g = GraphBuilder.createSmallTemporalGraph1();
 
         Vertex source = g.getVertex("A");
         Time time = new TimeInstant(3);
@@ -29,7 +29,7 @@ public class TemporalBreadthFirstSearchTest {
     @Test
     public void testSmallScaleGraph2() {
         TemporalBreadthFirstSearch tbfs = new TemporalBreadthFirstSearch();
-        Graph g = GraphBuilder.createSmallGraph2();
+        Graph g = GraphBuilder.createSmallTemporalGraph2();
 
         Vertex source = g.getVertex("A");
         Time time = new TimeInstant(3);
@@ -42,7 +42,7 @@ public class TemporalBreadthFirstSearchTest {
     @Test
     public void testSmallScaleGraph3() {
         TemporalBreadthFirstSearch tbfs = new TemporalBreadthFirstSearch();
-        Graph g = GraphBuilder.createSmallGraph3();
+        Graph g = GraphBuilder.createSmallTemporalGraph3();
 
         Vertex source = g.getVertex("A");
         Time time = new TimeInstant(1);

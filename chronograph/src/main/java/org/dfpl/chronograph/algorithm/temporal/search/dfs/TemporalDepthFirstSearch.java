@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 
-public class DepthFirstSearchTemporal {
+public class TemporalDepthFirstSearch {
 
     HashMap<Vertex, Time> gamma;
     HashMap<Vertex, Vertex> predecessors;
