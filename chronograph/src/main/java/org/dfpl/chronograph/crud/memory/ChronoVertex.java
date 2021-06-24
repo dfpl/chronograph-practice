@@ -163,13 +163,12 @@ public class ChronoVertex implements Vertex {
 		NavigableSet<ChronoVertexEvent> eventsToMerge = new TreeSet<>(Event::compareTo);
 		NavigableSet<ChronoVertexEvent> eventsToExtend = new TreeSet<>(Event::compareTo);
 
-		for(Iterator<ChronoVertexEvent> eIter = this.events.iterator(); eIter.hasNext();){
-			ChronoVertexEvent event = eIter.next();
+		for (ChronoVertexEvent event : this.events) {
 			Time existingTime = event.getTime();
 
 			// Null conditions
 			if (time.checkTemporalRelation(existingTime, TemporalRelation.cotemporal)) return null;
-			if ( time.checkTemporalRelation(existingTime, TemporalRelation.during) ||
+			if (time.checkTemporalRelation(existingTime, TemporalRelation.during) ||
 				time.checkTemporalRelation(existingTime, TemporalRelation.starts) ||
 				time.checkTemporalRelation(existingTime, TemporalRelation.finishes)
 			) return null;
@@ -177,12 +176,12 @@ public class ChronoVertex implements Vertex {
 			// Merge conditions
 			if (time instanceof TimePeriod && (
 				time.checkTemporalRelation(existingTime, TemporalRelation.contains) ||
-				time.checkTemporalRelation(existingTime, TemporalRelation.isStartedBy) ||
-				time.checkTemporalRelation(existingTime, TemporalRelation.isFinishedBy)
+					time.checkTemporalRelation(existingTime, TemporalRelation.isStartedBy) ||
+					time.checkTemporalRelation(existingTime, TemporalRelation.isFinishedBy)
 			)) eventsToMerge.add(event);
 
 			// Extend conditions
-			if (time instanceof TimePeriod &&  existingTime instanceof TimePeriod && (
+			if (time instanceof TimePeriod && existingTime instanceof TimePeriod && (
 				time.checkTemporalRelation(existingTime, TemporalRelation.isOverlappedBy) ||
 					time.checkTemporalRelation(existingTime, TemporalRelation.overlapsWith) ||
 					time.checkTemporalRelation(existingTime, TemporalRelation.meets) ||
