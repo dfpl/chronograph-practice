@@ -120,18 +120,21 @@ public class ChronoEdge implements Edge {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Event> NavigableSet<T> getEvents(Time time, TemporalRelation tr) {
+	public <T extends Event> NavigableSet<T> getEvents(Time time, TemporalRelation... temporalRelations) {
 		NavigableSet<ChronoEdgeEvent> validEvents = new TreeSet<>((ChronoEdgeEvent e1, ChronoEdgeEvent e2) -> {
 			if (this.orderByStart)
 				return e1.compareTo(e2);
 			return e2.compareTo(e1);
 		});
 
-		for (Iterator<ChronoEdgeEvent> eIter = this.events.iterator(); eIter.hasNext();) {
-			ChronoEdgeEvent event = eIter.next();
+		if (temporalRelations == null) return (NavigableSet<T>) validEvents;
 
-			if (event.getTime().checkTemporalRelation(time, tr))
-				validEvents.add(event);
+		for (ChronoEdgeEvent event : this.events) {
+			for(TemporalRelation tr: temporalRelations){
+				if (event.getTime().checkTemporalRelation(time, tr))
+					validEvents.add(event);
+			}
+
 		}
 		return (NavigableSet<T>) validEvents;
 	}
@@ -139,9 +142,7 @@ public class ChronoEdge implements Edge {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Event> T getEvent(Time time, TemporalRelation tr) {
-		for (Iterator<ChronoEdgeEvent> eIter = this.events.iterator(); eIter.hasNext();) {
-			ChronoEdgeEvent event = eIter.next();
-
+		for (ChronoEdgeEvent event : this.events) {
 			if (event.getTime().checkTemporalRelation(time, tr))
 				return (T) event;
 		}
@@ -150,12 +151,7 @@ public class ChronoEdge implements Edge {
 
 	@Override
 	public void removeEvents(Time time, TemporalRelation tr) {
-		for (Iterator<ChronoEdgeEvent> eIter = this.events.iterator(); eIter.hasNext();) {
-			ChronoEdgeEvent event = eIter.next();
-
-			if (event.getTime().checkTemporalRelation(time, tr))
-				eIter.remove();
-		}
+		this.events.removeIf(event -> event.getTime().checkTemporalRelation(time, tr));
 	}
 
 	@Override

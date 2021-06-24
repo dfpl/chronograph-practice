@@ -79,10 +79,10 @@ public interface Element {
 	 * 
 	 * @param <T>  VertexEvent or EdgeEvent
 	 * @param time
-	 * @param tr
+	 * @param temporalRelations
 	 * @return NavigableSet of VertexEvent or EdgeEvent
 	 */
-	public <T extends Event> NavigableSet<T> getEvents(Time time, TemporalRelation tr);
+	public <T extends Event> NavigableSet<T> getEvents(Time time, TemporalRelation... temporalRelations);
 
 	/**
 	 * Return a chronologically closest event that are matched with tr for time

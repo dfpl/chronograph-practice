@@ -31,12 +31,9 @@ public class TemporalDepthFirstSearch {
                 if (edge.getProperty("traversed") != null)
                     continue;
 
-                Event event = edge.getEvent(gamma.get(u), TemporalRelation.isAfter);
-                if (event != null)
-                    validEvents.add((ChronoEdgeEvent) event);
-                event = edge.getEvent(gamma.get(u), TemporalRelation.cotemporal);
-                if (event != null)
-                    validEvents.add((ChronoEdgeEvent) event);
+                NavigableSet<ChronoEdgeEvent> events = edge.getEvents(gamma.get(u), TemporalRelation.isAfter, TemporalRelation.cotemporal);
+                if (!events.isEmpty())
+                    validEvents.addAll(events);
             }
 
             if (!validEvents.isEmpty()) {
