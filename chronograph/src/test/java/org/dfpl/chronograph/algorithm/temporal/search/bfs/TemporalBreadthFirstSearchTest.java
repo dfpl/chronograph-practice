@@ -12,57 +12,57 @@ import com.tinkerpop.blueprints.Vertex;
 
 public class TemporalBreadthFirstSearchTest {
 
-	@Test
-	public void testSmallScaleGraph1() {
-		TemporalBreadthFirstSearch tbfs = new TemporalBreadthFirstSearch();
+    @Test
+    public void testSmallScaleGraph1() {
+        TemporalBreadthFirstSearch tbfs = new TemporalBreadthFirstSearch();
 
-		Graph g = GraphBuilder.createSmallGraph1();
+        Graph g = GraphBuilder.createSmallGraph1();
 
-		Vertex source = g.getVertex("A");
-		Time time = new TimeInstant(3);
+        Vertex source = g.getVertex("A");
+        Time time = new TimeInstant(3);
 
-		tbfs.compute(g, source, time, "links");
+        tbfs.compute(source, time, "links");
 
-		tbfs.printInfo(g);
-	}
+        tbfs.printInfo(g);
+    }
 
-	@Test
-	public void testSmallScaleGraph2() {
-		TemporalBreadthFirstSearch tbfs = new TemporalBreadthFirstSearch();
-		Graph g = GraphBuilder.createSmallGraph2();
+    @Test
+    public void testSmallScaleGraph2() {
+        TemporalBreadthFirstSearch tbfs = new TemporalBreadthFirstSearch();
+        Graph g = GraphBuilder.createSmallGraph2();
 
-		Vertex source = g.getVertex("A");
-		Time time = new TimeInstant(3);
+        Vertex source = g.getVertex("A");
+        Time time = new TimeInstant(3);
 
-		tbfs.compute(g, source, time, "links");
+        tbfs.compute(source, time, "links");
 
-		tbfs.printInfo(g);
-	}
+        tbfs.printInfo(g);
+    }
 
-	@Test
-	public void testSmallScaleGraph3() {
-		TemporalBreadthFirstSearch tbfs = new TemporalBreadthFirstSearch();
-		Graph g = GraphBuilder.createSmallGraph3();
+    @Test
+    public void testSmallScaleGraph3() {
+        TemporalBreadthFirstSearch tbfs = new TemporalBreadthFirstSearch();
+        Graph g = GraphBuilder.createSmallGraph3();
 
-		Vertex source = g.getVertex("A");
-		Time time = new TimeInstant(1);
+        Vertex source = g.getVertex("A");
+        Time time = new TimeInstant(1);
 
-		tbfs.compute(g, source, time, "links");
+        tbfs.compute(source, time, "links");
 
-		tbfs.printInfo(g);
-	}
+        tbfs.printInfo(g);
+    }
 
-	@Test
-	public void testLargeScaleGraph() throws IOException {
-		TemporalBreadthFirstSearch tbfs = new TemporalBreadthFirstSearch();
-		Graph g = GraphBuilder.createSNAPEmailEuCoreTemporal("d:\\emails.txt");
+    @Test
+    public void testLargeScaleGraph() throws IOException {
+        TemporalBreadthFirstSearch tbfs = new TemporalBreadthFirstSearch();
+        Graph g = GraphBuilder.createSNAPEmailEuCoreTemporal("d:\\emails.txt");
 
-		Vertex source = g.getVertex("582");
-		Time time = new TimeInstant(0);
+        Vertex source = g.getVertex("582");
+        Time time = new TimeInstant(0);
 
-		tbfs.compute(g, source, time, "sendEmailTo");
+        tbfs.compute(source, time, "sendEmailTo");
 
-		tbfs.printInfo(g);
-	}
+        tbfs.printInfo(g);
+    }
 
 }
