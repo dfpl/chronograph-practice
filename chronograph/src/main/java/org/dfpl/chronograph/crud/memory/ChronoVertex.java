@@ -167,8 +167,8 @@ public class ChronoVertex implements Vertex {
 			Time existingTime = event.getTime();
 
 			// Null conditions
-			if (time.checkTemporalRelation(existingTime, TemporalRelation.cotemporal)) return null;
-			if (time.checkTemporalRelation(existingTime, TemporalRelation.during) ||
+			if ( time.checkTemporalRelation(existingTime, TemporalRelation.cotemporal) ||
+				time.checkTemporalRelation(existingTime, TemporalRelation.during) ||
 				time.checkTemporalRelation(existingTime, TemporalRelation.starts) ||
 				time.checkTemporalRelation(existingTime, TemporalRelation.finishes)
 			) return null;
