@@ -41,12 +41,9 @@ public class TemporalBreadthFirstSearch {
             // Get all edges with the least time in ascending order
             NavigableSet<ChronoEdgeEvent> events = new TreeSet<>(Event::compareTo);
             for (Edge e : u.getEdges(Direction.OUT, labels)) {
-                ChronoEdgeEvent minVisitEvent = e.getEvent(time, TemporalRelation.isAfter);
-                if (minVisitEvent != null)
-                    events.add(minVisitEvent);
-                minVisitEvent = e.getEvent(time, TemporalRelation.cotemporal);
-                if (minVisitEvent != null)
-                    events.add(minVisitEvent);
+                NavigableSet<ChronoEdgeEvent> minVisitEvents = e.getEvents(time, TemporalRelation.isAfter, TemporalRelation.cotemporal);
+                if (!minVisitEvents.isEmpty())
+                    events.addAll(minVisitEvents);
             }
 
             for (ChronoEdgeEvent event : events) {
