@@ -54,6 +54,82 @@ public class EventTest {
     }
 
     @Test
+    public void testCreateForUnallowedEvents() {
+        time = new TimePeriod(5, 8);
+
+        ab.addEvent(time);
+
+        assertNull(ab.addEvent(new TimeInstant((5))));
+        assertNull(ab.addEvent(new TimeInstant((6))));
+        assertNull(ab.addEvent(new TimeInstant((8))));
+
+        assertNull(ab.addEvent(new TimePeriod(5, 8)));
+        assertNull(ab.addEvent(new TimePeriod(5, 6)));
+        assertNull(ab.addEvent(new TimePeriod(6, 7)));
+        assertNull(ab.addEvent(new TimePeriod(7, 8)));
+    }
+
+    @Test
+    public void testCreateForMerge() {
+        time = new TimePeriod(5, 9);
+
+        ab.addEvent(new TimeInstant((5)));
+        ab.addEvent(new TimeInstant((6)));
+
+        assertNotNull(ab.addEvent(time));
+        assertNull(ab.getEvent(new TimeInstant((5)), TemporalRelation.cotemporal));
+        assertNull(ab.getEvent(new TimeInstant((6)), TemporalRelation.cotemporal));
+    }
+
+    @Test
+    public void testCreateForExtend() {
+        time = new TimePeriod(5, 9);
+        ab.addEvent(time);
+
+        // Overlap
+        ab.addEvent(new TimePeriod(8, 10));
+        assertNull(ab.getEvent(time, TemporalRelation.cotemporal));
+        assertNotNull(ab.getEvent(new TimePeriod(5, 10), TemporalRelation.cotemporal));
+
+        // Meet
+        time = new TimePeriod(10, 11);
+        ab.addEvent(time);
+        assertNull(ab.getEvent(time, TemporalRelation.cotemporal));
+        assertNotNull(ab.getEvent(new TimePeriod(5, 11), TemporalRelation.cotemporal));
+
+        // Overlap
+        time = new TimePeriod(4, 6);
+        ab.addEvent(time);
+        assertNull(ab.getEvent(time, TemporalRelation.cotemporal));
+        assertNotNull(ab.getEvent(new TimePeriod(4, 11), TemporalRelation.cotemporal));
+
+        time = new TimePeriod(3, 4);
+        ab.addEvent(time);
+        assertNull(ab.getEvent(time, TemporalRelation.cotemporal));
+        assertNotNull(ab.getEvent(new TimePeriod(3, 11), TemporalRelation.cotemporal));
+    }
+
+    @Test
+    public void testCreateAndDeleteForCotemporalGivenTimeInstants() {
+        tr = TemporalRelation.cotemporal;
+
+        // No event exists
+        time = new TimeInstant(5);
+        assertNull(ab.getEvent(time, tr));
+        assertEquals(0, ab.getEvents(time, tr).size());
+
+        // One cotemporal event exists
+        ChronoEdgeEvent cotemporalEvent = ab.addEvent(time);
+        assertEquals(cotemporalEvent, ab.getEvent(time, tr));
+        assertEquals(1, ab.getEvents(time, tr).size());
+
+        // Remove event
+        ab.removeEvents(time, tr);
+        assertNull(ab.getEvent(time, tr));
+        assertEquals(0, ab.getEvents(time, tr).size());
+    }
+
+    @Test
     public void testCreateAndDeleteForContainsGivenTimeInstants() {
         tr = TemporalRelation.contains;
         time = new TimeInstant(5);
@@ -108,10 +184,10 @@ public class EventTest {
         assertEquals(0, ab.getEvents(time, tr).size());
 
         // Two valid events exist
-        TimePeriod validTime1 = new TimePeriod(3, 6);
+        TimePeriod validTime1 = new TimePeriod(1, 2);
         ChronoEdgeEvent validEvent1 = ab.addEvent(validTime1);
 
-        TimePeriod validTime2 = new TimePeriod(5, 7);
+        TimePeriod validTime2 = new TimePeriod(3, 4);
         ChronoEdgeEvent validEvent2 = ab.addEvent(validTime2);
 
         List<ChronoEdgeEvent> validEvents = new LinkedList<>(List.of(validEvent1, validEvent2));
@@ -122,6 +198,32 @@ public class EventTest {
         // Remove two valid events
         ab.removeEvents(time, tr);
         assertNull(ab.getEvent(time, tr));
+    }
+
+    @Test
+    public void testCreateAndDeleteForIsAfterGivenTimeInstants() {
+        tr = TemporalRelation.isAfter;
+        time = new TimeInstant(5);
+
+        // No event after time 5 exists
+        assertNull(ab.getEvent(time, tr));
+
+        // Two events after time 5 exists
+        Time afterTime1 = new TimeInstant(7);
+        ChronoEdgeEvent afterEvent1 = ab.addEvent(afterTime1);
+
+        Time afterTime2 = new TimeInstant(9);
+        ChronoEdgeEvent afterEvent2 = ab.addEvent(afterTime2);
+
+        assertEquals(afterEvent1, ab.getEvent(time, tr));
+        assertEquals(2, ab.getEvents(time, tr).size());
+        List<ChronoEdgeEvent> expectedEvents = new LinkedList<>(List.of(afterEvent1, afterEvent2));
+        assertTrue(ab.getEvents(time, tr).containsAll(expectedEvents));
+        assertEquals(2, ab.getEvents(time, tr).size());
+
+        // Remove events after time 5
+        ab.removeEvents(time, tr);
+        assertEquals(0, ab.getEvents(time, tr).size());
     }
 
     @Test
@@ -175,6 +277,36 @@ public class EventTest {
     }
 
     @Test
+    public void testCreateAndDeleteForMeetsGivenTimeInstants() {
+        tr = TemporalRelation.meets;
+        time = new TimeInstant(5);
+
+        // One cotemporal event exists
+        ab.addEvent(time);
+        assertNull(ab.getEvent(time, tr));
+        assertEquals(0, ab.getEvents(time, tr).size());
+
+        // No event is removed
+        ab.removeEvents(time, tr);
+        assertNull(ab.getEvent(time, tr));
+    }
+
+    @Test
+    public void testCreateAndDeleteForIsMetByGivenTimeInstants() {
+        tr = TemporalRelation.isMetBy;
+        time = new TimeInstant(5);
+
+        // One cotemporal event exists
+        ab.addEvent(time);
+        assertNull(ab.getEvent(time, tr));
+        assertEquals(0, ab.getEvents(time, tr).size());
+
+        // No event is removed
+        ab.removeEvents(time, tr);
+        assertNull(ab.getEvent(time, tr));
+    }
+
+    @Test
     public void testCreateAndDeleteForIsMetByGivenTimePeriod() {
         tr = TemporalRelation.isMetBy;
         time = new TimePeriod(9, 15);
@@ -193,6 +325,21 @@ public class EventTest {
         assertTrue(ab.getEvents(time, tr).containsAll(validEvents));
 
         // Remove valid event
+        ab.removeEvents(time, tr);
+        assertNull(ab.getEvent(time, tr));
+    }
+
+    @Test
+    public void testCreateAndDeleteForOverlapsWithGivenTimeInstants() {
+        tr = TemporalRelation.overlapsWith;
+        time = new TimeInstant(5);
+
+        // One cotemporal event exists
+        ab.addEvent(time);
+        assertNull(ab.getEvent(time, tr));
+        assertEquals(0, ab.getEvents(time, tr).size());
+
+        // No event is removed
         ab.removeEvents(time, tr);
         assertNull(ab.getEvent(time, tr));
     }
@@ -221,7 +368,22 @@ public class EventTest {
     }
 
     @Test
-    public void testCreateAndDeleteForisOvelappedByGivenTimePeriod() {
+    public void testCreateAndDeleteForIsOverlappedByGivenTimeInstants() {
+        tr = TemporalRelation.isOverlappedBy;
+        time = new TimeInstant(5);
+
+        // One cotemporal event exists
+        ab.addEvent(time);
+        assertNull(ab.getEvent(time, tr));
+        assertEquals(0, ab.getEvents(time, tr).size());
+
+        // No event is removed
+        ab.removeEvents(time, tr);
+        assertNull(ab.getEvent(time, tr));
+    }
+
+    @Test
+    public void testCreateAndDeleteForIsOvelappedByGivenTimePeriod() {
         tr = TemporalRelation.isOverlappedBy;
         time = new TimePeriod(8, 10);
 
@@ -239,6 +401,21 @@ public class EventTest {
         assertTrue(ab.getEvents(time, tr).containsAll(validEvents));
 
         // Remove valid events
+        ab.removeEvents(time, tr);
+        assertNull(ab.getEvent(time, tr));
+    }
+
+    @Test
+    public void testCreateAndDeleteForStartsGivenTimeInstants() {
+        tr = TemporalRelation.starts;
+        time = new TimeInstant(5);
+
+        // One cotemporal event exists
+        ab.addEvent(time);
+        assertNull(ab.getEvent(time, tr));
+        assertEquals(0, ab.getEvents(time, tr).size());
+
+        // No event is removed
         ab.removeEvents(time, tr);
         assertNull(ab.getEvent(time, tr));
     }
@@ -290,6 +467,36 @@ public class EventTest {
     }
 
     @Test
+    public void testCreateAndDeleteForIsStartedByGivenTimeInstants() {
+        tr = TemporalRelation.isStartedBy;
+        time = new TimeInstant(5);
+
+        // One cotemporal event exists
+        ab.addEvent(time);
+        assertNull(ab.getEvent(time, tr));
+        assertEquals(0, ab.getEvents(time, tr).size());
+
+        // No event is removed
+        ab.removeEvents(time, tr);
+        assertNull(ab.getEvent(time, tr));
+    }
+
+    @Test
+    public void testCreateAndDeleteForDuringGivenTimeInstants() {
+        tr = TemporalRelation.during;
+        time = new TimeInstant(5);
+
+        // One cotemporal event exists
+        ab.addEvent(time);
+        assertNull(ab.getEvent(time, tr));
+        assertEquals(0, a.getEvents(time, tr).size());
+
+        // No event is removed
+        ab.removeEvents(time, tr);
+        assertNull(ab.getEvent(time, tr));
+    }
+
+    @Test
     public void testCreateAndDeleteForDuringGivenTimePeriod() {
         tr = TemporalRelation.during;
         time = new TimePeriod(5, 10);
@@ -302,12 +509,9 @@ public class EventTest {
         TimePeriod validTime1 = new TimePeriod(6, 9);
         ChronoEdgeEvent validEvent1 = ab.addEvent(validTime1);
 
-        TimePeriod validTime2 = new TimePeriod(7, 8);
-        ChronoEdgeEvent validEvent2 = ab.addEvent(validTime2);
-
-        List<ChronoEdgeEvent> validEvents = new LinkedList<>(List.of(validEvent1, validEvent2));
+        List<ChronoEdgeEvent> validEvents = new LinkedList<>(List.of(validEvent1));
         assertEquals(validEvent1, ab.getEvent(time, tr));
-        assertEquals(2, ab.getEvents(time, tr).size());
+        assertEquals(1, ab.getEvents(time, tr).size());
         assertTrue(ab.getEvents(time, tr).containsAll(validEvents));
 
         // Remove valid events
@@ -328,12 +532,9 @@ public class EventTest {
         TimePeriod validTime1 = new TimePeriod(3, 7);
         ChronoEdgeEvent validEvent1 = ab.addEvent(validTime1);
 
-        TimePeriod validTime2 = new TimePeriod(3, 9);
-        ChronoEdgeEvent validEvent2 = ab.addEvent(validTime2);
-
-        List<ChronoEdgeEvent> validEvents = new LinkedList<>(List.of(validEvent1, validEvent2));
+        List<ChronoEdgeEvent> validEvents = new LinkedList<>(List.of(validEvent1));
         assertEquals(validEvent1, ab.getEvent(time, tr));
-        assertEquals(2, ab.getEvents(time, tr).size());
+        assertEquals(1, ab.getEvents(time, tr).size());
         assertTrue(ab.getEvents(time, tr).containsAll(validEvents));
 
         // Remove valid events

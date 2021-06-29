@@ -6,14 +6,8 @@ import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.tinkerpop.blueprints.*;
 import org.dfpl.chronograph.common.TemporalRelation;
-
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Event;
-import com.tinkerpop.blueprints.Graph;
-import com.tinkerpop.blueprints.Time;
-import com.tinkerpop.blueprints.Vertex;
 
 /**
  * The in-memory implementation of temporal graph database.
@@ -113,9 +107,52 @@ public class ChronoEdge implements Edge {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Event> T addEvent(Time time) {
-		ChronoEdgeEvent event = new ChronoEdgeEvent(this, time);
-		this.events.add(event);
-		return (T) event;
+		NavigableSet<ChronoEdgeEvent> eventsToMerge = new TreeSet<>(Event::compareTo);
+		NavigableSet<ChronoEdgeEvent> eventsToExtend = new TreeSet<>(Event::compareTo);
+
+		for (ChronoEdgeEvent event : this.events) {
+			Time existingTime = event.getTime();
+
+			// Null conditions
+			if ( time.checkTemporalRelation(existingTime, TemporalRelation.cotemporal) ||
+				time.checkTemporalRelation(existingTime, TemporalRelation.during) ||
+				time.checkTemporalRelation(existingTime, TemporalRelation.starts) ||
+				time.checkTemporalRelation(existingTime, TemporalRelation.finishes)
+			) return null;
+
+			// Merge conditions
+			if (time instanceof TimePeriod && (
+				time.checkTemporalRelation(existingTime, TemporalRelation.contains) ||
+					time.checkTemporalRelation(existingTime, TemporalRelation.isStartedBy) ||
+					time.checkTemporalRelation(existingTime, TemporalRelation.isFinishedBy)
+			)) eventsToMerge.add(event);
+
+			// Extend conditions
+			if (time instanceof TimePeriod && existingTime instanceof TimePeriod && (
+				time.checkTemporalRelation(existingTime, TemporalRelation.isOverlappedBy) ||
+					time.checkTemporalRelation(existingTime, TemporalRelation.overlapsWith) ||
+					time.checkTemporalRelation(existingTime, TemporalRelation.meets) ||
+					time.checkTemporalRelation(existingTime, TemporalRelation.isMetBy)
+			)) eventsToExtend.add(event);
+		}
+
+		if (!eventsToMerge.isEmpty())
+			this.events.removeAll(eventsToMerge);
+
+		if(!eventsToExtend.isEmpty()){
+			TimePeriod startTime = (TimePeriod) eventsToExtend.first().getTime();
+			TimePeriod finishTime = (TimePeriod) eventsToExtend.last().getTime();
+			if( time.compareTo(startTime) < 0)
+				startTime = (TimePeriod) time;
+			else
+				finishTime = (TimePeriod) time;
+			time = new TimePeriod( startTime.getS(), finishTime.getF());
+			this.events.removeAll(eventsToExtend);
+		}
+
+		ChronoEdgeEvent newEvent = new ChronoEdgeEvent(this, time);
+		this.events.add(newEvent);
+		return (T) newEvent;
 	}
 
 	@SuppressWarnings("unchecked")

@@ -40,39 +40,31 @@ public class TimeInstant extends Time {
 		// TODO: Confirm relation
 		if (t instanceof TimePeriod) {
 			TimePeriod tp = (TimePeriod) t;
-			switch (tr) {
-			case isBefore:
-				return s < tp.s;
-			case isAfter:
-				return s > tp.f;
-			case meets:
-			case starts:
-				return s == tp.s;
-			case isMetBy:
-			case finishes:
-				return s == tp.f;
-			case during:
-				return s > tp.s && s < tp.f;
-			default:
-				return false;
-			}
+			return switch (tr) {
+				case isBefore -> s < tp.s;
+				case isAfter -> s > tp.f;
+				case meets, starts -> s == tp.s;
+				case isMetBy, finishes -> s == tp.f;
+				case during -> s > tp.s && s < tp.f;
+				default -> false;
+			};
 		} else {
 			TimeInstant ti = (TimeInstant) t;
-			switch (tr) {
-			case isBefore:
-				return s < ti.s;
-			case isAfter:
-				return s > ti.s;
-			case cotemporal:
-				return s == ti.s;
-			default:
-				return false;
-			}
+			return switch (tr) {
+				case isBefore -> s < ti.s;
+				case isAfter -> s > ti.s;
+				case cotemporal -> s == ti.s;
+				default -> false;
+			};
 		}
 	}
 	
 	@Override
 	public String toString() {
 		return Long.toString(s);
+	}
+
+	public long getS(){
+		return s;
 	}
 }
