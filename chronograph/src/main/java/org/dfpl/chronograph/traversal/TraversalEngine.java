@@ -627,9 +627,9 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 			return makeStream(intermediate);
 		});
 
-//		Class[] args = { String.class, LoopBundle.class };
-//		Step step = new Step(this.getClass().getName(), "loop", args);
-//		stepList.add(step);
+		Class[] args = { String.class, Predicate.class };
+		Step step = new Step(this.getClass().getName(), "loop", args, pointer, whilePredicate);
+		stepList.add(step);
 
 		return this;
 	}
