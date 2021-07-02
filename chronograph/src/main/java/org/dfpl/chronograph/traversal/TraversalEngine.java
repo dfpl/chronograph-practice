@@ -27,6 +27,11 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 		super(graph, starts, elementClass, isParallel);
 	}
 
+	public TraversalEngine(Graph graph, Object starts, int loopCount,  Class<?> elementClass, boolean isParallel) {
+		super(graph, starts, elementClass, isParallel);
+		this.loopCount = loopCount;
+	}
+
 	// -------------------Transform: Graph to Element----------------------
 
 	@Override
@@ -595,9 +600,6 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 
 		this.stepIndex.put(pointer, stepList.indexOf(step));
 
-		this.stepIndex.forEach((name, value) ->{
-			System.out.println(name + " " + value);
-		});
 		return this;
 	}
 
@@ -605,27 +607,13 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 	public <E> GremlinFluentPipeline loop(String pointer, Predicate<LoopBundle<E>> whilePredicate) {
 		int lastStepIndex = stepList.size();
 
-		stream = stream.flatMap( intermediate -> {
-			LoopBundle<E> loopBundle = new LoopBundle<>((E) intermediate, null, this.loopCount);
+		// Check if the pointer is present in the step list or there is no step between the loop and the named step
+		Integer backStepIdx = stepIndex.get(pointer);
+		if (backStepIdx == null || lastStepIndex  <=  backStepIdx + 1  )
+			return this;
 
-			if (whilePredicate.test(loopBundle)) {
-				Integer backStepIdx = stepIndex.get(pointer);
-				if (backStepIdx == null || (lastStepIndex - (backStepIdx) + 1) < 0)
-					return makeStream(intermediate);
-
-				TraversalEngine innerPipeline = new TraversalEngine(g, intermediate, intermediate.getClass(), false);
-
-				List<Step> loopSteps = stepList.subList(backStepIdx + 1, lastStepIndex);
-				for (Step step : loopSteps) {
-					step.setInstance(innerPipeline);
-				}
-				System.out.println("Here");
-				innerPipeline.invoke(loopSteps);
-				innerPipeline.innerLoop(stepList, whilePredicate);
-				return innerPipeline.toList().parallelStream();
-			}
-			return makeStream(intermediate);
-		});
+		List<Step> subStepList = stepList.subList(backStepIdx + 1, lastStepIndex);
+		stream = this.innerLoop(subStepList, whilePredicate).toList().stream();
 
 		Class[] args = { String.class, Predicate.class };
 		Step step = new Step(this.getClass().getName(), "loop", args, pointer, whilePredicate);
@@ -634,30 +622,31 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 		return this;
 	}
 
-	private <E> GremlinFluentPipeline innerLoop(List<Step> stepList, Predicate<LoopBundle<E>> whilePredicate){
+	/**
+	 * Recursively apply the substeps to the stream while the whilePredicate is true
+	 *
+	 * @param subStepList consists of the named step to the last step in the stepList
+	 * @param whilePredicate the predicate to continue the while loop
+	 *
+	 * @return the pipeline
+	 * */
+	private <E> GremlinFluentPipeline innerLoop(List<Step> subStepList, Predicate<LoopBundle<E>> whilePredicate){
 		stream = stream.flatMap( intermediate ->{
-			LoopBundle<E> loopBundle = new LoopBundle<>((E) intermediate, null, this.loopCount + 1);
+			LoopBundle<E> loopBundle = new LoopBundle<>((E) intermediate, null, this.loopCount);
 			if (whilePredicate.test(loopBundle)){
-				TraversalEngine innerPipeline = new TraversalEngine(g, intermediate, intermediate.getClass(), false);
+				TraversalEngine innerPipeline = new TraversalEngine(g, intermediate, this.loopCount + 1, intermediate.getClass(), this.isParallel);
 
-				for (Step step : stepList){
+				for (Step step : subStepList){
 					step.setInstance(innerPipeline);
+					step.invoke();
 				}
 
-				innerPipeline.invoke(stepList);
-				innerPipeline.innerLoop(stepList, whilePredicate);
+				innerPipeline.innerLoop(subStepList, whilePredicate);
 				return innerPipeline.toList().parallelStream();
 			}
 
 			return makeStream(intermediate);
 		});
-		return this;
-	}
-
-	private TraversalEngine invoke(List<Step> stepList) {
-		for (Step step : stepList) {
-			step.invoke();
-		}
 		return this;
 	}
 
@@ -667,7 +656,7 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 		else if (e instanceof Collection)
 			return ((Collection) e).parallelStream();
 		else {
-			return Arrays.asList(e).parallelStream();
+			return Collections.singletonList(e).parallelStream();
 		}
 	}
 
