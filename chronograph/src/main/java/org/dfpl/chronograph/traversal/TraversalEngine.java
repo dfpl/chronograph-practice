@@ -1,17 +1,12 @@
 package org.dfpl.chronograph.traversal;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.dfpl.chronograph.common.Step;
 import org.dfpl.chronograph.common.Tokens.NC;
@@ -558,6 +553,11 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 			return e;
 		});
 
+		// Step Update
+		Class[] args = { Function.class };
+		Step step = new Step(this.getClass().getName(), "sideEffect", args, function);
+		stepList.add(step);
+
 		return this;
 	}
 
@@ -594,13 +594,81 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 		stepList.add(step);
 
 		this.stepIndex.put(pointer, stepList.indexOf(step));
+
+		this.stepIndex.forEach((name, value) ->{
+			System.out.println(name + " " + value);
+		});
 		return this;
 	}
 
 	@Override
 	public <E> GremlinFluentPipeline loop(String pointer, Predicate<LoopBundle<E>> whilePredicate) {
-		// TODO Auto-generated method stub
-		return null;
+		int lastStepIndex = stepList.size();
+
+		stream = stream.flatMap( intermediate -> {
+			LoopBundle<E> loopBundle = new LoopBundle<>((E) intermediate, null, this.loopCount);
+
+			if (whilePredicate.test(loopBundle)) {
+				Integer backStepIdx = stepIndex.get(pointer);
+				if (backStepIdx == null || (lastStepIndex - (backStepIdx) + 1) < 0)
+					return makeStream(intermediate);
+
+				TraversalEngine innerPipeline = new TraversalEngine(g, intermediate, intermediate.getClass(), false);
+
+				List<Step> loopSteps = stepList.subList(backStepIdx + 1, lastStepIndex);
+				for (Step step : loopSteps) {
+					step.setInstance(innerPipeline);
+				}
+				System.out.println("Here");
+				innerPipeline.invoke(loopSteps);
+				innerPipeline.innerLoop(stepList, whilePredicate);
+				return innerPipeline.toList().parallelStream();
+			}
+			return makeStream(intermediate);
+		});
+
+//		Class[] args = { String.class, LoopBundle.class };
+//		Step step = new Step(this.getClass().getName(), "loop", args);
+//		stepList.add(step);
+
+		return this;
+	}
+
+	private <E> GremlinFluentPipeline innerLoop(List<Step> stepList, Predicate<LoopBundle<E>> whilePredicate){
+		stream = stream.flatMap( intermediate ->{
+			LoopBundle<E> loopBundle = new LoopBundle<>((E) intermediate, null, this.loopCount + 1);
+			if (whilePredicate.test(loopBundle)){
+				TraversalEngine innerPipeline = new TraversalEngine(g, intermediate, intermediate.getClass(), false);
+
+				for (Step step : stepList){
+					step.setInstance(innerPipeline);
+				}
+
+				innerPipeline.invoke(stepList);
+				innerPipeline.innerLoop(stepList, whilePredicate);
+				return innerPipeline.toList().parallelStream();
+			}
+
+			return makeStream(intermediate);
+		});
+		return this;
+	}
+
+	private TraversalEngine invoke(List<Step> stepList) {
+		for (Step step : stepList) {
+			step.invoke();
+		}
+		return this;
+	}
+
+	private Stream makeStream(Object e) {
+		if (e instanceof Stream)
+			return (Stream) e;
+		else if (e instanceof Collection)
+			return ((Collection) e).parallelStream();
+		else {
+			return Arrays.asList(e).parallelStream();
+		}
 	}
 
 	// ------------------- Aggregation ----------------------

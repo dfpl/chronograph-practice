@@ -37,4 +37,5 @@ public class LoopBundle<T> {
 	public void setLoopCount(int loopCount) {
 		this.loopCount = loopCount;
 	}
+
 }

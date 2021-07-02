@@ -5,7 +5,9 @@ import static org.junit.Assert.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
+import com.tinkerpop.gremlin.LoopBundle;
 import org.dfpl.chronograph.crud.memory.ChronoGraph;
 import org.dfpl.chronograph.traversal.TraversalEngine;
 import org.junit.After;
@@ -103,6 +105,33 @@ public class Branch {
 
         fail("Unimplemented");
 //		assertThat(vertices, containsInAnyOrder("north", 10, "west"));
+    }
+
+    @Test
+    public void testLoop(){
+        for( Vertex v: graph.getVertices()){
+            v.setProperty("loopValue", 0);
+        }
+
+        TraversalEngine engine = new TraversalEngine(graph, graph.getVertices(), Vertex.class, false);
+
+        engine
+            .as("first")
+            .sideEffect( v -> {
+
+                System.out.println( ((Vertex) v).getId() + " " + ((Vertex) v).getProperty("loopValue").toString());
+                return v;
+            })
+            .sideEffect( v -> {
+                System.out.println("Printing");
+                int currentValue = ((Vertex) v).getProperty("loopValue");
+                ((Vertex) v).setProperty("loopValue", currentValue + 1);
+                return v;
+            })
+            .loop("first", (Predicate<LoopBundle<Vertex>>) loopBundle -> {
+                Vertex v = loopBundle.getTraverser();
+                return (int) v.getProperty("loopValue") < 5;
+            }).toList();
     }
 
 }
