@@ -3,6 +3,7 @@ package org.dfpl.chronograph.traversal.traversalengine;
 import static org.junit.Assert.*;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -108,8 +109,8 @@ public class Branch {
     }
 
     @Test
-    public void testLoop(){
-        for( Vertex v: graph.getVertices()){
+    public void testLoop_VertexProperty() {
+        for (Vertex v : graph.getVertices()) {
             v.setProperty("loopValue", 0);
         }
 
@@ -117,21 +118,45 @@ public class Branch {
 
         engine
             .as("first")
-            .sideEffect( v -> {
-
-                System.out.println( ((Vertex) v).getId() + " " + ((Vertex) v).getProperty("loopValue").toString());
-                return v;
-            })
-            .sideEffect( v -> {
-                System.out.println("Printing");
+            .sideEffect(v -> {
                 int currentValue = ((Vertex) v).getProperty("loopValue");
                 ((Vertex) v).setProperty("loopValue", currentValue + 1);
+                return v;
+            })
+            .sideEffect(v -> {
+                System.out.println(((Vertex) v).getId() + " " + ((Vertex) v).getProperty("loopValue").toString());
                 return v;
             })
             .loop("first", (Predicate<LoopBundle<Vertex>>) loopBundle -> {
                 Vertex v = loopBundle.getTraverser();
                 return (int) v.getProperty("loopValue") < 5;
-            }).toList();
+            });
+
+        List<Vertex> vertices =  engine.toList();
+
+        vertices.forEach(v -> {
+            assertEquals(5, (int) v.getProperty("loopValue"));
+        });
+    }
+
+    @Test
+    public void testLoop_OutVertex() {
+        graph.removeEdge(acLikes);
+        graph.addEdge(b, c, "likes");
+
+        TraversalEngine engine = new TraversalEngine(graph, graph.getVertex("A"), Vertex.class, false);
+
+        engine
+            .as("first")
+            .out("likes")
+            .loop("first", (Predicate<LoopBundle<Vertex>>) loopBundle -> {
+                Vertex v = loopBundle.getTraverser();
+                return v.getVertices(Direction.OUT, "likes").size() != 0;
+            });
+
+        List<Vertex> vertices =  engine.toList();
+        List<Vertex> expectedVertices = new LinkedList<>(List.of(a, b));
+        assertTrue(vertices.containsAll(expectedVertices));
     }
 
 }

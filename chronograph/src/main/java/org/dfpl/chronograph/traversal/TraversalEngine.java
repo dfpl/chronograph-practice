@@ -1,5 +1,6 @@
 package org.dfpl.chronograph.traversal;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BinaryOperator;
@@ -19,6 +20,7 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.GremlinFluentPipeline;
 import com.tinkerpop.gremlin.GremlinPipeline;
 import com.tinkerpop.gremlin.LoopBundle;
+import org.dfpl.chronograph.crud.memory.ChronoVertex;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TraversalEngine extends GremlinPipeline implements GremlinFluentPipeline {
@@ -279,7 +281,7 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 		// Step Update
 		Class[] args = { labels.getClass() };
 
-		Step step = new Step(this.getClass().getName(), "out", args, (Object[]) labels);
+		Step step = new Step(this.getClass().getName(), "out", args, (String[]) labels);
 		stepList.add(step);
 
 		// return the extended stream
@@ -631,16 +633,23 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 	 * @return the pipeline
 	 * */
 	private <E> GremlinFluentPipeline innerLoop(List<Step> subStepList, Predicate<LoopBundle<E>> whilePredicate){
+		if (this.loopCount == 10) return this;
 		stream = stream.flatMap( intermediate ->{
 			LoopBundle<E> loopBundle = new LoopBundle<>((E) intermediate, null, this.loopCount);
 			if (whilePredicate.test(loopBundle)){
+				System.out.println( "intermediate " + ((Vertex) intermediate));
+
 				TraversalEngine innerPipeline = new TraversalEngine(g, intermediate, this.loopCount + 1, intermediate.getClass(), this.isParallel);
 
 				for (Step step : subStepList){
 					step.setInstance(innerPipeline);
-					step.invoke();
+					try {
+						step.invoke();
+					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+						return makeStream(e);
+					}
 				}
-
+				System.out.println("Done invoke");
 				innerPipeline.innerLoop(subStepList, whilePredicate);
 				return innerPipeline.toList().parallelStream();
 			}
@@ -704,14 +713,14 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 	private void checkInputElementClass(Class... correctClasses) {
 		boolean isMatched = false;
 		for (Class correct : correctClasses) {
-			if (elementClass == correct) {
+			if (elementClass == correct || correct.isAssignableFrom(elementClass)) {
 				isMatched = true;
 				break;
 			}
 		}
 		if (isMatched == false) {
 			throw new UnsupportedOperationException(
-					"Current stream element class " + elementClass + " should be one of " + correctClasses);
+					"Current stream element class " + elementClass + " should be one of " + Arrays.toString(correctClasses));
 		}
 	}
 
