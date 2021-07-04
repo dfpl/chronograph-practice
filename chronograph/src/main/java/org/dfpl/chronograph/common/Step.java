@@ -2,6 +2,7 @@ package org.dfpl.chronograph.common;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 public class Step {
 	private Object classInstance;
@@ -12,6 +13,7 @@ public class Step {
 	public Step(final String className, final String methodName, final Class[] args, final Object... params) {
 		try {
 			Class cls = Class.forName(className);
+//			System.out.println("Method " + methodName + " " + Arrays.toString(args));
 			this.method = cls.getDeclaredMethod(methodName, args);
 			this.params = params;
 		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException e) {
@@ -24,12 +26,13 @@ public class Step {
 		this.classInstance = classInstance;
 	}
 
-	public void invoke() {
+	public void invoke() throws InvocationTargetException, IllegalAccessException {
 		try {
+			System.out.println("METHOD " + method.getName() + " METHODPARAMS " + Arrays.toString(method.getParameterTypes()) + " PARAMS " + Arrays.toString(params) + " PARAMSCLASS " + params.getClass());
 			method.invoke(classInstance, params);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
-			System.out.println(e.getCause());
+			throw e;
 		}
 	}
 

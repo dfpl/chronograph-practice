@@ -1,17 +1,13 @@
 package org.dfpl.chronograph.traversal;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.dfpl.chronograph.common.Step;
 import org.dfpl.chronograph.common.Tokens.NC;
@@ -24,12 +20,18 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.GremlinFluentPipeline;
 import com.tinkerpop.gremlin.GremlinPipeline;
 import com.tinkerpop.gremlin.LoopBundle;
+import org.dfpl.chronograph.crud.memory.ChronoVertex;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TraversalEngine extends GremlinPipeline implements GremlinFluentPipeline {
 
 	public TraversalEngine(Graph graph, Object starts, Class<?> elementClass, boolean isParallel) {
 		super(graph, starts, elementClass, isParallel);
+	}
+
+	public TraversalEngine(Graph graph, Object starts, int loopCount,  Class<?> elementClass, boolean isParallel) {
+		super(graph, starts, elementClass, isParallel);
+		this.loopCount = loopCount;
 	}
 
 	// -------------------Transform: Graph to Element----------------------
@@ -279,7 +281,7 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 		// Step Update
 		Class[] args = { labels.getClass() };
 
-		Step step = new Step(this.getClass().getName(), "out", args, (Object[]) labels);
+		Step step = new Step(this.getClass().getName(), "out", args, (String[]) labels);
 		stepList.add(step);
 
 		// return the extended stream
@@ -558,6 +560,11 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 			return e;
 		});
 
+		// Step Update
+		Class[] args = { Function.class };
+		Step step = new Step(this.getClass().getName(), "sideEffect", args, function);
+		stepList.add(step);
+
 		return this;
 	}
 
@@ -594,13 +601,72 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 		stepList.add(step);
 
 		this.stepIndex.put(pointer, stepList.indexOf(step));
+
 		return this;
 	}
 
 	@Override
 	public <E> GremlinFluentPipeline loop(String pointer, Predicate<LoopBundle<E>> whilePredicate) {
-		// TODO Auto-generated method stub
-		return null;
+		int lastStepIndex = stepList.size();
+
+		// Check if the pointer is present in the step list or there is no step between the loop and the named step
+		Integer backStepIdx = stepIndex.get(pointer);
+		if (backStepIdx == null || lastStepIndex  <=  backStepIdx + 1  )
+			return this;
+
+		List<Step> subStepList = stepList.subList(backStepIdx + 1, lastStepIndex);
+		stream = this.innerLoop(subStepList, whilePredicate).toList().stream();
+
+		Class[] args = { String.class, Predicate.class };
+		Step step = new Step(this.getClass().getName(), "loop", args, pointer, whilePredicate);
+		stepList.add(step);
+
+		return this;
+	}
+
+	/**
+	 * Recursively apply the substeps to the stream while the whilePredicate is true
+	 *
+	 * @param subStepList consists of the named step to the last step in the stepList
+	 * @param whilePredicate the predicate to continue the while loop
+	 *
+	 * @return the pipeline
+	 * */
+	private <E> GremlinFluentPipeline innerLoop(List<Step> subStepList, Predicate<LoopBundle<E>> whilePredicate){
+		if (this.loopCount == 10) return this;
+		stream = stream.flatMap( intermediate ->{
+			LoopBundle<E> loopBundle = new LoopBundle<>((E) intermediate, null, this.loopCount);
+			if (whilePredicate.test(loopBundle)){
+				System.out.println( "intermediate " + ((Vertex) intermediate));
+
+				TraversalEngine innerPipeline = new TraversalEngine(g, intermediate, this.loopCount + 1, intermediate.getClass(), this.isParallel);
+
+				for (Step step : subStepList){
+					step.setInstance(innerPipeline);
+					try {
+						step.invoke();
+					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+						return makeStream(e);
+					}
+				}
+				System.out.println("Done invoke");
+				innerPipeline.innerLoop(subStepList, whilePredicate);
+				return innerPipeline.toList().parallelStream();
+			}
+
+			return makeStream(intermediate);
+		});
+		return this;
+	}
+
+	private Stream makeStream(Object e) {
+		if (e instanceof Stream)
+			return (Stream) e;
+		else if (e instanceof Collection)
+			return ((Collection) e).parallelStream();
+		else {
+			return Collections.singletonList(e).parallelStream();
+		}
 	}
 
 	// ------------------- Aggregation ----------------------
@@ -647,14 +713,14 @@ public class TraversalEngine extends GremlinPipeline implements GremlinFluentPip
 	private void checkInputElementClass(Class... correctClasses) {
 		boolean isMatched = false;
 		for (Class correct : correctClasses) {
-			if (elementClass == correct) {
+			if (elementClass == correct || correct.isAssignableFrom(elementClass)) {
 				isMatched = true;
 				break;
 			}
 		}
 		if (isMatched == false) {
 			throw new UnsupportedOperationException(
-					"Current stream element class " + elementClass + " should be one of " + correctClasses);
+					"Current stream element class " + elementClass + " should be one of " + Arrays.toString(correctClasses));
 		}
 	}
 
