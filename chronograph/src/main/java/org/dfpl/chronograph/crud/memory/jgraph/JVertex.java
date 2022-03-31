@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.NavigableSet;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.dfpl.chronograph.common.TemporalRelation;
 import com.tinkerpop.blueprints.Direction;
@@ -95,15 +97,40 @@ public class JVertex implements Vertex{
 	@Override
 	public Collection<Edge> getEdges(Direction direction, String... labels) { // Vertex에서 연관 된 Edges들을 뽑아오자
 		// TODO Auto-generated method stub
-		
-		return null;
+		if (direction.equals(Direction.OUT)) {
+			return g.getEdges().parallelStream().
+					filter(e->e.getVertex(Direction.IN).getId().equals(this.id)).filter(e->{
+						if(labels.length==0)
+							return true;
+						for (String label : labels) {
+							if(e.getLabel().equals(label))
+								return true;
+						}
+						return false;
+					})
+					.collect(Collectors.toSet());
+
+		} else if (direction.equals(Direction.IN)) {
+			return g.getEdges().parallelStream().
+					filter(e->e.getVertex(Direction.OUT).getId().equals(this.id)).filter(e->{
+						if(labels.length==0)
+							return true;
+						for (String label : labels) {
+							if(e.getLabel().equals(label))
+								return true;
+						}
+						return false;
+					})
+					.collect(Collectors.toSet());
+		}
+		return new HashSet<Edge>();
 	}
 
 	@Override
 	public Collection<Vertex> getVertices(Direction direction, String... labels) {
 		// TODO Auto-generated method stub // 이 Vertex와 연동 된 모든 Vertices들을 return
 		if(direction.equals(Direction.OUT)) {
-			
+
 		}
 		else if(direction.equals(Direction.IN)) {
 			
@@ -116,13 +143,13 @@ public class JVertex implements Vertex{
 	public Edge addEdge(String label, Vertex inVertex) {
 		// TODO Auto-generated method stub
 		return this.g.addEdge(this, inVertex, label);
+
 	}
 
 	@Override
 	public void remove() {  
 		// TODO Auto-generated method stub
-		g.removeVertex(this);	
-		
+		g.removeVertex(this);
 	}
 
 	@Override

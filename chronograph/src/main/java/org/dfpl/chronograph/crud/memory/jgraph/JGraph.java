@@ -22,7 +22,7 @@ public class JGraph implements Graph{
 		edges = new HashMap<>();
 		
 	}
-	
+	//TODO: solve vertices and edges when edges are deleted
 	@Override
 	public Vertex addVertex(String id) {
 		// TODO Auto-generated method stub

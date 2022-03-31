@@ -115,5 +115,12 @@ public class JEdge implements Edge{
 		
 	}
 
-
+	@Override
+	public String toString() {
+		return "JEdge{" +
+				"out=" + out +
+				", label='" + label + '\'' +
+				", in=" + in +
+				'}';
+	}
 }
