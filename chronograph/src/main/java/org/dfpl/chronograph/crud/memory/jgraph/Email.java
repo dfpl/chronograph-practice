@@ -1,4 +1,4 @@
-package org.dfpl.chronograph.crud.memory.test;
+package org.dfpl.chronograph.crud.memory.jgraph;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -17,8 +17,8 @@ public class Email {
     private Graph g;
 
 
-    public Graph getG() {
-        return g;
+    public JGraph getG() {
+        return (JGraph)g;
     }
 
     public void setG(Graph g) {
@@ -26,10 +26,10 @@ public class Email {
     }
 
 
-    Email() throws IOException {
+    public Email() throws IOException {
         this.g = new JGraph();
         BufferedReader reader = new BufferedReader(
-                new FileReader("/Users/ahnjaehyun/Documents/gitRepo/chronograph/chronograph/src/main/java/org/dfpl/chronograph/crud/memory/test/email.txt"));
+                new FileReader("D:\\Email.txt"));
         while (true) {
             String str = reader.readLine();
             if (str == null)
@@ -54,7 +54,7 @@ public class Email {
         }
     }
 
-    Email(Graph g) throws IOException {
+   public Email(Graph g) throws IOException {
         BufferedReader reader = new BufferedReader(
                 new FileReader("email.txt"));
         while (true) {

@@ -2,6 +2,7 @@ package org.dfpl.chronograph.crud.memory.jgraph;
 
 import java.util.HashMap;
 import java.util.NavigableSet;
+import java.util.Objects;
 import java.util.Set;
 
 import org.dfpl.chronograph.common.TemporalRelation;
@@ -25,8 +26,7 @@ public class JEdge implements Edge{
 	
 	public JEdge(Graph g , Vertex out, String label, Vertex in) {
 		this.g = g;
-		this.id = out.toString()+"|"+label+"|"+in.toString();
-		
+		this.id = out.toString() + "|" + label + "|" + in.toString();
 		this.out = out;
 		this.in = in;
 		this.label = label;
@@ -122,5 +122,18 @@ public class JEdge implements Edge{
 				", label='" + label + '\'' +
 				", in=" + in +
 				'}';
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		JEdge jEdge = (JEdge) o;
+		return id.equals(jEdge.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
 }

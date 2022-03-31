@@ -48,12 +48,13 @@ public class JGraph implements Graph{
 		vertices.remove(vertex.getId());
 		Iterator<Entry<String, Edge>> edgeIterator = edges.entrySet().iterator();
 		while(edgeIterator.hasNext()) {
-			Edge thisEdge = edgeIterator.next().getValue();
+			Entry<String, Edge> edgeEntry = edgeIterator.next();
+			Edge thisEdge = edgeEntry.getValue();
 			if(thisEdge.getVertex(Direction.OUT).equals(vertex)) {
-				removeEdge(thisEdge);
+				edgeIterator.remove();
 			}
 			if(thisEdge.getVertex(Direction.IN).equals(vertex)) {
-				removeEdge(thisEdge);
+				edgeIterator.remove();
 			}
 		}
 		
