@@ -14,8 +14,10 @@ import java.util.Set;
 public class main {
     public static void main(String[] args) throws IOException {
         Email email = new Email();
-        JGraph jGraph = email.getG();
-        System.out.println("jGraph = " + jGraph.getEdges());
+       
+        Graph g = (Graph)email.getG();
+        
+
 
 
 

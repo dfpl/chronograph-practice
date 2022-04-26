@@ -36,4 +36,12 @@ public class Step {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return "Step{" +
+				"classInstance=" + classInstance +
+				", method=" + method +
+				", params=" + Arrays.toString(params) +
+				'}';
+	}
 }

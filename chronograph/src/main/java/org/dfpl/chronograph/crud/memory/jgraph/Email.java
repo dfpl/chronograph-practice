@@ -17,8 +17,8 @@ public class Email {
     private Graph g;
 
 
-    public JGraph getG() {
-        return (JGraph)g;
+    public Graph getG() {
+        return g;
     }
 
     public void setG(Graph g) {

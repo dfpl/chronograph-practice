@@ -6,7 +6,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.dfpl.chronograph.common.TemporalRelation;
-import org.dfpl.chronograph.crud.memory.ChronoEdgeEvent;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
@@ -33,32 +32,28 @@ public class JEdge implements Edge{
 	}
 	@Override
 	public String getId() {
-		// TODO Auto-generated method stub
 		return id;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getProperty(String key) {
-		// TODO Auto-generated method stub
-		return (T)properties.get(key);
+		return (T) properties.get(key);
 	}
 
 	@Override
 	public Set<String> getPropertyKeys() {
-		// TODO Auto-generated method stub
 		return properties.keySet();
 	}
 
 	@Override
 	public void setProperty(String key, Object value) {
-		// TODO Auto-generated method stub
 		properties.put(key, value);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T removeProperty(String key) {
-		// TODO Auto-generated method stub
 		return (T) properties.remove(key);
 				
 	}
@@ -95,7 +90,6 @@ public class JEdge implements Edge{
 
 	@Override
 	public Vertex getVertex(Direction direction) throws IllegalArgumentException {
-		// TODO Auto-generated method stub
 		if(direction.equals(Direction.OUT))
 			return out;
 		else
@@ -104,13 +98,11 @@ public class JEdge implements Edge{
 
 	@Override
 	public String getLabel() {
-		// TODO Auto-generated method stub
 		return label;
 	}
 
 	@Override
 	public void remove() {
-		// TODO Auto-generated method stub
 		g.removeEdge(this);
 		
 	}
