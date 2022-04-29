@@ -1,82 +1,54 @@
 package kr.ac.adv.exam;
 
+import static kr.ac.adv.exam.getNumber.getEdgeNumber;
+import static kr.ac.adv.exam.getNumber.getVertexNumber;
+
 import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.blueprints.impls.tg.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
+import org.dfpl.chronograph.crud.memory.ChronoGraph;
 
 public class App {
 
     static HashMap<String, HashSet<Vertex>> reachableMap;
-    static int V , E;
 
     public static void main(String[] args) throws IOException {
-        TinkerGraph graph = Creation.getGraph();
-        V = getVertexNumber(graph);
-        E = getEdgeNumber(graph);
-        System.out.println(V);
-        TinkerGraph graph1 = Creation.getTempGraph();
-        reachableMap = new HashMap<>();
-        Vertex v1 = graph1.getVertex("1");
-        Edge e1 = graph1.getEdge("1->2");
+        ChronoGraph graph = Creation.getGraph();
+        ChronoGraph graph1 = Creation.getTempGraph();
+//        //prob 1-1,1-2
+//        System.out.println(getNumber.getVertexNumber(graph));
+//        System.out.println(getNumber.getEdgeNumber(graph));
+//        //prob 1-3
+//        ClosenessCentrality closenessCentrality = new ClosenessCentrality(graph);
+//        for(Vertex vertex : graph.getVertices()){
+//            closenessCentrality.execute(vertex);
+//            System.out.println(closenessCentrality.distance);
+//        }
+//        //prob 1-4
+//        for (Vertex vertex : graph.getVertices()) {
+//            closenessCentrality.execute(vertex);
+//            System.out.println(vertex.getId() + "," + closenessCentrality.calculateCC());
+//        }
+        //prob1-5
+        LocalClusteringCoefficient localClusteringCoefficient = new LocalClusteringCoefficient(
+            graph1);
+        System.out.println(localClusteringCoefficient.getNumberOfTriangles());
 
-        System.out.println(v1);
-        //BFS(graph1);
-
+//        System.out.println(graph1.getEdges());
+//        ClosenessCentrality closenessCentrality = new ClosenessCentrality(graph1);
+//        closenessCentrality.execute(graph1.getVertex("1"));
+//        System.out.println(closenessCentrality.distance);
+//        System.out.println(closenessCentrality.calculateCC());
     }
 
-
-    public static int getVertexNumber(TinkerGraph graph) {
-        int count = 0;
-        Iterator iterator = graph.getVertices().iterator();
-        while (iterator.hasNext()) {
-            iterator.next();
-            count++;
-        }
-        return count;
-    }
-
-    public static int getEdgeNumber(TinkerGraph graph) {
-        int count = 0;
-        Iterator iterator = graph.getEdges().iterator();
-        while (iterator.hasNext()) {
-            iterator.next();
-            count++;
-        }
-        return count;
-    }
-
-    public static void getReachableVertices(Graph graph) {
-
-        Iterable<Vertex> vertices = graph.getVertices();
-
-        for (Vertex vertex : vertices) {
-            HashSet<Vertex> vertexHashSet = new HashSet<>();
-
-        }
-    }
-
-    public static void tmp(Vertex vertex) {
-
-        Iterable<Vertex> vertices = vertex.getVertices(Direction.OUT);
-        if (count(vertices) == 1) {
-            return;
-        }
-        vertices.forEach(vertex1 -> {
-            System.out.println(vertex1);
-            tmp(vertex1);
-        });
-
-
-    }
 
     public static int count(Iterable<Vertex> vertices) {
         int count = 0;
@@ -86,32 +58,44 @@ public class App {
         return count;
     }
 
-    public static void BFS(TinkerGraph graph) {
-        Iterable<Vertex> vertices = graph.getVertices();
-        int cnt = 0;
-        for (Vertex v : vertices) {
-            String vId = v.getId().toString();
+    public static void BFS(Graph graph) {
+////        Iterable<Vertex> vertices = graph.getVertices();
+////        for (Vertex v : vertices) {
+////            String vId = v.getId();
+////            Queue<Vertex> queue = new LinkedList<>();
+////            HashSet<Vertex> visited = new HashSet<>();
+////            queue.add(v);
+////            while (!queue.isEmpty()) {
+////                Vertex vertex = queue.poll();
+////                Iterator<Vertex> iterator = vertex.getVertices(Direction.OUT,"").iterator();
+////                while (iterator.hasNext()) {
+////                    Vertex adjVertex = iterator.next();
+////                    if (adjVertex.equals(vertex)) {
+////                        continue;
+////                    }
+////                    if (!visited.contains(adjVertex)) {
+////                        visited.add(adjVertex);
+////                        queue.add(adjVertex);
+////                    }
+////                }
+////            }
+////            reachableMap.put(vId, visited);
+        ArrayList<ArrayList<Vertex>> adj = new ArrayList<>();
+        //init
+
+        Collection<Vertex> vertices = graph.getVertices();
+
+        for (Vertex vertex : vertices) {
             Queue<Vertex> queue = new LinkedList<>();
-            HashSet<Vertex> visited = new HashSet<>();
-            queue.add(v);
+            queue.add(vertex);
+            vertex.setProperty("isVisited", "true");
             while (!queue.isEmpty()) {
-                Vertex vertex = queue.poll();
-                Iterator<Vertex> iterator = vertex.getVertices(Direction.OUT).iterator();
-                while (iterator.hasNext()) {
-                    Vertex adjVertex = iterator.next();
-                    if (adjVertex.equals(vertex)) {
-                        continue;
-                    }
-                    if (!visited.contains(adjVertex)) {
-                        visited.add(adjVertex);
-                        queue.add(adjVertex);
-                    }
-                }
+                Vertex v = queue.poll();
+                Collection<Vertex> adjVertices = v.getVertices(Direction.OUT, "");
+
             }
-            reachableMap.put(vId, visited);
-            System.out.println(visited);
-            System.out.println("vId: " + vId + "\t" + reachableMap.get(vId).size());
         }
+
     }
 
     public static void calculateCC(Graph graph) {

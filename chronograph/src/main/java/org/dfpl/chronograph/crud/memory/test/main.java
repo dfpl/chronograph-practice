@@ -16,7 +16,7 @@ public class main {
         Email email = new Email();
        
         Graph g = (Graph)email.getG();
-        
+        System.out.println(g.getVertex("1").getVertices(Direction.OUT));
 
 
 
